@@ -1,0 +1,73 @@
+/* The switcher - the box around the slider */
+.switcher {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switcher input {
+  opacity: 50%;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+  border-radius: 34px;
+  border: 1px #808080;
+}
+
+.slider:before {
+  position: absolute;
+  content: "#";
+  text-align: center;
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background: linear-gradient(
+      135deg,
+      rgba(237, 253, 252, 0.8) 0.01%,
+      rgba(213, 238, 246, 0.8) 70%,
+      rgba(246, 254, 254, 0.8) 100%
+    ),
+    #ffffff;
+  background-size: 200%;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+  border-radius: 50%;
+  border: 1px #808080;
+}
+
+.slider:hover {
+  background-position: 240%;
+  box-shadow: none;
+}
+
+input:checked + .slider:before {
+  content: "%";
+  text-align: center;
+}
+
+/* input:checked + .slider {
+  background-color: #da9100;
+} */
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196f3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
