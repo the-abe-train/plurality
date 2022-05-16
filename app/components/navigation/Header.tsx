@@ -2,13 +2,15 @@ import { Link } from "@remix-run/react";
 import Sidebar from "./Sidebar";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import guess from "~/images/icons/guess.svg";
-import respond from "~/images/icons/respond.svg";
-import draft from "~/images/icons/draft.svg";
-import logo from "~/images/icons/logo.svg";
-import down from "~/images/icons/down.svg";
-import empty_logo from "~/images/icons/empty_logo.svg";
 import { truncateName } from "~/util/text";
+import {
+  downIcon,
+  draftIcon,
+  emptyLogo,
+  guessIcon,
+  logo,
+  respondIcon,
+} from "~/images/icons";
 
 type Props = {
   name?: string;
@@ -55,7 +57,7 @@ export default ({ name }: Props) => {
             >
               <span>Surveys</span>{" "}
               <img
-                src={down}
+                src={downIcon}
                 alt="Instruction symbol"
                 className="mr-2 inline"
                 width={12}
@@ -69,7 +71,7 @@ export default ({ name }: Props) => {
               >
                 <Link to="/surveys/today" className="flex items-center">
                   <img
-                    src={guess}
+                    src={guessIcon}
                     alt="Guess symbol"
                     className="mr-2 inline"
                     width={16}
@@ -78,7 +80,7 @@ export default ({ name }: Props) => {
                 </Link>
                 <Link to="/surveys/tomorrow" className="flex items-center">
                   <img
-                    src={respond}
+                    src={respondIcon}
                     alt="Respond symbol"
                     className="mr-2 inline"
                     width={16}
@@ -87,7 +89,7 @@ export default ({ name }: Props) => {
                 </Link>
                 <Link to="/draft" className="flex items-center">
                   <img
-                    src={draft}
+                    src={draftIcon}
                     alt="Draft symbol"
                     className="mr-2 inline"
                     width={16}
@@ -96,7 +98,7 @@ export default ({ name }: Props) => {
                 </Link>
                 <Link to="/surveys" className="flex items-center">
                   <img
-                    src={empty_logo}
+                    src={emptyLogo}
                     alt="Logo"
                     className="mr-2 inline"
                     width={16}

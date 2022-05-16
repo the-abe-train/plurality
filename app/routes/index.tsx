@@ -1,6 +1,10 @@
 import { json } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 import type { LoaderFunction, LinksFunction } from "@remix-run/node";
+import invariant from "tiny-invariant";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
 
 import styles from "~/styles/app.css";
 import backgrounds from "~/styles/backgrounds.css";
@@ -15,15 +19,7 @@ import AnimatedBanner from "~/components/text/AnimatedBanner";
 import Survey from "~/components/game/Survey";
 import NavButton from "~/components/buttons/NavButton";
 
-import logo from "~/images/icons/logo.svg";
-import guess from "~/images/icons/guess.svg";
-import respond from "~/images/icons/respond.svg";
-import draft from "~/images/icons/draft.svg";
-
-import invariant from "tiny-invariant";
-import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
-import timezone from "dayjs/plugin/timezone";
+import { draftIcon, guessIcon, logo, respondIcon } from "~/images/icons";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -53,7 +49,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 const instructions = [
   {
     name: "Guess",
-    icon: guess,
+    icon: guessIcon,
     link: "/surveys/today",
     text: (
       <>
@@ -63,7 +59,7 @@ const instructions = [
   },
   {
     name: "Respond",
-    icon: respond,
+    icon: respondIcon,
     link: "/surveys/tomorrow",
     text: (
       <>
@@ -73,7 +69,7 @@ const instructions = [
   },
   {
     name: "Draft",
-    icon: draft,
+    icon: draftIcon,
     link: "/draft",
     text: (
       <>

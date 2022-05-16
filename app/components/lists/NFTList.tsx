@@ -1,5 +1,5 @@
 import { NFT } from "~/api/schemas";
-import openSeaJpeg from "~/images/open_sea_logo.jpg";
+import { openSeaLogo } from "~/images/icons";
 
 type Props = {
   nfts: NFT[];
@@ -26,7 +26,7 @@ export default ({ nfts, token, setToken }: Props) => {
       <div className="grid grid-cols-3 max-h-64 overflow-y-scroll">
         {nfts.length > 0 &&
           nfts.map((nft) => {
-            const src = nft.image_url || openSeaJpeg;
+            const src = nft.image_url || openSeaLogo;
             return (
               <figure className="flex flex-col items-center max-w-[100px] m-2">
                 <img

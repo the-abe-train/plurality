@@ -1,5 +1,5 @@
 import { Link } from "@remix-run/react";
-import emptyLogo from "~/images/icons/empty_logo.svg";
+import { emptyLogo } from "~/images/icons";
 
 const data = [
   { name: "What is Plurality?", path: "what-is-plurality" },

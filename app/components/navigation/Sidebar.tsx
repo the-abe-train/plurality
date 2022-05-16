@@ -2,13 +2,14 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@remix-run/react";
 import { disableBodyScroll, enableBodyScroll } from "body-scroll-lock";
-
-import guess from "~/images/icons/guess.svg";
-import respond from "~/images/icons/respond.svg";
-import draft from "~/images/icons/draft.svg";
-import user from "~/images/icons/user.svg";
-import info from "~/images/icons/info.svg";
-import logo from "~/images/icons/empty_logo.svg";
+import {
+  draftIcon,
+  guessIcon,
+  infoIcon,
+  logo,
+  respondIcon,
+  userIcon,
+} from "~/images/icons";
 
 type Props = {
   name?: string;
@@ -71,7 +72,7 @@ export default ({ name }: Props) => {
             >
               <Link to="/user" className="text-2xl mx-5 flex items-center">
                 <img
-                  src={user}
+                  src={userIcon}
                   alt="Instruction symbol"
                   className="mr-2 inline"
                   width={24}
@@ -93,7 +94,7 @@ export default ({ name }: Props) => {
                   className="text-xl mx-8 flex items-center"
                 >
                   <img
-                    src={guess}
+                    src={guessIcon}
                     alt="Instruction symbol"
                     className="mr-2 inline"
                     width={18}
@@ -105,7 +106,7 @@ export default ({ name }: Props) => {
                   className="text-xl mx-8 flex items-center"
                 >
                   <img
-                    src={respond}
+                    src={respondIcon}
                     alt="Instruction symbol"
                     className="mr-2 inline"
                     width={18}
@@ -114,7 +115,7 @@ export default ({ name }: Props) => {
                 </Link>
                 <Link to="/draft" className="text-xl mx-8 flex items-center">
                   <img
-                    src={draft}
+                    src={draftIcon}
                     alt="Instruction symbol"
                     className="mr-2 inline"
                     width={18}
@@ -127,7 +128,7 @@ export default ({ name }: Props) => {
                 className="text-2xl mx-5 flex items-center"
               >
                 <img
-                  src={info}
+                  src={infoIcon}
                   alt="Instruction symbol"
                   className="mr-2 inline"
                   width={24}

@@ -33,7 +33,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
   // If there is a userId but no user, destroy the cookie
   if (userId && !user) {
-    return redirect("/user/login", {
+    return redirect("/user/signup", {
       headers: {
         "Set-Cookie": await destroySession(session),
       },

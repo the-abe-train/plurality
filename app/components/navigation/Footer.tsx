@@ -1,10 +1,7 @@
-import styles from "~/styles/app.css";
-import whiteLogo from "~/images/icons/white_logo.svg";
-import twitterIcon from "~/images/icons/twitter.svg";
-import githubIcon from "~/images/icons/github.svg";
-import emailIcon from "~/images/icons/email.svg";
 import type { LinksFunction } from "@remix-run/node";
 import { Link } from "@remix-run/react";
+import { emailIcon, githubIcon, twitterIcon, whiteLogo } from "~/images/icons";
+import styles from "~/styles/app.css";
 
 export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: styles }];

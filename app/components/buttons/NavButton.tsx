@@ -1,8 +1,5 @@
 import { Link } from "@remix-run/react";
-import guessIcon from "~/images/icons/guess.svg";
-import respondIcon from "~/images/icons/respond.svg";
-import draftIcon from "~/images/icons/draft.svg";
-import surveyIcon from "~/images/icons/empty_logo.svg";
+import { draftIcon, emptyLogo, guessIcon, respondIcon } from "~/images/icons";
 
 type Name = "Guess" | "Respond" | "Draft" | "Surveys";
 
@@ -55,7 +52,7 @@ export default ({ name }: { name: Name }) => {
         <Link to="/surveys">
           <button className="flex items-center silver rounded-md px-3 py-1 w-max">
             <img
-              src={surveyIcon}
+              src={emptyLogo}
               alt="Guess symbol"
               className="mr-2 inline"
               width={16}

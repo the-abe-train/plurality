@@ -28,8 +28,7 @@ import { commitSession, getSession } from "~/sessions";
 import styles from "~/styles/app.css";
 import backgrounds from "~/styles/backgrounds.css";
 
-import draftSymbol from "~/images/icons/draft.svg";
-import openSeaIcon from "~/images/icons/open_sea.svg";
+import { draftIcon, openSeaLogo } from "~/images/icons";
 
 export const links: LinksFunction = () => {
   return [
@@ -54,7 +53,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   // Redirect not signed-in users to home page
   if (!user) {
     session.flash("message", "You need to be logged-in to draft a survey.");
-    return redirect("/user/login", {
+    return redirect("/user/signup", {
       headers: {
         "Set-Cookie": await commitSession(session),
       },
@@ -196,7 +195,7 @@ export default () => {
   return (
     <div className="light w-full top-0 bottom-0 flex flex-col min-h-screen">
       <Header name={loaderData.user ? loaderData.user.name : "Connect"} />
-      <AnimatedBanner text="Draft" icon={draftSymbol} />
+      <AnimatedBanner text="Draft" icon={draftIcon} />
       <main
         className="container max-w-4xl flex-grow px-4 flex flex-col
     md:grid grid-cols-2 grid-flow-row gap-x-6 my-6"
@@ -207,7 +206,7 @@ export default () => {
           <a href="https://opensea.io/PluralityGame">
             <button className="gold px-3 py-2 my-6 flex space-x-1 items-center mx-auto">
               <span>Buy a Token</span>
-              <img src={openSeaIcon} alt="OpenSea" className="inline" />
+              <img src={openSeaLogo} alt="OpenSea" className="inline" />
             </button>
           </a>
         </section>
