@@ -4,8 +4,6 @@ import type { LoaderFunction, LinksFunction } from "@remix-run/node";
 
 import styles from "~/styles/app.css";
 import backgrounds from "~/styles/backgrounds.css";
-import switchStyles from "~/styles/switch.css";
-import animations from "~/styles/animations.css";
 
 import { SurveySchema } from "~/db/schemas";
 import { surveyByClose } from "~/db/queries";
@@ -13,9 +11,9 @@ import { client } from "~/db/connect.server";
 import { Photo } from "~/api/schemas";
 import { fetchPhoto } from "~/api/unsplash";
 
-import AnimatedBanner from "~/components/AnimatedBanner";
-import Survey from "~/components/Survey";
-import NavButton from "~/components/NavButton";
+import AnimatedBanner from "~/components/text/AnimatedBanner";
+import Survey from "~/components/game/Survey";
+import NavButton from "~/components/buttons/NavButton";
 
 import logo from "~/images/icons/logo.svg";
 import guess from "~/images/icons/guess.svg";
