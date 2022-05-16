@@ -5,7 +5,7 @@ import { Form, Link, useActionData } from "@remix-run/react";
 import { commitSession, getSession } from "~/sessions";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
-import { connectUserWallet, gameByQuestionUser } from "~/db/queries";
+import { connectUserWallet, gameBySurveyUser } from "~/db/queries";
 import { client } from "~/db/connect.server";
 import { ObjectId } from "mongodb";
 import useConnectWithWallet from "~/hooks/useConnectWithWallet";
@@ -91,7 +91,7 @@ export const action: ActionFunction = async ({ request }) => {
   // If there is a game in the local storage, uplaod it for the user.
   if (localData) {
     const { win, guesses, question } = JSON.parse(localData);
-    await gameByQuestionUser({
+    await gameBySurveyUser({
       client,
       userId,
       surveyId: Number(question),

@@ -7,7 +7,7 @@ import { Form, Link, useActionData, useLoaderData } from "@remix-run/react";
 import useConnectWithWallet from "~/hooks/useConnectWithWallet";
 import { authorizeUser } from "~/util/authorize";
 import { client } from "~/db/connect.server";
-import { connectUserWallet, gameByQuestionUser } from "~/db/queries";
+import { connectUserWallet, gameBySurveyUser } from "~/db/queries";
 import { getSession, commitSession } from "../../sessions";
 import AnimatedBanner from "~/components/text/AnimatedBanner";
 import userIcon from "~/images/icons/user.svg";
@@ -94,7 +94,7 @@ export const action: ActionFunction = async ({ request }) => {
   // If there is a game in the local storage, uplaod it for the user.
   if (localData) {
     const { win, guesses, question } = JSON.parse(localData);
-    await gameByQuestionUser({
+    await gameBySurveyUser({
       client,
       userId,
       surveyId: Number(question),

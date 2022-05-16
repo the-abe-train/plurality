@@ -304,7 +304,7 @@ type GameProps = {
   guesses?: VoteAggregation[];
 };
 
-export async function gameByQuestionUser({
+export async function gameBySurveyUser({
   client,
   surveyId,
   userId,
