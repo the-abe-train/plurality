@@ -5,8 +5,10 @@
   "license": "",
   "sideEffects": false,
   "scripts": {
-    "build": "remix build",
-    "dev": "cross-env NODE_ENV=development netlify dev",
+    "build:css": "tailwindcss -m -i ./styles/app.css -o app/styles/app.css",
+    "build": "npm run build:css && remix build",
+    "dev:css": "tailwindcss -w -i ./styles/app.css -o app/styles/app.css",
+    "dev": "concurrently \"npm run dev:css\" \"cross-env NODE_ENV=development netlify dev\"",
     "start": "cross-env NODE_ENV=production netlify dev"
   },
   "dependencies": {
