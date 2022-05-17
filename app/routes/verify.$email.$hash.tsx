@@ -4,7 +4,7 @@ import invariant from "tiny-invariant";
 
 import { client } from "~/db/connect.server";
 import { verifyUser } from "~/db/queries";
-import { createVerifyEmailToken } from "~/util/verify.server";
+import { createVerifyEmailToken } from "~/util/verify";
 
 export const loader: LoaderFunction = async ({ params }) => {
   const { email, hash } = params;
@@ -16,6 +16,6 @@ export const loader: LoaderFunction = async ({ params }) => {
   }
 };
 
-export default function index() {
+export default () => {
   return <div>Verify route</div>;
-}
+};

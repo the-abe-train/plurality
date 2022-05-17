@@ -28,9 +28,11 @@ export default ({ nfts, token, setToken }: Props) => {
           nfts.map((nft) => {
             const src = nft.image_url || openSeaLogo;
             return (
-              <figure className="flex flex-col items-center max-w-[100px] m-2">
+              <figure
+                className="flex flex-col items-center max-w-[100px] m-2"
+                key={nft.token_id}
+              >
                 <img
-                  key={nft.token_id}
                   src={src}
                   alt={nft.name}
                   width={100}

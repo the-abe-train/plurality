@@ -48,7 +48,7 @@ export default ({ scorebarProps, surveyProps, handleClose }: Props) => {
         exit="exit"
       >
         <button className="absolute top-3 right-4" onClick={handleClose}>
-          <img src={xIcon} alt="X" />
+          <img src={xIcon} alt="X" height={20} width={20} />
         </button>
         <h2 className="font-header mb-2 text-2xl sm:text-left">
           Share your score!

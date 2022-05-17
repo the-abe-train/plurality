@@ -2,7 +2,7 @@ import helpIcon from "~/images/icons/help.svg";
 export default function Tooltip({ text }: { text: string }) {
   return (
     <div className="relative flex flex-col items-center group h-fit">
-      <img src={helpIcon} alt="Help Icon" className="w-5 h-5" />
+      <img src={helpIcon} alt="Help Icon" width={20} height={20} />
       <div className="absolute bottom-0 flex-col items-center hidden mb-6 group-hover:flex">
         <span
           className="relative z-10 p-2 text-xs leading-none 

@@ -4,9 +4,9 @@ import { Link } from "@remix-run/react";
 import { disableBodyScroll, enableBodyScroll } from "body-scroll-lock";
 import {
   draftIcon,
+  emptyLogo,
   guessIcon,
   infoIcon,
-  logo,
   respondIcon,
   userIcon,
 } from "~/images/icons";
@@ -81,7 +81,7 @@ export default ({ name }: Props) => {
               </Link>
               <Link to="/surveys" className="text-2xl mx-5 flex items-center">
                 <img
-                  src={logo}
+                  src={emptyLogo}
                   alt="Instruction symbol"
                   className="mr-2 inline"
                   width={24}

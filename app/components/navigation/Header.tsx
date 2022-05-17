@@ -45,7 +45,13 @@ export default ({ name }: Props) => {
       <div className="w-full px-4 flex justify-between max-w-4xl mx-auto items-center">
         <Link to="/" className="flex space-x-2 items-center">
           <p className="font-header text-2xl font-bold">Plurality</p>
-          <img className="inline h-6 object-fill" src={logo} alt="logo" />
+          <img
+            className="inline h-6 object-fill"
+            src={logo}
+            width={24}
+            height={24}
+            alt="logo"
+          />
         </Link>
         <nav className="flex justify-between items-center">
           <ul className="hidden md:flex md:space-x-8 items-center">
@@ -61,6 +67,7 @@ export default ({ name }: Props) => {
                 alt="Instruction symbol"
                 className="mr-2 inline"
                 width={12}
+                height={12}
               />
               <motion.div
                 className="absolute top-8 -left-4 bg-primary2 drop-shadow-nav 
@@ -75,6 +82,7 @@ export default ({ name }: Props) => {
                     alt="Guess symbol"
                     className="mr-2 inline"
                     width={16}
+                    height={16}
                   />
                   <span>Guess</span>
                 </Link>
@@ -84,6 +92,7 @@ export default ({ name }: Props) => {
                     alt="Respond symbol"
                     className="mr-2 inline"
                     width={16}
+                    height={16}
                   />
                   <span>Respond</span>
                 </Link>
@@ -93,6 +102,7 @@ export default ({ name }: Props) => {
                     alt="Draft symbol"
                     className="mr-2 inline"
                     width={16}
+                    height={16}
                   />
                   <span>Draft</span>
                 </Link>
@@ -102,6 +112,7 @@ export default ({ name }: Props) => {
                     alt="Logo"
                     className="mr-2 inline"
                     width={16}
+                    height={16}
                   />
                   <span>Search</span>
                 </Link>

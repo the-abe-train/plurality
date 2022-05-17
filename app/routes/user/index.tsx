@@ -13,7 +13,7 @@ import { sendEmail } from "~/api/nodemailer";
 
 import { getSession, destroySession } from "../../sessions";
 import useAttachWallet from "~/hooks/useAttachWallet";
-import { createVerifyEmailLink } from "~/util/verify.server";
+import { createVerifyEmailLink, verifyEmailBody } from "~/util/verify";
 import { statFormat, truncateEthAddress, truncateName } from "~/util/text";
 import { authorizeWallet } from "~/util/authorize";
 import { NAME_LENGTH } from "~/util/constants";
@@ -76,7 +76,9 @@ export const loader: LoaderFunction = async ({ request }) => {
     gamesByUser(client, userId),
   ]);
 
-  const highScoreGame = games.sort((a, z) => z.score - a.score)[0];
+  const highScoreGame = games
+    .filter((game) => game.score)
+    .sort((a, z) => z.score - a.score)[0];
   const fewestGuessesGame = games
     .filter((game) => game.guessesToWin)
     .sort((a, z) => {
@@ -131,9 +133,7 @@ export const action: ActionFunction = async ({ request }) => {
     const user = await userById(client, userId);
     if (user) {
       const emailTo = user.email.address;
-      const emailLink = await createVerifyEmailLink(emailTo);
-      const emailBody = `Click the link below to verify your email!
-${emailLink}`;
+      const emailBody = await verifyEmailBody(emailTo);
       const subject = "Verify Email for Plurality";
       const response = await sendEmail({ emailBody, emailTo, subject });
       if (response === 200) {

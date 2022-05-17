@@ -19,7 +19,13 @@ export default () => {
         md:items-start space-x-4 md:space-x-0 w-full md:w-max"
         >
           <div className="font-header text-xl space-x-1 flex items-center">
-            <img className="inline h-5" src={whiteLogo} alt="logo" />
+            <img
+              className="inline"
+              height={20}
+              width={20}
+              src={whiteLogo}
+              alt="logo"
+            />
             <span>Plurality</span>
           </div>
           <p>© Plurality {new Date().getFullYear()}</p>
@@ -36,13 +42,13 @@ export default () => {
             </a>
           </div>
           <a href="https://twitter.com/pluralitygame">
-            <img src={twitterIcon} width={20} alt="Twitter" />
+            <img src={twitterIcon} width={20} height={20} alt="Twitter" />
           </a>
           <a href="https://github.com/the-abe-train/plurality">
-            <img src={githubIcon} width={20} alt="GitHub" />
+            <img src={githubIcon} width={20} height={20} alt="GitHub" />
           </a>
           <a href="mailto:team@plurality.fun">
-            <img src={emailIcon} width={20} alt="Email" />
+            <img src={emailIcon} width={20} height={20} alt="Email" />
           </a>
         </section>
         <section>

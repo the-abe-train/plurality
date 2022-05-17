@@ -14,6 +14,7 @@ export default ({ name }: { name: Name }) => {
               alt="Guess symbol"
               className="mr-2 inline"
               width={16}
+              height={16}
             />
             <span>Guess</span>
           </button>
@@ -28,6 +29,7 @@ export default ({ name }: { name: Name }) => {
               alt="Respond symbol"
               className="mr-2 inline"
               width={16}
+              height={16}
             />
             <span>Respond</span>
           </button>
@@ -42,6 +44,7 @@ export default ({ name }: { name: Name }) => {
               alt="Guess symbol"
               className="mr-2 inline"
               width={16}
+              height={16}
             />
             <span>Draft</span>
           </button>
@@ -56,6 +59,7 @@ export default ({ name }: { name: Name }) => {
               alt="Guess symbol"
               className="mr-2 inline"
               width={16}
+              height={16}
             />
             <span>Surveys</span>
           </button>

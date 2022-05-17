@@ -27,3 +27,20 @@ export async function createVerifyEmailLink(email: string) {
     console.error(e);
   }
 }
+
+export async function verifyEmailBody(email: string) {
+  const emailLink = await createVerifyEmailLink(email);
+  return `Hello!
+
+You received this email because you clicked the "Verify" button on the Plurality user page.
+
+To verify your account's email address, click on the link below.
+
+${emailLink}
+
+If you have any questions, you can reply to this email.
+
+Thank you for playing!
+
+ - The Plurality Team`;
+}

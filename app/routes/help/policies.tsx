@@ -96,8 +96,10 @@ export default () => {
             </p>
             <p>
               It is difficult to directly measure the carbon footprint of our
-              NFTs, but if you would like to learn more, check out [Kyle
-              McDonald's](https://kylemcdonald.github.io/ethereum-emissions/)
+              NFTs, but if you would like to learn more, check out{" "}
+              <a href="https://kylemcdonald.github.io/ethereum-emissions/">
+                Kyle McDonald's
+              </a>
               work on measuring the energy required and emissions produced by
               Ethereum transactions.
             </p>
