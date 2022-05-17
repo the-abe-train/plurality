@@ -79,7 +79,7 @@ export const loader: LoaderFunction = async ({ params, request }) => {
       session.flash(
         "message",
         `You need to be logged-in to play more games.
-        (You have already played Question ${session.get("game")})`
+        (You have already played Survey ${session.get("game")})`
       );
       return redirect("/user/login", {
         headers: {
@@ -268,6 +268,7 @@ export default () => {
   // Data from server
   const loaderData = useLoaderData<LoaderData>();
   const actionData = useActionData<ActionData>();
+  // console.log(loaderData.);
 
   // Initial states are from loader data
   const [guesses, setGuesses] = useState(loaderData.game.guesses || []);
@@ -376,6 +377,7 @@ export default () => {
             guesses={guesses}
             score={score}
             displayPercent={displayPercent}
+            category={loaderData.survey.category}
           />
         </section>
         <section className="md:order-last md:self-end h-min">

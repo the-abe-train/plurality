@@ -93,11 +93,11 @@ export const action: ActionFunction = async ({ request }) => {
 
   // If there is a game in the local storage, uplaod it for the user.
   if (localData) {
-    const { win, guesses, question } = JSON.parse(localData);
+    const { win, guesses, survey } = JSON.parse(localData);
     await gameBySurveyUser({
       client,
       userId,
-      surveyId: Number(question),
+      surveyId: Number(survey),
       win: win === "true",
       guesses: JSON.parse(guesses),
     });
@@ -129,10 +129,10 @@ export default () => {
 
   // If the player has already played a sample round, grab that data
   useEffect(() => {
-    const question = localStorage.getItem("question");
+    const survey = localStorage.getItem("survey");
     const guesses = localStorage.getItem("guesses");
     const win = localStorage.getItem("win");
-    setLocalData(JSON.stringify({ question, guesses, win }));
+    setLocalData(JSON.stringify({ survey, guesses, win }));
   }, []);
 
   return (

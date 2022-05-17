@@ -24,8 +24,8 @@ export const loader: LoaderFunction = async ({ request }) => {
     surveyByClose(client, tomorrowSc),
   ]);
 
-  // Get questions from db
-  invariant(survey, "Today's question not fetched from database");
+  // Get surveys from db
+  invariant(survey, "Today's Survey not fetched from database");
   const surveyId = survey._id;
 
   // Redirect not signed-in users to home page
@@ -36,7 +36,7 @@ export const loader: LoaderFunction = async ({ request }) => {
       session.flash(
         "message",
         `You need to be logged-in to play more games.
-        (You have already played Question ${session.get("game")})`
+        (You have already played Survey ${session.get("game")})`
       );
       return redirect("/user/login", {
         headers: {

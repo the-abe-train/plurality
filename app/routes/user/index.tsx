@@ -93,11 +93,11 @@ export const loader: LoaderFunction = async ({ request }) => {
     responsesSubmitted: games.filter((game) => !!game.vote).length,
     gamesPlayed: games.filter((game) => game.guesses.length > 0).length,
     highestScore: {
-      survey: highScoreGame.question,
-      score: highScoreGame.score,
+      survey: highScoreGame ? highScoreGame.survey : 0,
+      score: highScoreGame ? highScoreGame.score : 0,
     },
     fewestGuesses: {
-      survey: fewestGuessesGame ? fewestGuessesGame.question : 0,
+      survey: fewestGuessesGame ? fewestGuessesGame.survey : 0,
       guesses: fewestGuessesGame ? fewestGuessesGame.guessesToWin : 0,
     },
     surveysDrafted: surveysList.length,

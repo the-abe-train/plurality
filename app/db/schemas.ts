@@ -29,17 +29,18 @@ export type SurveySchema = {
   surveyClose: Date;
   drafted: Date;
   community: boolean;
+  category: "number" | "word";
   author?: ObjectId;
 };
 
 export type GameSchema = {
   _id: ObjectId;
-  question: number;
+  survey: number;
   user: ObjectId;
   guesses: VoteAggregation[];
   win?: boolean;
   vote?: {
-    text: string;
+    text: string | number;
     date: Date;
   };
   totalVotes: number;

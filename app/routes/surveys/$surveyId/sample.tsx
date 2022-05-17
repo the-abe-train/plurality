@@ -74,7 +74,7 @@ export const loader: LoaderFunction = async ({ params, request }) => {
     session.flash(
       "message",
       `You need to be logged-in to play more games.
-        (You have already played Question ${session.get("game")})`
+        (You have already played Survey ${session.get("game")})`
     );
     return redirect("/user/login", {
       headers: {
@@ -227,8 +227,8 @@ export default () => {
   // try to run it.
   useEffect(() => {
     // If another survey's answers are stored in localstorage, start fresh
-    const storedQuestion = Number(localStorage.getItem("survey"));
-    if (storedQuestion && storedQuestion !== surveyId) {
+    const storedSurvey = Number(localStorage.getItem("survey"));
+    if (storedSurvey && storedSurvey !== surveyId) {
       localStorage.setItem("guesses", "[]");
       localStorage.setItem("win", "false");
       localStorage.setItem("gameOver", "false");
@@ -338,6 +338,7 @@ export default () => {
             guesses={guesses}
             score={score}
             displayPercent={displayPercent}
+            category={loaderData.survey.category}
           />
         </section>
         <section className="md:order-last">

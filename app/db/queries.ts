@@ -203,7 +203,7 @@ export async function getFutureSurveys(client: MongoClient, userId: ObjectId) {
   const userGames = await gamesByUser(client, userId);
   const omitSurveys = userGames
     .filter((game) => game.vote)
-    .map((game) => game.question);
+    .map((game) => game.survey);
   const collection = await surveysCollection
     .find({
       surveyClose: { $gt: dayjs().toDate() },
@@ -263,7 +263,7 @@ export async function votesBySurvey(client: MongoClient, surveyId: number) {
     .aggregate([
       {
         $match: {
-          question: surveyId,
+          survey: surveyId,
           vote: {
             $exists: true,
           },
@@ -315,7 +315,7 @@ export async function gameBySurveyUser({
   const db = await connectDb(client);
   const gamesCollection = db.collection<GameSchema>("games");
   const result = await gamesCollection.findOneAndUpdate(
-    { question: surveyId, user: userId },
+    { survey: surveyId, user: userId },
     {
       $set: { lastUpdated: new Date() },
       $setOnInsert: { guesses: guesses || [], win: win || false, score: 0 },

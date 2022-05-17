@@ -1,4 +1,4 @@
-import { statFormat } from "~/util/text";
+import { rankToLetter, statFormat } from "~/util/text";
 import { motion } from "framer-motion";
 import { useRef } from "react";
 import { VoteAggregation } from "~/db/schemas";
@@ -8,6 +8,7 @@ type Props = {
   totalVotes: number;
   score: number;
   displayPercent: boolean;
+  category: "word" | "number";
 };
 
 export default function Answers({
@@ -15,6 +16,7 @@ export default function Answers({
   totalVotes,
   score,
   displayPercent,
+  category,
 }: Props) {
   const nodeRef = useRef<HTMLDivElement>(null!);
   const sortedGuesses = guesses.sort((a, z) => z.votes - a.votes);
@@ -51,6 +53,8 @@ export default function Answers({
         {sortedGuesses.map((answer, idx) => {
           const score = statFormat((answer.votes / totalVotes) * 100);
           const showStat = displayPercent ? score + "%" : answer.votes;
+          const rank =
+            category === "word" ? answer.ranking : rankToLetter(answer.ranking);
           const variants = {
             hidden: {
               y: 90,
@@ -77,7 +81,7 @@ export default function Answers({
                 className="text-sm font-bold flex-grow overflow-hidden 
             overflow-ellipsis"
               >
-                {answer.ranking + ". " + answer._id}
+                {rank + ". " + answer._id}
               </span>
               <span className="mx-2 text-sm">{showStat}</span>
             </motion.div>

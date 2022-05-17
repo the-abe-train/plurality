@@ -81,7 +81,7 @@ export const loader: LoaderFunction = async ({ params, request }) => {
 
   // Get data from db and apis
   const survey = await surveyById(client, surveyId);
-  invariant(survey, "No question found!");
+  invariant(survey, "No Survey found!");
 
   // Redirect to guess if the survey is closed
   const surveyClose = survey.surveyClose;
@@ -117,10 +117,12 @@ export const loader: LoaderFunction = async ({ params, request }) => {
 
 type ActionData = {
   message: string;
-  newVoteResult?: string;
+  newVoteResult?: string | number;
   previews?: Preview[];
   lastSurveyDate?: string;
 };
+
+// TODO if category is number, respond should only accept numbers and vice-versa
 
 export const action: ActionFunction = async ({ request, params }) => {
   // Async parse form and session data

@@ -79,7 +79,7 @@ export const action: ActionFunction = async ({ request }) => {
   const pageStart = pageParam ? (Number(pageParam) - 1) * PER_PAGE : 0;
   const pageEnd = pageParam ? Number(pageParam) * PER_PAGE : PER_PAGE;
 
-  // Questions from database
+  // Surveys from database
   const matchingSurveys = await surveyBySearch({ client, ...searchParams });
 
   const pageSurveys = matchingSurveys.slice(pageStart, pageEnd);
@@ -95,13 +95,13 @@ export const action: ActionFunction = async ({ request }) => {
   if (pageSurveys) {
     const [votes, photos] = await Promise.all([
       await Promise.all(
-        pageSurveys.map(async (question) => {
-          return await votesBySurvey(client, question._id);
+        pageSurveys.map(async (survey) => {
+          return await votesBySurvey(client, survey._id);
         })
       ),
       await Promise.all(
-        pageSurveys.map(async (question) => {
-          return await fetchPhoto(question.photo);
+        pageSurveys.map(async (survey) => {
+          return await fetchPhoto(survey.photo);
         })
       ),
     ]);
@@ -173,7 +173,7 @@ export default () => {
         <input
           type="text"
           name="text"
-          placeholder="Search by keyword or question ID"
+          placeholder="Search by keyword or Survey ID"
           className="border border-black px-2"
         />
         <div

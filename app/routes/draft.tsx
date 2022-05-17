@@ -244,8 +244,8 @@ export default () => {
           )}
           {!showForm && (
             <p>
-              Question submitted successfully! If there is any issue with your
-              submission, the Plurality team will let you know as soon as
+              Survey question submitted successfully! If there is any issue with
+              your submission, the Plurality team will let you know as soon as
               possible.{" "}
             </p>
           )}
