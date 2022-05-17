@@ -7,10 +7,10 @@ import {
 } from "./schemas";
 import { DATABASE_NAME } from "../util/env";
 import { MongoClient, ObjectId, UpdateFilter } from "mongodb";
-import { SessionData } from "remix";
 import { capitalizeFirstLetter, truncateEthAddress } from "~/util/text";
 import { randomPassword } from "../util/authorize";
 import dayjs from "dayjs";
+import { SessionData } from "@remix-run/node";
 
 // Connect database
 async function connectDb(client: MongoClient) {

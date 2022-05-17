@@ -1,5 +1,5 @@
 import nodemailer from "nodemailer";
-import { FROM_EMAIL, EMAIL_PASSWORD } from "../util/env";
+import { ADMIN_EMAIL, EMAIL_PASSWORD } from "../util/env";
 
 const transporter = nodemailer.createTransport({
   pool: true,
@@ -7,7 +7,7 @@ const transporter = nodemailer.createTransport({
   port: 465,
   secure: true,
   auth: {
-    user: FROM_EMAIL,
+    user: ADMIN_EMAIL,
     pass: EMAIL_PASSWORD,
   },
 });
@@ -20,7 +20,7 @@ type Props = {
 
 export function sendEmail({ emailBody, emailTo, subject }: Props) {
   const options = {
-    from: FROM_EMAIL,
+    from: ADMIN_EMAIL,
     to: emailTo,
     subject,
     text: emailBody,
