@@ -2,6 +2,8 @@ import type {
   ActionFunction,
   LinksFunction,
   LoaderFunction,
+  MetaFunction,
+  HtmlMetaDescriptor,
 } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, Link, useActionData, useLoaderData } from "@remix-run/react";
@@ -175,6 +177,13 @@ type ActionData = {
   win?: boolean;
 };
 
+export const meta: MetaFunction = ({ data }: { data: LoaderData }) => {
+  return {
+    title: `Plurality #${data.survey._id}`,
+    description: `Plurality #${data.survey._id}: ${data.survey.text}`,
+  };
+};
+
 export const action: ActionFunction = async ({ request, params }) => {
   // Async parse form and session data
   const [form, session] = await Promise.all([
@@ -326,7 +335,14 @@ export default () => {
     survey: loaderData.tomorrow,
     photo: loaderData.tomorrowPhoto,
   };
-  const scorebarProps = { points, score, guesses, win };
+  const scorebarProps = {
+    points,
+    score,
+    guesses,
+    win,
+    surveyId: loaderData.survey._id,
+    guessesToWin: loaderData.game.guessesToWin,
+  };
 
   return (
     <>

@@ -13,7 +13,8 @@ module.exports = {
         primary1: '#FDFAF6',
         primary2: '#FFEAE0',
         secondary: '#2B1628',
-        outline: '#808080'
+        outline: '#808080',
+        accent: '#C43661'
       },
       dropShadow: {
         'block': "0px 4px 4px rgba(0, 0, 0, 0.25)",

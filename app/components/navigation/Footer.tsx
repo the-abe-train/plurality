@@ -33,7 +33,7 @@ export default () => {
         <section className="flex justify-between w-full md:w-max md:space-x-3 items-center">
           <div>
             <b>Plurality</b> was created by <br />
-            <a className="underline" href="https://twitter.com/theAbeTrain">
+            <a className="underline" href="https://the-abe-train.com">
               The Abe Train
             </a>{" "}
             &{" "}

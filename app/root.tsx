@@ -8,16 +8,35 @@ import {
   ScrollRestoration,
 } from "@remix-run/react";
 import styles from "./styles/app.css";
+import preview from "~/images/illustrations/preview.png";
 
 export function links() {
   return [{ rel: "stylesheet", href: styles }];
 }
 
-export const meta: MetaFunction = () => ({
-  charset: "utf-8",
-  title: "New Remix App",
-  viewport: "width=device-width,initial-scale=1",
-});
+export const meta: MetaFunction = () => {
+  const htmlAttributes = {
+    title: "Plurality",
+    viewport: "width=device-width,initial-scale=1",
+    description: "A Web3 guessing game.",
+    "theme-color": "#FDFAF6",
+  };
+  const twitter = {
+    "twitter:site": "@pluralitygame",
+    "twitter:creator": "@theAbeTrain",
+    "twitter:card": "summary",
+    "twitter:image": preview,
+  };
+  const og = {
+    "og:url": "https://plurality.fun",
+    "og:title": "Plurality",
+    "og:description": "A Web3 guessing game.",
+    "og:site_name": "Plurality",
+    "og:image": preview,
+  };
+
+  return { charset: "utf-8", ...htmlAttributes, ...twitter, ...og };
+};
 
 export default function App() {
   return (

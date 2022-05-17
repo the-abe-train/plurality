@@ -11,6 +11,8 @@ type Props = {
   guesses: VoteAggregation[];
   win: boolean;
   instructions: boolean;
+  surveyId: number;
+  guessesToWin?: number;
 };
 
 export default function Scorebar({
@@ -19,6 +21,8 @@ export default function Scorebar({
   guesses,
   win,
   instructions,
+  surveyId,
+  guessesToWin,
 }: Props) {
   const items = [
     {
@@ -44,6 +48,13 @@ export default function Scorebar({
   const [currentItem, setCurrentItem] = useState("Guesses left");
   const [showPopup, setShowPopup] = useState(instructions);
   const control = useAnimation();
+
+  const shareButtonProps = {
+    score,
+    surveyId,
+    guesses: guesses.length,
+    guessesToWin,
+  };
 
   const containerVariants = {
     collapsed: {
@@ -96,19 +107,16 @@ export default function Scorebar({
 
   return (
     <div className="flex flex-col space-y-4">
-      <div
-        className="w-3/4 mx-auto bg-outline rounded-full h-2.5 
-        dark:bg-gray-700 relative"
-      >
+      <div className="w-3/4 mx-auto bg-gray-100 border border-outline rounded-full h-2.5 relative">
         <motion.div
-          className="h-2.5 rounded-full z-20"
-          style={{ backgroundColor: win ? "#03bb6e" : "#39cdff" }}
+          className="h-full rounded-full z-20"
+          style={{ backgroundColor: win ? "#03bb6e" : "#c43661" }}
           initial={{ width: 0 }}
           animate={{ width: `${score * 100}%` }}
           transition={{ duration: 1 }}
         ></motion.div>
         <div
-          className="h-full w-1 z-10 bg-[#03bb6e] absolute top-0"
+          className="h-full w-1 z-10 bg-outline absolute top-0"
           style={{ left: `calc(${THRESHOLD}% - 2px)` }}
         ></div>
       </div>
@@ -125,7 +133,7 @@ export default function Scorebar({
             </div>
           );
         })}
-        {win && <ShareButton score={score} />}
+        {win && <ShareButton {...shareButtonProps} />}
       </div>
       <AnimatePresence initial={false}>
         {showPopup && (

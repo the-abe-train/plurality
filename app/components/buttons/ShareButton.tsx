@@ -1,20 +1,30 @@
-import dayjs from "dayjs";
 import { useState } from "react";
 import { isFirefox, isMobile } from "react-device-detect";
 import { shareIcon } from "~/images/icons";
+import { statFormat } from "~/util/text";
 
 type Props = {
   score: number;
+  surveyId: number;
+  guesses: number;
+  guessesToWin?: number;
 };
 
-export default function ShareButton({ score }: Props) {
+export default function ShareButton({
+  score,
+  surveyId,
+  guesses,
+  guessesToWin,
+}: Props) {
   // Sharing your score
   const [msg, setMsg] = useState("Share");
   const [copied, setCopied] = useState(false);
   async function shareScore() {
-    let shareString = `${dayjs()}
-Score: ${score}
-`;
+    let shareString = `Survey #${surveyId}
+Score: ${statFormat(score * 100)}%
+Guesses: ${guesses}
+
+#Plurality`;
     setCopied(true);
     setMsg("Shared!");
     if ("canShare" in navigator && isMobile && !isFirefox) {

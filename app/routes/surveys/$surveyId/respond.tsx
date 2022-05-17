@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
-import type { ActionFunction, LoaderFunction } from "@remix-run/node";
+import type {
+  ActionFunction,
+  LoaderFunction,
+  MetaFunction,
+} from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, Link, useActionData, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
@@ -113,6 +117,13 @@ export const loader: LoaderFunction = async ({ params, request }) => {
     previews,
     lastSurveyDate,
   });
+};
+
+export const meta: MetaFunction = ({ data }: { data: LoaderData }) => {
+  return {
+    title: `Plurality #${data.survey._id}`,
+    description: `Plurality #${data.survey._id}: ${data.survey.text}`,
+  };
 };
 
 type ActionData = {
