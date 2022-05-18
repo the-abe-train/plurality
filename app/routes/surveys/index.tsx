@@ -190,7 +190,7 @@ export default () => {
             <label className="flex items-center">
               Community
               <input
-                className="mx-2 "
+                className="mx-2 accent-accent"
                 type="checkbox"
                 name="community"
                 id="community"
@@ -200,7 +200,7 @@ export default () => {
             <label className="flex items-center">
               Standard
               <input
-                className="mx-2"
+                className="mx-2 accent-accent"
                 type="checkbox"
                 name="standard"
                 id="standard"

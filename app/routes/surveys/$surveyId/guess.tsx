@@ -79,7 +79,7 @@ export const loader: LoaderFunction = async ({ params, request }) => {
     if (session.has("game") && session.get("game") !== surveyId) {
       session.flash(
         "message",
-        `You need to be logged-in to play more games.
+        `You need to be logged-in to play more Surveys.
         (You have already played Survey ${session.get("game")})`
       );
       return redirect("/user/signup", {
@@ -285,6 +285,12 @@ export default () => {
   const { totalVotes } = loaderData;
   const userVote = loaderData.game.vote;
 
+  // Unsplash photo attributions
+  const refLink = "?utm_source=plurality&utm_medium=referral";
+  const photographerLink = loaderData.photo.user.links.html + refLink;
+  const photographerName = loaderData.photo.user.name;
+  const unsplashLink = "https://unsplash.com/" + refLink;
+
   // The modal
   const [openModal, setOpenModal] = useState(actionData?.win || win);
   const mainRef = useRef<HTMLDivElement>(null!);
@@ -311,15 +317,18 @@ export default () => {
   // Upon winning, from action data or loader
   useEffect(() => {
     if (win && !openModal) {
-      window.scrollTo(0, 0);
       setTimeout(() => {
         setOpenModal(true);
       }, 1500);
     }
   }, [win]);
 
-  // Always scroll to the top on refresh
-  useEffect(() => window.scrollTo(0, 0), []);
+  // Always scroll to the top when opening modal
+  useEffect(() => {
+    if (openModal) {
+      window.scrollTo(0, 0);
+    }
+  }, [openModal]);
 
   // Calculated values
   const points = guesses.reduce((sum, guess) => {
@@ -403,6 +412,16 @@ export default () => {
           <Link to="/surveys" className="underline">
             Play more Surveys
           </Link>
+          <p className="text-sm my-2 italic">
+            Survey photo by{" "}
+            <a className="underline" href={photographerLink}>
+              {photographerName}
+            </a>{" "}
+            on{" "}
+            <a className="underline" href={unsplashLink}>
+              Unsplash
+            </a>
+          </p>
         </section>
       </main>
       <AnimatePresence initial={true} exitBeforeEnter={true}>

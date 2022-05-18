@@ -207,6 +207,12 @@ export default () => {
     loaderData.lastSurveyDate
   );
 
+  // Unsplash photo attributions
+  const refLink = "?utm_source=plurality&utm_medium=referral";
+  const photographerLink = loaderData.photo.user.links.html + refLink;
+  const photographerName = loaderData.photo.user.name;
+  const unsplashLink = "https://unsplash.com/" + refLink;
+
   // Making sure "your vote" is correct
   useEffect(() => {
     setYourVote(loaderData.game.vote?.text);
@@ -290,6 +296,16 @@ export default () => {
             </p>
           )}
           {msg && <p>{msg}</p>}
+          <p className="text-sm my-2 italic">
+            Survey photo by{" "}
+            <a className="underline" href={photographerLink}>
+              {photographerName}
+            </a>{" "}
+            on{" "}
+            <a className="underline" href={unsplashLink}>
+              Unsplash
+            </a>
+          </p>
         </section>
         <section
           className={`md:w-max md:px-4 ${yourVote && "hidden md:block"}`}

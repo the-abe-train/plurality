@@ -7,6 +7,9 @@ export type Photo = {
   user: {
     username: string;
     name: string;
+    links: {
+      html: string;
+    };
   };
   errors?: string[];
 };
