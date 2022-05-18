@@ -11,6 +11,8 @@ type ScorebarProps = {
   score: number;
   guesses: VoteAggregation[];
   win: boolean;
+  surveyId: number;
+  guessesToWin?: number;
 };
 
 type SurveyProps = {

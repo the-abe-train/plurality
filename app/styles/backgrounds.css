@@ -1,10 +1,10 @@
 .light {
   background: linear-gradient(
     100deg,
-    #eed1d6 0%,
+    hsl(342, 100%, 96%) 0%,
     #fcf8f6 20%,
     #fcf8f6 80%,
-    #eed1d6 100%
+    hsl(342, 100%, 96%) 100%
   );
 }
 

@@ -13,8 +13,8 @@ import { sendEmail } from "~/api/nodemailer";
 
 import { getSession, destroySession } from "../../sessions";
 import useAttachWallet from "~/hooks/useAttachWallet";
-import { createVerifyEmailLink, verifyEmailBody } from "~/util/verify";
-import { statFormat, truncateEthAddress, truncateName } from "~/util/text";
+import { verifyEmailBody } from "~/util/verify";
+import { percentFormat, truncateEthAddress, truncateName } from "~/util/text";
 import { authorizeWallet } from "~/util/authorize";
 import { NAME_LENGTH } from "~/util/constants";
 import { UserSchema } from "~/db/schemas";
@@ -383,7 +383,7 @@ export default () => {
                 <td className="px-2 py-2">Highest score</td>
                 <td className="px-2 py-2 text-center">
                   {wonAnyGames &&
-                    `${statFormat(userStats.highestScore.score * 100)}% (#${
+                    `${percentFormat(userStats.highestScore.score)} (#${
                       userStats.highestScore.survey
                     })`}
                 </td>

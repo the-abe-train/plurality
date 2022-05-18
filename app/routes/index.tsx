@@ -88,7 +88,7 @@ export default function questions() {
         md:transform md:-translate-x-1/2 md:-translate-y-1/2
         max-w-survey md:max-w-4xl mx-auto"
       >
-        <AnimatedBanner text="Plurality" icon={logo} size={"50"} />
+        <AnimatedBanner text="Plurality" icon={logo} size={50} />
         <p className="text-center text-lg">A Web3 guessing game.</p>
         <div className="md:grid grid-cols-2 gap-y-3 gap-x-8 my-6">
           <h2 className="block text-2xl font-header row-start-1 col-start-2 mt-6 mb-2 md:my-0">

@@ -1,4 +1,4 @@
-import { rankToLetter, statFormat } from "~/util/text";
+import { percentFormat, rankToLetter, statFormat } from "~/util/text";
 import { motion } from "framer-motion";
 import { useRef } from "react";
 import { VoteAggregation } from "~/db/schemas";
@@ -24,7 +24,7 @@ export default function Answers({
     return total + guess.votes;
   }, 0);
   const showRemainingStat = displayPercent
-    ? statFormat((1 - score) * 100) + "%"
+    ? percentFormat(1 - score)
     : totalVotes - guessedVotes;
 
   return (
@@ -51,8 +51,8 @@ export default function Answers({
         ref={nodeRef}
       >
         {sortedGuesses.map((answer, idx) => {
-          const score = statFormat((answer.votes / totalVotes) * 100);
-          const showStat = displayPercent ? score + "%" : answer.votes;
+          const score = percentFormat(answer.votes / totalVotes);
+          const showStat = displayPercent ? score : statFormat(answer.votes);
           const rank =
             category === "word" ? answer.ranking : rankToLetter(answer.ranking);
           const variants = {

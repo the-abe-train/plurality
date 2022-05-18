@@ -2,6 +2,7 @@ import type {
   ActionFunction,
   LinksFunction,
   LoaderFunction,
+  MetaFunction,
 } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, useActionData, useLoaderData } from "@remix-run/react";
@@ -122,6 +123,13 @@ export const loader: LoaderFunction = async ({ params, request }) => {
       "Set-Cookie": await commitSession(session),
     },
   });
+};
+
+export const meta: MetaFunction = ({ data }: { data: LoaderData }) => {
+  return {
+    title: `Plurality #${data.survey._id}`,
+    description: `Plurality #${data.survey._id}: ${data.survey.text}`,
+  };
 };
 
 type ActionData = {

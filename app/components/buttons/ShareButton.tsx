@@ -1,20 +1,38 @@
-import dayjs from "dayjs";
 import { useState } from "react";
 import { isFirefox, isMobile } from "react-device-detect";
+import invariant from "tiny-invariant";
 import { shareIcon } from "~/images/icons";
+import { percentFormat } from "~/util/text";
 
 type Props = {
   score: number;
+  surveyId: number;
+  guesses: number;
+  guessesToWin?: number;
 };
 
-export default function ShareButton({ score }: Props) {
+export default function ShareButton({
+  score,
+  surveyId,
+  guesses,
+  guessesToWin,
+}: Props) {
   // Sharing your score
   const [msg, setMsg] = useState("Share");
   const [copied, setCopied] = useState(false);
   async function shareScore() {
-    let shareString = `${dayjs()}
-Score: ${score}
-`;
+    invariant(guessesToWin, "Game hasn't been won yet, can't share score");
+    const purples = [...new Array(guessesToWin)].map(() => "🟪").join("");
+    const oranges = [...new Array(guesses - guessesToWin)]
+      .map(() => "🟧")
+      .join();
+    let shareString = `#Plurality Survey ${surveyId}
+Score: ${percentFormat(score)}
+Guesses to win: ${guessesToWin}
+Guesses total: ${guesses}
+${purples}${oranges}
+
+https://plurality.fun`;
     setCopied(true);
     setMsg("Shared!");
     if ("canShare" in navigator && isMobile && !isFirefox) {
