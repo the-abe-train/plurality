@@ -24,14 +24,14 @@ export const meta: MetaFunction = () => {
     "twitter:site": "@pluralitygame",
     "twitter:creator": "@theAbeTrain",
     "twitter:card": "summary",
-    "twitter:image": "https://plurality.fun/png",
+    "twitter:image": "https://plurality.fun/preview.png",
   };
   const og = {
     "og:url": "https://plurality.fun",
     "og:title": "Plurality",
     "og:description": "A Web3 guessing game.",
     "og:site_name": "Plurality",
-    "og:image": "https://plurality.fun/png",
+    "og:image": "https://plurality.fun/preview.png",
   };
 
   return { charset: "utf-8", ...htmlAttributes, ...twitter, ...og };
