@@ -9,12 +9,11 @@ module.exports = {
         sans: ['"Kanit"', 'sans-serif']
       },
       colors: {
-        button: '#012733',
-        primary1: '#FDFAF6',
-        primary2: '#FFEAE0',
-        secondary: '#2B1628',
-        outline: '#808080',
-        accent: '#C43661'
+        primary1: '#FDFAF6',   // Baby Powder
+        primary2: '#FFEAE0',   // Champagne Pink
+        secondary: '#2B1628',  // Dark Purple
+        outline: '#808080',    // Gray Web
+        accent: '#C43661'      // Rose Red
       },
       dropShadow: {
         'block': "0px 4px 4px rgba(0, 0, 0, 0.25)",

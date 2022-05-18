@@ -111,7 +111,7 @@ export default function Scorebar({
       <div className="w-3/4 mx-auto bg-gray-100 border border-outline rounded-full h-2.5 relative">
         <motion.div
           className="h-full rounded-full z-20"
-          style={{ backgroundColor: win ? "#03bb6e" : "#c43661" }}
+          style={{ backgroundColor: win ? "#04BA10" : "#c43661" }}
           initial={{ width: 0 }}
           animate={{ width: percentFormat(score) }}
           transition={{ duration: 1 }}
