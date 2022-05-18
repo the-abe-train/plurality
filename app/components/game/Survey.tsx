@@ -1,14 +1,12 @@
 import { Link } from "@remix-run/react";
 import dayjs from "dayjs";
-import { Photo } from "~/api/schemas";
 import { SurveySchema } from "~/db/schemas";
 
 type Props = {
   survey: SurveySchema;
-  photo: Photo;
 };
 
-export default function Survey({ survey, photo }: Props) {
+export default function Survey({ survey }: Props) {
   const surveyClose = dayjs(survey.surveyClose);
   const action = surveyClose > dayjs() ? "respond" : "guess";
   return (
@@ -21,7 +19,7 @@ export default function Survey({ survey, photo }: Props) {
       >
         <div className="z-0 h-40 overflow-hidden rounded-t-md bg-black">
           <img
-            src={photo.urls.small}
+            src={`https://source.unsplash.com/${survey.photo}/600x300`}
             alt="question image"
             className="object-cover w-full h-full"
           />

@@ -19,7 +19,6 @@ import { client } from "~/db/connect.server";
 import { userById } from "~/db/queries";
 import { NFT } from "~/api/schemas";
 import { sendEmail } from "~/api/nodemailer";
-import { fetchPhoto } from "~/api/unsplash";
 import { getNfts } from "~/api/opensea";
 import { ADMIN_EMAIL } from "~/util/env";
 
@@ -127,14 +126,6 @@ export const action: ActionFunction = async ({ request }) => {
   const allowableIds = [100];
   if (!allowableIds.includes(Number(id))) {
     const message = "Survey number is not allowed";
-    const success = false;
-    return json<ActionData>({ message, success });
-  }
-
-  // Verify that the Unsplash photo ID exists
-  const checkPhoto = await fetchPhoto(photo);
-  if (checkPhoto.errors) {
-    const message = "Invalid photo ID";
     const success = false;
     return json<ActionData>({ message, success });
   }

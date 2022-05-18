@@ -12,8 +12,6 @@ import backgrounds from "~/styles/backgrounds.css";
 import { SurveySchema } from "~/db/schemas";
 import { surveyByClose } from "~/db/queries";
 import { client } from "~/db/connect.server";
-import { Photo } from "~/api/schemas";
-import { fetchPhoto } from "~/api/unsplash";
 
 import AnimatedBanner from "~/components/text/AnimatedBanner";
 import Survey from "~/components/game/Survey";
@@ -33,7 +31,6 @@ export const links: LinksFunction = () => {
 
 type LoaderData = {
   survey: SurveySchema;
-  photo: Photo;
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -41,8 +38,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   const surveyClose = midnight.subtract(1, "day").toDate();
   const survey = await surveyByClose(client, surveyClose);
   invariant(survey, "Tomorrow's survey not found!");
-  const photo = await fetchPhoto(survey.photo);
-  const data = { survey, photo };
+  const data = { survey };
   return json<LoaderData>(data);
 };
 
@@ -95,7 +91,7 @@ export default function questions() {
             Click on today's Survey to begin!
           </h2>
           <div className="col-start-2">
-            <Survey photo={data.photo} survey={data.survey} />
+            <Survey survey={data.survey} />
           </div>
           <div className="my-5 md:my-0">
             <div className="flex flex-wrap gap-3 my-3 md:mt-1 md:mb-2">

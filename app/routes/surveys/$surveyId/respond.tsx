@@ -19,8 +19,6 @@ import {
 import type { ObjectId } from "mongodb";
 
 import { commitSession, getSession } from "~/sessions";
-import { Photo } from "~/api/schemas";
-import { fetchPhoto } from "~/api/unsplash";
 
 import Survey from "~/components/game/Survey";
 import AnimatedBanner from "~/components/text/AnimatedBanner";
@@ -34,13 +32,10 @@ import { respondIcon } from "~/images/icons";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-type Preview = { survey: SurveySchema; photo: Photo };
-
 type LoaderData = {
   game: GameSchema;
   survey: SurveySchema;
-  photo: Photo;
-  previews?: Preview[];
+  previews?: SurveySchema[];
   lastSurveyDate?: string;
 };
 
@@ -48,17 +43,9 @@ async function getPreviews(userId: ObjectId, surveyId: number) {
   const futureSurveys = await getFutureSurveys(client, userId);
   const lastSurvey = futureSurveys[futureSurveys.length - 1];
   const lastSurveyDate = dayjs(lastSurvey.surveyClose).format("YYYY-MM-DD");
-  const previewSurveys = futureSurveys
+  const previews = futureSurveys
     .filter((preview) => preview._id !== surveyId)
     .slice(0, 2);
-  const previewPhotos = await Promise.all(
-    previewSurveys.map(async (survey) => {
-      return await fetchPhoto(survey.photo);
-    })
-  );
-  const previews = previewSurveys.map((survey, idx) => {
-    return { survey, photo: previewPhotos[idx] };
-  });
   return { previews, lastSurveyDate };
 }
 
@@ -94,15 +81,13 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   }
 
   // Get additional data from db and apis
-  const [photo, game] = await Promise.all([
-    fetchPhoto(survey.photo),
-    gameBySurveyUser({ client, surveyId, userId }),
-  ]);
+  const game = await gameBySurveyUser({ client, surveyId, userId });
+
   invariant(game, "Game upsert failed");
 
   // If the player has already voted
   if (!game.vote) {
-    const data = { game, survey, photo };
+    const data = { game, survey };
     return json<LoaderData>(data);
   }
 
@@ -113,7 +98,6 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   return json<LoaderData>({
     game,
     survey,
-    photo,
     previews,
     lastSurveyDate,
   });
@@ -129,7 +113,7 @@ export const meta: MetaFunction = ({ data }: { data: LoaderData }) => {
 type ActionData = {
   message: string;
   newVoteResult?: string | number;
-  previews?: Preview[];
+  previews?: SurveySchema[];
   lastSurveyDate?: string;
 };
 
@@ -200,7 +184,7 @@ export default () => {
     dayjs(surveyClose).format("YYYY-MM-DD")
   );
   const [msg, setMsg] = useState("");
-  const [previewSurveys, setPreviewSurveys] = useState<Preview[]>(
+  const [previewSurveys, setPreviewSurveys] = useState<SurveySchema[]>(
     loaderData.previews || []
   );
   const [lastSurveyDate, setLastSurveyDate] = useState(
@@ -209,8 +193,6 @@ export default () => {
 
   // Unsplash photo attributions
   const refLink = "?utm_source=plurality&utm_medium=referral";
-  const photographerLink = loaderData.photo.user.links.html + refLink;
-  const photographerName = loaderData.photo.user.name;
   const unsplashLink = "https://unsplash.com/" + refLink;
 
   // Making sure "your vote" is correct
@@ -266,7 +248,7 @@ export default () => {
     my-6 flex-wrap"
       >
         <section className="md:px-4 py-2 space-y-4 md:w-max">
-          <Survey survey={loaderData.survey} photo={loaderData.photo} />
+          <Survey survey={loaderData.survey} />
           <Form method="post" className="w-full flex space-x-2 my-4">
             <input
               type="text"
@@ -297,11 +279,7 @@ export default () => {
           )}
           {msg && <p>{msg}</p>}
           <p className="text-sm my-2 italic">
-            Survey photo by{" "}
-            <a className="underline" href={photographerLink}>
-              {photographerName}
-            </a>{" "}
-            on{" "}
+            Survey photo from{" "}
             <a className="underline" href={unsplashLink}>
               Unsplash
             </a>
@@ -362,12 +340,9 @@ export default () => {
                 Select date
               </button>
             </Form>
-            <div
-              className="flex flex-wrap gap-4 md:w-full"
-              // onClick={() => setYourVote(undefined)}
-            >
-              {previewSurveys.map(({ survey, photo }, idx) => {
-                return <Survey survey={survey} photo={photo} key={idx} />;
+            <div className="flex flex-wrap gap-4 md:w-full">
+              {previewSurveys.map((survey, idx) => {
+                return <Survey survey={survey} key={idx} />;
               })}
             </div>
           </section>

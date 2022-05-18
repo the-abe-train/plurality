@@ -17,8 +17,6 @@ import backgrounds from "~/styles/backgrounds.css";
 import { SurveySchema, VoteAggregation } from "~/db/schemas";
 import { surveyBySearch, votesBySurvey } from "~/db/queries";
 import { client } from "~/db/connect.server";
-import { Photo } from "~/api/schemas";
-import { fetchPhoto } from "~/api/unsplash";
 
 import { PER_PAGE } from "~/util/constants";
 
@@ -45,7 +43,6 @@ type ActionData = {
     totalSurveysNum: number;
     pageSurveysNum: number;
   };
-  photos: Photo[];
   votes: VoteAggregation[][];
 };
 
@@ -93,21 +90,14 @@ export const action: ActionFunction = async ({ request }) => {
 
   // Get votes from database
   if (pageSurveys) {
-    const [votes, photos] = await Promise.all([
-      await Promise.all(
-        pageSurveys.map(async (survey) => {
-          return await votesBySurvey(client, survey._id);
-        })
-      ),
-      await Promise.all(
-        pageSurveys.map(async (survey) => {
-          return await fetchPhoto(survey.photo);
-        })
-      ),
-    ]);
+    const votes = await Promise.all(
+      pageSurveys.map(async (survey) => {
+        return await votesBySurvey(client, survey._id);
+      })
+    );
 
     // Return data
-    const data = { pageSurveys, metadata, photos, votes };
+    const data = { pageSurveys, metadata, votes };
     return json<ActionData>(data);
   }
   return "";
@@ -134,22 +124,20 @@ export default () => {
 
   async function turnPage(change: number) {
     if (data?.metadata) {
-      const { pageSurveysNum: pageSurveys, totalSurveysNum: totalSurveys } =
-        data?.metadata;
+      const { pageSurveysNum, totalSurveysNum } = data?.metadata;
 
       const newFormData = new FormData(formRef.current);
       const currentPage = Number(newFormData.get("page"));
-      // const currentPage = data?.metadata.
 
       // If there are fewer than 6 survyes on the page, don't increase
-      if (pageSurveys < 6 && change > 0) return;
+      if (pageSurveysNum < 6 && change > 0) return;
 
       // If the current page is 1, don't decrease
       if (currentPage === 1 && change < 0) return;
 
       // If the current page is the final page, don't increase
-      const seenSurveys = pageSurveys + currentPage * 6;
-      if (seenSurveys === totalSurveys && change > 1) return;
+      const seenSurveys = pageSurveysNum + currentPage * 6;
+      if (seenSurveys === totalSurveysNum && change > 1) return;
 
       const newPage = currentPage + change;
       setPage(newPage);
@@ -269,9 +257,8 @@ export default () => {
               </span>
             </div>
             <div className="flex flex-col md:flex-row flex-wrap gap-3">
-              {data.pageSurveys.map((q, idx) => {
-                const photo = data.photos[idx];
-                return <Survey survey={q} photo={photo} key={q._id} />;
+              {data.pageSurveys.map((q) => {
+                return <Survey survey={q} key={q._id} />;
               })}
             </div>
           </section>

@@ -31,9 +31,7 @@ import {
   votesBySurvey,
 } from "~/db/queries";
 import { GameSchema, SurveySchema, VoteAggregation } from "~/db/schemas";
-import { Photo } from "~/api/schemas";
 import { commitSession, getSession } from "~/sessions";
-import { fetchPhoto } from "~/api/unsplash";
 import { MAX_GUESSES } from "~/util/constants";
 import { exclamationIcon, guessIcon } from "~/images/icons";
 
@@ -60,10 +58,8 @@ type LoaderData = {
   message: string;
   gameOver: boolean;
   survey: SurveySchema;
-  photo: Photo;
   totalVotes: number;
   tomorrow: SurveySchema;
-  tomorrowPhoto: Photo;
 };
 
 export const loader: LoaderFunction = async ({ params, request }) => {
@@ -121,11 +117,7 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   }
 
   // Get additional surveydata from db and apis
-  const [photo, votes, tomorrowPhoto] = await Promise.all([
-    fetchPhoto(survey.photo),
-    votesBySurvey(client, surveyId),
-    fetchPhoto(tomorrow.photo),
-  ]);
+  const votes = await votesBySurvey(client, surveyId);
 
   console.log("Votes", votes);
   const totalVotes = votes.reduce((sum, ans) => {
@@ -159,8 +151,6 @@ export const loader: LoaderFunction = async ({ params, request }) => {
     message,
     gameOver,
     survey,
-    photo,
-    tomorrowPhoto,
   };
   return json<LoaderData>(data, {
     headers: {
@@ -287,8 +277,6 @@ export default () => {
 
   // Unsplash photo attributions
   const refLink = "?utm_source=plurality&utm_medium=referral";
-  const photographerLink = loaderData.photo.user.links.html + refLink;
-  const photographerName = loaderData.photo.user.name;
   const unsplashLink = "https://unsplash.com/" + refLink;
 
   // The modal
@@ -335,10 +323,9 @@ export default () => {
     return sum + guess.votes;
   }, 0);
   const score = points / totalVotes;
-  const surveyProps = { survey: loaderData.survey, photo: loaderData.photo };
+  const surveyProps = { survey: loaderData.survey };
   const tomorrowSurveyProps = {
     survey: loaderData.tomorrow,
-    photo: loaderData.tomorrowPhoto,
   };
   const scorebarProps = {
     points,
@@ -413,11 +400,7 @@ export default () => {
             Play more Surveys
           </Link>
           <p className="text-sm my-2 italic">
-            Survey photo by{" "}
-            <a className="underline" href={photographerLink}>
-              {photographerName}
-            </a>{" "}
-            on{" "}
+            Survey photo from{" "}
             <a className="underline" href={unsplashLink}>
               Unsplash
             </a>

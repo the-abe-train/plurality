@@ -1,4 +1,3 @@
-import { Photo } from "~/api/schemas";
 import { SurveySchema } from "~/db/schemas";
 import Scorebar from "~/components/game/Scorebar";
 import Survey from "~/components/game/Survey";
@@ -9,7 +8,6 @@ import { ScorebarProps } from "../schemas";
 
 type SurveyProps = {
   survey: SurveySchema;
-  photo: Photo;
 };
 
 type Props = {
