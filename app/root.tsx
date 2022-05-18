@@ -8,7 +8,6 @@ import {
   ScrollRestoration,
 } from "@remix-run/react";
 import styles from "./styles/app.css";
-import preview from "~/images/illustrations/preview.png";
 
 export function links() {
   return [{ rel: "stylesheet", href: styles }];
@@ -25,14 +24,14 @@ export const meta: MetaFunction = () => {
     "twitter:site": "@pluralitygame",
     "twitter:creator": "@theAbeTrain",
     "twitter:card": "summary",
-    "twitter:image": preview,
+    "twitter:image": "https://plurality.fun/png",
   };
   const og = {
     "og:url": "https://plurality.fun",
     "og:title": "Plurality",
     "og:description": "A Web3 guessing game.",
     "og:site_name": "Plurality",
-    "og:image": preview,
+    "og:image": "https://plurality.fun/png",
   };
 
   return { charset: "utf-8", ...htmlAttributes, ...twitter, ...og };

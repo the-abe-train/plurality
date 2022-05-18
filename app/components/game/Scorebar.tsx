@@ -4,6 +4,7 @@ import { VoteAggregation } from "~/db/schemas";
 import { MAX_GUESSES, THRESHOLD } from "~/util/constants";
 import Counter from "~/components/text/Counter";
 import ShareButton from "~/components/buttons/ShareButton";
+import { percentFormat } from "~/util/text";
 
 type Props = {
   points: number;
@@ -40,7 +41,7 @@ export default function Scorebar({
     {
       name: "Score",
       text: <p>Score</p>,
-      value: score * 100,
+      value: score,
       percentage: true,
     },
   ];
@@ -112,7 +113,7 @@ export default function Scorebar({
           className="h-full rounded-full z-20"
           style={{ backgroundColor: win ? "#03bb6e" : "#c43661" }}
           initial={{ width: 0 }}
-          animate={{ width: `${score * 100}%` }}
+          animate={{ width: percentFormat(score) }}
           transition={{ duration: 1 }}
         ></motion.div>
         <div

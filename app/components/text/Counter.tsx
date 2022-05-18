@@ -1,6 +1,6 @@
 import { animate } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { statFormat } from "~/util/text";
+import { percentFormat, statFormat } from "~/util/text";
 
 type Props = {
   value: number;
@@ -24,7 +24,9 @@ export default function Counter({ value, percent }: Props) {
     const controls = animate(from, to, {
       duration: 1,
       onUpdate(value) {
-        node.textContent = `${statFormat(value)}${percent ? "%" : ""}`;
+        node.textContent = `${
+          percent ? percentFormat(value) : statFormat(value)
+        }`;
       },
     });
 

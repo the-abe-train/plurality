@@ -213,6 +213,7 @@ export default () => {
   useEffect(() => {
     setYourVote(loaderData.game.vote?.text);
     setDatePicker(dayjs(surveyClose).format("YYYY-MM-DD"));
+    setVoteText("");
   }, [loaderData.game]);
 
   // Updates from action data
@@ -234,11 +235,19 @@ export default () => {
 
   // Text validation
   useEffect(() => {
+    const containsLetter = !!voteText.match(/[a-zA-Z]/);
+    const containsNumber = !!voteText.match(/\d/);
     if (voteText.length < 1 || voteText.length >= 20) {
       setEnabled(false);
     } else if (voteText.includes(" ")) {
       setEnabled(false);
       setMsg("Response cannot contain a space.");
+    } else if (loaderData.survey.category === "number" && containsLetter) {
+      setEnabled(false);
+      setMsg("This survey only accepts numbers as responses.");
+    } else if (loaderData.survey.category === "word" && containsNumber) {
+      setEnabled(false);
+      setMsg("This survey does not accept numbers in responses.");
     } else {
       setEnabled(true);
       setMsg("");
@@ -258,7 +267,7 @@ export default () => {
             <input
               type="text"
               name="vote"
-              className="border border-black py-1 px-2 
+              className="border border-outline py-1 px-2 
             bg-white disabled:bg-gray-300 w-full"
               disabled={!!yourVote}
               placeholder="Type your Survey response here."

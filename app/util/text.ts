@@ -2,7 +2,7 @@ import { NAME_LENGTH } from "./constants";
 
 export function statFormat(number: number) {
   if (number >= 1000) {
-    const newNum = (number / 1000).toPrecision(3);
+    const newNum = (number / 1000).toFixed(1);
     return newNum + "k";
   } else if (100 <= number && number < 1000) {
     return String(Math.floor(number));
@@ -11,6 +11,10 @@ export function statFormat(number: number) {
   } else {
     return String(number);
   }
+}
+
+export function percentFormat(number: number) {
+  return `${(number * 100).toFixed(1)}%`;
 }
 
 export function trim(str: string) {

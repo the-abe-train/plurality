@@ -242,9 +242,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 
   // Update game with new guess
   const guesses = [...game.guesses, correctGuess];
-  const points = guesses.reduce((sum, guess) => {
-    return sum + guess.votes;
-  }, 0);
+  const points = guesses.reduce((sum, guess) => sum + guess.votes, 0);
   const score = points / game.totalVotes;
   const win = score >= 80 / 100;
   const guessesToWin = win ? guesses.length : 0;
