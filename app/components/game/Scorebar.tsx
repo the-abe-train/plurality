@@ -1,20 +1,10 @@
 import { AnimatePresence, motion, useAnimation } from "framer-motion";
 import { useState } from "react";
-import { VoteAggregation } from "~/db/schemas";
 import { MAX_GUESSES, THRESHOLD } from "~/util/constants";
 import Counter from "~/components/text/Counter";
 import ShareButton from "~/components/buttons/ShareButton";
 import { percentFormat } from "~/util/text";
-
-type Props = {
-  points: number;
-  score: number;
-  guesses: VoteAggregation[];
-  win: boolean;
-  instructions: boolean;
-  surveyId: number;
-  guessesToWin?: number;
-};
+import { ScorebarProps } from "../schemas";
 
 export default function Scorebar({
   points,
@@ -24,7 +14,7 @@ export default function Scorebar({
   instructions,
   surveyId,
   guessesToWin,
-}: Props) {
+}: ScorebarProps) {
   const items = [
     {
       name: "Guesses left",

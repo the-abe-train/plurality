@@ -37,7 +37,7 @@ import Switch from "~/components/buttons/Switch";
 import AnimatedBanner from "~/components/text/AnimatedBanner";
 import NavButton from "~/components/buttons/NavButton";
 import Modal from "~/components/modal/Modal";
-import { THRESHOLD } from "~/util/constants";
+import { MAX_GUESSES, THRESHOLD } from "~/util/constants";
 import { checkWin } from "~/util/gameplay";
 
 dayjs.extend(utc);
@@ -77,7 +77,7 @@ export const loader: LoaderFunction = async ({ params, request }) => {
       `You need to be logged-in to play more games.
         (You have already played Survey ${session.get("game")})`
     );
-    return redirect("/user/login", {
+    return redirect("/user/signup", {
       headers: {
         "Set-Cookie": await commitSession(session),
       },
@@ -189,7 +189,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   const win = checkWin(updatedGuesses, Number(totalVotes));
 
   // Pick message to send to player
-  const gameOver = updatedGuesses.length >= THRESHOLD;
+  const gameOver = updatedGuesses.length >= MAX_GUESSES;
   let message: string;
   if (win && !gameOver) {
     message = "You win! Keep guessing to improve your score.";
@@ -214,6 +214,7 @@ export default () => {
   const [gameOver, setGameOver] = useState(false);
   const [message, setMessage] = useState("");
   const [win, setWin] = useState(false);
+  const [guessesToWin, setGuessesToWin] = useState(0);
   const [displayPercent, setDisplayPercent] = useState(false);
   const { totalVotes } = loaderData;
   const surveyId = loaderData.survey._id;
@@ -240,13 +241,23 @@ export default () => {
       localStorage.setItem("guesses", "[]");
       localStorage.setItem("win", "false");
       localStorage.setItem("gameOver", "false");
-    }
-    localStorage.setItem("survey", `${surveyId}`);
+      localStorage.setItem("guessesToWin", "0");
 
-    // Set state initial values from local storage
-    setGuesses(JSON.parse(localStorage.getItem("guesses") || "[]"));
-    setWin(JSON.parse(localStorage.getItem("win") || "false"));
-    setGameOver(JSON.parse(localStorage.getItem("gameOver") || "false"));
+      // Set state initial values from local storage
+    } else if (storedSurvey && storedSurvey === surveyId) {
+      setGuesses(JSON.parse(localStorage.getItem("guesses") || "[]"));
+      setWin(JSON.parse(localStorage.getItem("win") || "false"));
+      setGameOver(JSON.parse(localStorage.getItem("gameOver") || "false"));
+      setGuessesToWin(JSON.parse(localStorage.getItem("guessesToWin") || "0"));
+
+      // If it's the first time you've done a sample survey, set blank data
+    } else {
+      localStorage.setItem("survey", `${surveyId}`);
+      localStorage.setItem("guesses", "[]");
+      localStorage.setItem("win", "false");
+      localStorage.setItem("gameOver", "false");
+      localStorage.setItem("guessesToWin", "0");
+    }
   }, []);
 
   // Updates from action data
@@ -262,16 +273,25 @@ export default () => {
     }
   }, [actionData]);
 
-  // Update the local storage and win condition
+  // New guesses
   useEffect(() => {
     localStorage.setItem("guesses", JSON.stringify(guesses));
-    localStorage.setItem("win", JSON.stringify(win));
     localStorage.setItem("gameOver", JSON.stringify(gameOver));
+  }, [guesses, gameOver]);
+
+  useEffect(() => {
+    localStorage.setItem("win", JSON.stringify(win));
     if (win) {
       window.scrollTo(0, 0);
-      setOpenModal(true);
+      setTimeout(() => {
+        setOpenModal(true);
+      }, 1500);
+      if (localStorage.getItem("guessesToWin") === "0") {
+        localStorage.setItem("guessesToWin", JSON.stringify(guesses.length));
+        setGuessesToWin(guesses.length);
+      }
     }
-  }, [guesses, win, gameOver]);
+  }, [win]);
 
   // Always scroll to the top on refresh
   useEffect(() => window.scrollTo(0, 0), []);
@@ -286,7 +306,14 @@ export default () => {
     survey: loaderData.tomorrow,
     photo: loaderData.tomorrowPhoto,
   };
-  const scorebarProps = { points, score, guesses, win };
+  const scorebarProps = {
+    points,
+    score,
+    guesses,
+    win,
+    surveyId: loaderData.survey._id,
+    guessesToWin,
+  };
 
   return (
     <>
@@ -350,13 +377,7 @@ export default () => {
           />
         </section>
         <section className="md:order-last">
-          <Scorebar
-            points={points}
-            score={score}
-            guesses={guesses}
-            win={win}
-            instructions
-          />
+          <Scorebar {...scorebarProps} instructions />
         </section>
         <section className="md:self-end md:px-4 flex space-x-4">
           <NavButton name="Guess" />

@@ -1,7 +1,7 @@
 import { registerUser } from "~/util/authorize";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Form, Link, useActionData } from "@remix-run/react";
+import { Form, Link, useActionData, useLoaderData } from "@remix-run/react";
 import { commitSession, getSession } from "~/sessions";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
@@ -11,6 +11,10 @@ import { ObjectId } from "mongodb";
 import useConnectWithWallet from "~/hooks/useConnectWithWallet";
 import AnimatedBanner from "~/components/text/AnimatedBanner";
 import userIcon from "~/images/icons/user.svg";
+
+type LoaderData = {
+  message: string;
+};
 
 export const loader: LoaderFunction = async ({ request }) => {
   // Connect to database
@@ -24,7 +28,18 @@ export const loader: LoaderFunction = async ({ request }) => {
   if (session.has("user")) {
     return redirect("/");
   }
-  return "";
+
+  const message = session.get("message") || null;
+  session.unset("message");
+  return json<LoaderData>(
+    { message },
+    {
+      headers: {
+        // only necessary with cookieSessionStorage
+        "Set-Cookie": await commitSession(session),
+      },
+    }
+  );
 };
 
 type ActionData = {
@@ -74,29 +89,30 @@ export const action: ActionFunction = async ({ request }) => {
 
   // Validate that all data was entered
   if (!email || !password || !verify) {
-    return json<ActionData>({ message: "Please fill out all fields" });
+    return json<ActionData>({ message: "Please fill out all fields." });
   }
 
   // Check that password and verify match
   if (password !== verify) {
-    return json<ActionData>({ message: "Password fields must match" });
+    return json<ActionData>({ message: "Password fields must match." });
   }
 
   // Check if username is already taken and register user
   const { isAuthorized, userId } = await registerUser(email, password);
   if (!isAuthorized || !userId) {
-    return json<ActionData>({ message: "Username already taken" });
+    return json<ActionData>({ message: "Username already taken." });
   }
 
   // If there is a game in the local storage, uplaod it for the user.
   if (localData) {
-    const { win, guesses, survey } = JSON.parse(localData);
+    const { win, guesses, survey, guessesToWin } = JSON.parse(localData);
     await gameBySurveyUser({
       client,
       userId,
       surveyId: Number(survey),
       win: win === "true",
       guesses: JSON.parse(guesses),
+      guessesToWin: Number(guessesToWin),
     });
   }
 
@@ -105,8 +121,9 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function signup() {
+  const loaderData = useLoaderData<LoaderData>();
   const actionData = useActionData<ActionData>();
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState(loaderData?.message);
   const [localData, setLocalData] = useState("");
   const connectWallet = useConnectWithWallet();
 
@@ -126,7 +143,8 @@ export default function signup() {
     const survey = localStorage.getItem("survey");
     const guesses = localStorage.getItem("guesses");
     const win = localStorage.getItem("win");
-    setLocalData(JSON.stringify({ survey, guesses, win }));
+    const guessesToWin = localStorage.getItem("guessesToWin");
+    setLocalData(JSON.stringify({ survey, guesses, win, guessesToWin }));
   }, []);
 
   return (
@@ -169,6 +187,7 @@ export default function signup() {
             <button className="silver px-3 py-2 block" type="submit">
               Sign-up
             </button>
+            <p className="text-red-700 text-left self-start">{message}</p>
           </Form>
         </article>
         <article className="max-w-sm">
@@ -189,14 +208,13 @@ export default function signup() {
           </div>
         </article>
       </section>
-      <section className="md:mt-8 my-4">
+      <section className="md:mt-8 my-4 md:px-4">
         <p>
           Already have an account?{" "}
           <Link to="/user/login" className="underline">
             Log-in
           </Link>
         </p>
-        {message && <p className="text-red-700">{message}</p>}
       </section>
     </main>
   );

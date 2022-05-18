@@ -3,7 +3,6 @@ import type {
   LinksFunction,
   LoaderFunction,
   MetaFunction,
-  HtmlMetaDescriptor,
 } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, Link, useActionData, useLoaderData } from "@remix-run/react";
@@ -83,7 +82,7 @@ export const loader: LoaderFunction = async ({ params, request }) => {
         `You need to be logged-in to play more games.
         (You have already played Survey ${session.get("game")})`
       );
-      return redirect("/user/login", {
+      return redirect("/user/signup", {
         headers: {
           "Set-Cookie": await commitSession(session),
         },
@@ -143,7 +142,7 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   invariant(game, "Game upsert failed");
 
   // Set initial message for player
-  const gameOver = game.guesses.length >= 6;
+  const gameOver = game.guesses.length >= MAX_GUESSES;
   let message = "";
   if (game.win && !gameOver) {
     message = "You win! Keep guessing to improve your score.";
@@ -275,7 +274,6 @@ export default () => {
   // Data from server
   const loaderData = useLoaderData<LoaderData>();
   const actionData = useActionData<ActionData>();
-  // console.log(loaderData.);
 
   // Initial states are from loader data
   const [guesses, setGuesses] = useState(loaderData.game.guesses || []);

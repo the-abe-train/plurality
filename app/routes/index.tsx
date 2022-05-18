@@ -84,9 +84,9 @@ export default function questions() {
   return (
     <div className="light w-full top-0 bottom-0 flex flex-col min-h-screen">
       <div
-        className="md:absolute top-1/2 left-1/2 md:w-max md:mx-4
+        className="md:absolute top-1/2 left-1/2 md:w-max
         md:transform md:-translate-x-1/2 md:-translate-y-1/2
-        max-w-survey md:max-w-4xl mx-auto"
+        max-w-survey md:max-w-4xl mx-auto md:pb-8"
       >
         <AnimatedBanner text="Plurality" icon={logo} size={50} />
         <p className="text-center text-lg">A Web3 guessing game.</p>

@@ -302,6 +302,7 @@ type GameProps = {
   totalVotes?: number;
   win?: boolean;
   guesses?: VoteAggregation[];
+  guessesToWin?: number;
 };
 
 export async function gameBySurveyUser({
@@ -311,6 +312,7 @@ export async function gameBySurveyUser({
   totalVotes,
   win,
   guesses,
+  guessesToWin,
 }: GameProps) {
   const db = await connectDb(client);
   const gamesCollection = db.collection<GameSchema>("games");
@@ -318,7 +320,12 @@ export async function gameBySurveyUser({
     { survey: surveyId, user: userId },
     {
       $set: { lastUpdated: new Date() },
-      $setOnInsert: { guesses: guesses || [], win: win || false, score: 0 },
+      $setOnInsert: {
+        guesses: guesses || [],
+        win: win || false,
+        score: 0,
+        guessesToWin: guessesToWin || undefined,
+      },
       $max: { totalVotes },
     },
     { upsert: true, returnDocument: "after" }

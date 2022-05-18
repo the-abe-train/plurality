@@ -66,5 +66,3 @@ export function rankToLetter(num: number) {
   }
   return s;
 }
-
-console.log(rankToLetter(100));

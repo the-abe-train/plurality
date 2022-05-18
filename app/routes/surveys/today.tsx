@@ -38,7 +38,7 @@ export const loader: LoaderFunction = async ({ request }) => {
         `You need to be logged-in to play more games.
         (You have already played Survey ${session.get("game")})`
       );
-      return redirect("/user/login", {
+      return redirect("/user/signup", {
         headers: {
           "Set-Cookie": await commitSession(session),
         },

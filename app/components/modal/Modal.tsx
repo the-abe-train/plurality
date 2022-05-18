@@ -1,19 +1,11 @@
 import { Photo } from "~/api/schemas";
-import { SurveySchema, VoteAggregation } from "~/db/schemas";
+import { SurveySchema } from "~/db/schemas";
 import Scorebar from "~/components/game/Scorebar";
 import Survey from "~/components/game/Survey";
 import { motion } from "framer-motion";
 import xIcon from "~/images/icons/X.svg";
 import Backdrop from "./Backdrop";
-
-type ScorebarProps = {
-  points: number;
-  score: number;
-  guesses: VoteAggregation[];
-  win: boolean;
-  surveyId: number;
-  guessesToWin?: number;
-};
+import { ScorebarProps } from "../schemas";
 
 type SurveyProps = {
   survey: SurveySchema;

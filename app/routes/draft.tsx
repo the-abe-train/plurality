@@ -74,7 +74,6 @@ export const loader: LoaderFunction = async ({ request }) => {
 
       // Return data
       const data = { user, nfts, enabled: true };
-      // console.log(data);
       return json<LoaderData>(data);
     } catch (e) {
       console.log(e);
@@ -184,11 +183,9 @@ export default () => {
     if (actionData?.success) {
       setShowForm(false);
     }
-
     if (actionData?.message) {
       setMsg(actionData.message);
     }
-
     // Disable form using transition, email verified, valid token selected
   }, [actionData]);
 
@@ -213,23 +210,39 @@ export default () => {
         <section>
           <h2 className="font-header text-2xl">Draft your Survey question</h2>
           {showForm && (
-            <Form method="post" className="my-4 space-y-3">
+            <Form method="post" className="my-4 space-y-4">
               <textarea
-                className="w-full px-4 py-2 text-sm border rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
+                className="w-full px-4 py-2 text-sm border border-outline"
                 name="question"
+                placeholder="Enter question text here."
               />
-              <label htmlFor="photo" className="flex items-center space-x-2">
-                <p>Unsplash photo ID </p>
-                <Tooltip
-                  text="The string of characters at the end of the URL for 
+              <div>
+                <label
+                  htmlFor="photo"
+                  className="flex items-center space-x-2 my-1"
+                >
+                  <p>Unsplash photo ID</p>
+                  <Tooltip
+                    text="The string of characters at the end of the URL for 
               any photo on unsplash.com"
+                  />
+                </label>
+                <input
+                  type="text"
+                  className="w-full px-4 py-2 text-sm border border-outline"
+                  name="photo"
                 />
+              </div>
+              <label htmlFor="category" className="flex items-center space-x-2">
+                <p>Select Survey category:</p>
+                <select
+                  name="category"
+                  className="bg-white border border-outline px-1"
+                >
+                  <option value="word">Word</option>
+                  <option value="number">Number</option>
+                </select>
               </label>
-              <input
-                type="text"
-                className="w-full px-4 py-2 text-sm border rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
-                name="photo"
-              />
               <div>
                 <button
                   className="gold px-6 py-2 block mx-auto my-6"

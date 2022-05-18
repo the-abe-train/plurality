@@ -76,7 +76,7 @@ export const loader: LoaderFunction = async ({ params, request }) => {
       "message",
       "You need to be logged-in to respond to a Survey."
     );
-    return redirect("/user/login", {
+    return redirect("/user/signup", {
       headers: {
         "Set-Cookie": await commitSession(session),
       },
@@ -132,8 +132,6 @@ type ActionData = {
   previews?: Preview[];
   lastSurveyDate?: string;
 };
-
-// TODO if category is number, respond should only accept numbers and vice-versa
 
 export const action: ActionFunction = async ({ request, params }) => {
   // Async parse form and session data

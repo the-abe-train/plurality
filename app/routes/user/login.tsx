@@ -93,13 +93,14 @@ export const action: ActionFunction = async ({ request }) => {
 
   // If there is a game in the local storage, uplaod it for the user.
   if (localData) {
-    const { win, guesses, survey } = JSON.parse(localData);
+    const { win, guesses, survey, guessesToWin } = JSON.parse(localData);
     await gameBySurveyUser({
       client,
       userId,
       surveyId: Number(survey),
       win: win === "true",
       guesses: JSON.parse(guesses),
+      guessesToWin: Number(guessesToWin),
     });
   }
 
@@ -132,7 +133,8 @@ export default () => {
     const survey = localStorage.getItem("survey");
     const guesses = localStorage.getItem("guesses");
     const win = localStorage.getItem("win");
-    setLocalData(JSON.stringify({ survey, guesses, win }));
+    const guessesToWin = localStorage.getItem("guessesToWin");
+    setLocalData(JSON.stringify({ survey, guesses, win, guessesToWin }));
   }, []);
 
   return (
@@ -190,7 +192,7 @@ export default () => {
           </div>
         </article>
       </section>
-      <section className="md:mt-8 my-4">
+      <section className="md:mt-8 my-4 md:px-4">
         <p>
           Don't have an account?{" "}
           <Link to="/user/signup" className="underline">
