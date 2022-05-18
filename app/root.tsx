@@ -17,21 +17,22 @@ export const meta: MetaFunction = () => {
   const htmlAttributes = {
     title: "Plurality",
     viewport: "width=device-width,initial-scale=1",
-    description: "A Web3 guessing game.",
+    description: "A Web3 guessing game",
     "theme-color": "#FDFAF6",
   };
   const twitter = {
     "twitter:site": "@pluralitygame",
     "twitter:creator": "@theAbeTrain",
     "twitter:card": "summary",
-    "twitter:image": "https://plurality.fun/preview.png",
+    "twitter:image": "https://plurality.fun/preview-square.png",
   };
   const og = {
     "og:url": "https://plurality.fun",
     "og:title": "Plurality",
-    "og:description": "A Web3 guessing game.",
+    "og:description": "A Web3 guessing game",
     "og:site_name": "Plurality",
     "og:image": "https://plurality.fun/preview.png",
+    "og:image:alt": "Plurality: A Web3 guessing game",
   };
 
   return { charset: "utf-8", ...htmlAttributes, ...twitter, ...og };
