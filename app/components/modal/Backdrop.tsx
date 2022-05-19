@@ -9,7 +9,7 @@ type Props = {
 export default ({ children, onClick }: Props) => {
   return (
     <motion.div
-      className="absolute top-0 left-0 bottom-0 w-full bg-[#000000d1] 
+      className="absolute top-0 left-0 bottom-0 w-screen md:w-full bg-[#000000d1] 
     flex items-center justify-center z-30"
       onClick={onClick}
       initial={{ opacity: 0 }}

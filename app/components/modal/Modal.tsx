@@ -31,7 +31,7 @@ export default ({ scorebarProps, surveyProps, handleClose }: Props) => {
   return (
     <Backdrop onClick={handleClose}>
       <motion.div
-        className="absolute top-1/2 left-1/2 
+        className="absolute md:top-1/2 top-80 left-1/2 
       bg-primary1 p-5 rounded-md border border-outline z-30 w-max max-w-[90%]"
         onClick={(e) => e.stopPropagation()}
         variants={dropIn}

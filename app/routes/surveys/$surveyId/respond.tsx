@@ -184,6 +184,7 @@ export default () => {
     dayjs(surveyClose).format("YYYY-MM-DD")
   );
   const [msg, setMsg] = useState("");
+  const [msgColour, setMsgColour] = useState("auto");
   const [previewSurveys, setPreviewSurveys] = useState<SurveySchema[]>(
     loaderData.previews || []
   );
@@ -219,24 +220,33 @@ export default () => {
     }
   }, [actionData]);
 
+  const placeholderText = "Type your Survey response here.";
+
   // Text validation
   useEffect(() => {
     const containsLetter = !!voteText.match(/[a-zA-Z]/);
     const containsNumber = !!voteText.match(/\d/);
+    const { category } = loaderData.survey;
+    const isPlaceholder = voteText === placeholderText;
     if (voteText.length < 1 || voteText.length >= 20) {
       setEnabled(false);
     } else if (voteText.includes(" ")) {
       setEnabled(false);
       setMsg("Response cannot contain a space.");
-    } else if (loaderData.survey.category === "number" && containsLetter) {
+      setMsgColour("red");
+    } else if (category === "number" && containsLetter && !isPlaceholder) {
+      console.log(voteText);
       setEnabled(false);
       setMsg("This survey only accepts numbers as responses.");
-    } else if (loaderData.survey.category === "word" && containsNumber) {
+      setMsgColour("red");
+    } else if (category === "word" && containsNumber) {
       setEnabled(false);
       setMsg("This survey does not accept numbers in responses.");
+      setMsgColour("red");
     } else {
       setEnabled(true);
       setMsg("");
+      setMsgColour("auto");
     }
   }, [voteText]);
 
@@ -256,7 +266,7 @@ export default () => {
               className="border border-outline py-1 px-2 
             bg-white disabled:bg-gray-300 w-full"
               disabled={!!yourVote}
-              placeholder="Type your Survey response here."
+              placeholder={placeholderText}
               maxLength={20}
               value={voteText}
               onChange={(e) => setVoteText(e.target.value)}
@@ -277,13 +287,7 @@ export default () => {
               Your response is: <b>{yourVote}</b>
             </p>
           )}
-          {msg && <p>{msg}</p>}
-          <p className="text-sm my-2 italic">
-            Survey photo from{" "}
-            <a className="underline" href={unsplashLink}>
-              Unsplash
-            </a>
-          </p>
+          {msg && <p style={{ color: msgColour }}>{msg}</p>}
         </section>
         <section
           className={`md:w-max md:px-4 ${yourVote && "hidden md:block"}`}
@@ -345,6 +349,12 @@ export default () => {
                 return <Survey survey={survey} key={idx} />;
               })}
             </div>
+            <p className="text-sm my-2 italic">
+              Survey photos from{" "}
+              <a className="underline my-3" href={unsplashLink}>
+                Unsplash
+              </a>
+            </p>
           </section>
         )}
       </main>
