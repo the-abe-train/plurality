@@ -51,7 +51,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
   // Redirect not signed-in users to home page
   if (!user) {
-    session.flash("message", "You need to be logged-in to draft a survey.");
+    session.flash("message", "You need to be logged-in to draft a Survey.");
     return redirect("/user/signup", {
       headers: {
         "Set-Cookie": await commitSession(session),
@@ -189,7 +189,7 @@ export default () => {
     md:grid grid-cols-2 grid-flow-row gap-x-6 my-6"
       >
         <section>
-          <h2 className="font-header text-2xl">Select your survey token</h2>
+          <h2 className="font-header text-2xl">Select your Survey Token</h2>
           <NFTList nfts={nfts} token={token} setToken={setToken} />
           <a href="https://opensea.io/PluralityGame">
             <button className="gold px-3 py-2 my-6 flex space-x-1 items-center mx-auto">
@@ -199,7 +199,9 @@ export default () => {
           </a>
         </section>
         <section>
-          <h2 className="font-header text-2xl">Draft your Survey question</h2>
+          <h2 className="font-header text-2xl" data-cy="draft-header">
+            Draft your Survey question
+          </h2>
           {showForm && (
             <Form method="post" className="my-4 space-y-4">
               <textarea

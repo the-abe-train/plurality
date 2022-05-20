@@ -63,7 +63,7 @@ export const action: ActionFunction = async ({ request }) => {
     const cookieString = await commitSession(session, {
       expires: nextWeek,
     });
-    return redirect("/surveys/today", {
+    return redirect("/", {
       headers: {
         "Set-Cookie": cookieString,
       },
@@ -88,7 +88,7 @@ export const action: ActionFunction = async ({ request }) => {
 
   // Reject unauthorized user
   if (!isAuthorized || !userId) {
-    return json<ActionData>({ message: "Invalid username/password" });
+    return json<ActionData>({ message: "Email and/or password is incorrect" });
   }
 
   // If there is a game in the local storage, uplaod it for the user.
@@ -168,10 +168,16 @@ export default () => {
               value={localData}
               readOnly
             />
-            <button className="silver px-3 py-2 block" type="submit">
+            <button
+              className="silver px-3 py-2 block"
+              type="submit"
+              data-cy="login"
+            >
               Log-in
             </button>
-            <p className="text-red-700 text-left self-start">{message}</p>
+            <p className="text-red-700 text-left self-start" data-cy="message">
+              {message}
+            </p>
           </Form>
         </article>
         <article className="max-w-sm">

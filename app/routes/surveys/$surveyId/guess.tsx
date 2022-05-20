@@ -357,10 +357,12 @@ export default () => {
               placeholder="Guess survey responses"
               value={guess}
               disabled={gameOver}
+              data-cy="guess-input"
               onChange={(e) => setGuess(e.target.value)}
             />
             <button
               className="silver px-3 py-1"
+              data-cy="guess-enter"
               disabled={gameOver}
               type="submit"
             >

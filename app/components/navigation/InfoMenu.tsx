@@ -22,6 +22,7 @@ md:my-0 md:flex flex-col md:space-y-4 w-max p-2 md:p-4 h-min md:mr-8 card"
             to={`/help/${path}`}
             key={name}
             style={{ fontWeight: page === path ? "bold" : "" }}
+            data-cy={path}
           >
             {page === path && (
               <img src={emptyLogo} alt="logo" className="inline mr-2" />

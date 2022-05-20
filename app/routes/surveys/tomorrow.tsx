@@ -13,6 +13,10 @@ import timezone from "dayjs/plugin/timezone";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
+// TODO this page, and today, maybe shouldn't be necessary, and is definitely
+// slow. Explore directly linking to the right day's survey number. This will
+// be easier when we're using real survey questions since the days won't change.
+
 export const loader: LoaderFunction = async ({ request }) => {
   // Get datetime objects
   const midnight = dayjs().tz("America/Toronto").endOf("day");

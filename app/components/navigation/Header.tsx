@@ -122,7 +122,9 @@ export default ({ name }: Props) => {
               <Link to="/help/what-is-plurality">Help</Link>
             </li>
             <Link to="/user">
-              <button className="silver px-3 py-2">{truncateName(name)}</button>
+              <button className="silver px-3 py-2" data-cy="connect-btn">
+                {truncateName(name)}
+              </button>
             </Link>
           </ul>
         </nav>

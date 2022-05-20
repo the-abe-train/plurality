@@ -72,7 +72,7 @@ export const action: ActionFunction = async ({ request }) => {
     const cookieString = await commitSession(session, {
       expires: nextWeek,
     });
-    return redirect("/surveys/today", {
+    return redirect("/", {
       headers: {
         "Set-Cookie": cookieString,
       },
@@ -184,7 +184,11 @@ export default function signup() {
               value={localData}
               readOnly
             />
-            <button className="silver px-3 py-2 block" type="submit">
+            <button
+              className="silver px-3 py-2 block"
+              type="submit"
+              data-cy="signup"
+            >
               Sign-up
             </button>
             <p className="text-red-700 text-left self-start">{message}</p>

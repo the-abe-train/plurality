@@ -240,6 +240,7 @@ export default () => {
         replace: true,
       });
     }
+    return;
   }
 
   const wonAnyGames = !!userStats.fewestGuesses.guesses;
@@ -411,14 +412,16 @@ export default () => {
                 name="_action"
                 value="logOut"
                 className="silver px-3 py-1"
+                data-cy="logout"
               >
                 Logout
               </button>
             </Form>
-            <Form method="post" className="space-x-4" ref={deleteFormRef}>
+            <Form className="space-x-4" ref={deleteFormRef}>
               <button
                 className="cancel px-3 py-1"
                 onClick={confirmDeleteAccount}
+                data-cy="delete-account"
               >
                 Delete
               </button>
