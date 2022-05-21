@@ -60,7 +60,7 @@ export const action: ActionFunction = async ({ request }) => {
 
   // Parse form data
   const form = await request.formData();
-  const email = form.get("email") as string;
+  const email = (form.get("email") as string).toLowerCase();
   const password = form.get("password") as string;
   const verify = form.get("verify") as string;
   const wallet = form.get("wallet") as string;
