@@ -16,7 +16,7 @@ module.exports = {
         accent: '#C43661'      // Rose Red
       },
       dropShadow: {
-        'block': "0px 4px 4px rgba(0, 0, 0, 0.25)",
+        'block': "0px 3px 3px rgba(0, 0, 0, 0.25)",
         'nav': "0px 2px 6px rgba(0, 0, 0, 0.4)"
       },
       container: {

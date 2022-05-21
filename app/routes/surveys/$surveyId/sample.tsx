@@ -119,8 +119,8 @@ export const loader: LoaderFunction = async ({ params, request }) => {
 
 export const meta: MetaFunction = ({ data }: { data: LoaderData }) => {
   return {
-    title: `Plurality #${data.survey._id}`,
-    description: `Plurality #${data.survey._id}: ${data.survey.text}`,
+    title: `Plurality Survey #${data.survey._id}`,
+    description: `Plurality Survey #${data.survey._id}: ${data.survey.text}`,
   };
 };
 
@@ -325,7 +325,6 @@ export default () => {
       >
         <section className="md:px-4 space-y-4 mx-auto md:mx-0 justify-self-start">
           <Survey {...surveyProps} />
-
           <p>{gameOver}</p>
           <Form className="w-survey mx-auto flex space-x-2" method="post">
             <input

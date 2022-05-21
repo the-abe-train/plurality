@@ -38,9 +38,12 @@ export default ({ text, icon, size }: Props) => {
   return (
     <AnimatePresence exitBeforeEnter>
       <motion.h1
-        className="mb-2 text-4xl font-header text-center my-6 flex items-center 
+        className="text-4xl font-header text-center my-6 flex items-center 
         w-full justify-center space-x-3 font-bold"
-        style={{ fontSize: size || 36 }}
+        style={{
+          fontSize: size || 36,
+          marginBottom: size ? "0.5rem" : "1.5rem",
+        }}
         variants={letterContainerVariants}
         initial={"before"}
         animate={"after"}

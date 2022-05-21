@@ -182,90 +182,95 @@ export default () => {
 
   return (
     <div className="light w-full top-0 bottom-0 flex flex-col min-h-screen">
-      <Header name={loaderData.user ? loaderData.user.name : "Connect"} />
-      <AnimatedBanner text="Draft" icon={draftIcon} />
-      <main
-        className="container max-w-4xl flex-grow px-4 flex flex-col
-    md:grid grid-cols-2 grid-flow-row gap-x-6 my-6"
-      >
-        <section>
-          <h2 className="font-header text-2xl">Select your Survey Token</h2>
-          <NFTList nfts={nfts} token={token} setToken={setToken} />
-          <a href="https://opensea.io/PluralityGame">
-            <button className="gold px-3 py-2 my-6 flex space-x-1 items-center mx-auto">
-              <span>Buy a Token</span>
-              <img src={openSeaLogo} alt="OpenSea" className="inline" />
-            </button>
-          </a>
-        </section>
-        <section>
-          <h2 className="font-header text-2xl" data-cy="draft-header">
-            Draft your Survey question
-          </h2>
-          {showForm && (
-            <Form method="post" className="my-4 space-y-4">
-              <textarea
-                className="w-full px-4 py-2 text-sm border border-outline"
-                name="question"
-                placeholder="Enter question text here."
-              />
-              <div>
-                <label
-                  htmlFor="photo"
-                  className="flex items-center space-x-2 my-1"
-                >
-                  <p>Unsplash photo ID</p>
-                  <Tooltip
-                    text="The string of characters at the end of the URL for 
-              any photo on unsplash.com"
-                  />
-                </label>
-                <input
-                  type="text"
+      <div className="flex-grow">
+        <Header name={loaderData.user ? loaderData.user.name : "Connect"} />
+        <AnimatedBanner text="Draft" icon={draftIcon} />
+        <main
+          className="max-w-4xl flex flex-col md:grid grid-cols-2
+        gap-4 my-6 justify-center md:mx-auto mx-4"
+        >
+          <section className="md:px-4">
+            <h2 className="font-header text-2xl">Select your Survey Token</h2>
+            <NFTList nfts={nfts} token={token} setToken={setToken} />
+            <a href="https://opensea.io/PluralityGame">
+              <button className="gold px-3 py-2 my-6 flex space-x-1 items-center mx-auto">
+                <span>Buy a Token</span>
+                <img src={openSeaLogo} alt="OpenSea" className="inline" />
+              </button>
+            </a>
+          </section>
+          <section className="md:px-4">
+            <h2 className="font-header text-2xl" data-cy="draft-header">
+              Draft your Survey question
+            </h2>
+            {showForm && (
+              <Form method="post" className="my-4 space-y-4">
+                <textarea
                   className="w-full px-4 py-2 text-sm border border-outline"
-                  name="photo"
+                  name="question"
+                  placeholder="Enter question text here."
                 />
-              </div>
-              <label htmlFor="category" className="flex items-center space-x-2">
-                <p>Select Survey category:</p>
-                <select
-                  name="category"
-                  className="bg-white border border-outline px-1"
+                <div>
+                  <label
+                    htmlFor="photo"
+                    className="flex items-center space-x-2 my-1"
+                  >
+                    <p>Unsplash photo ID</p>
+                    <Tooltip
+                      text="The string of characters at the end of the URL for 
+              any photo on unsplash.com"
+                    />
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full px-4 py-2 text-sm border border-outline"
+                    name="photo"
+                  />
+                </div>
+                <label
+                  htmlFor="category"
+                  className="flex items-center space-x-2"
                 >
-                  <option value="word">Word</option>
-                  <option value="number">Number</option>
-                </select>
-              </label>
-              <div>
-                <button
-                  className="gold px-6 py-2 block mx-auto my-6"
-                  type="submit"
-                  disabled={!enabled}
-                >
-                  Submit
-                </button>
-              </div>
-              <p className="text-red-700">{msg}</p>
-            </Form>
-          )}
-          {!showForm && (
-            <p>
-              Survey question submitted successfully! If there is any issue with
-              your submission, the Plurality team will let you know as soon as
-              possible.{" "}
-            </p>
-          )}
-        </section>
-        <div className="my-5">
-          <div className="flex flex-wrap gap-3 my-3">
-            <NavButton name="Guess" />
-            <NavButton name="Respond" />
-          </div>
-          <Link to="/surveys" className="underline text-right w-full">
-            Play more Surveys
-          </Link>
-        </div>
-      </main>
+                  <p>Select Survey category:</p>
+                  <select
+                    name="category"
+                    className="bg-white border border-outline px-1"
+                  >
+                    <option value="word">Word</option>
+                    <option value="number">Number</option>
+                  </select>
+                </label>
+                <div>
+                  <button
+                    className="gold px-6 py-2 block mx-auto my-6"
+                    type="submit"
+                    disabled={!enabled}
+                  >
+                    Submit
+                  </button>
+                </div>
+                <p className="text-red-700">{msg}</p>
+              </Form>
+            )}
+            {!showForm && (
+              <p>
+                Survey question submitted successfully! If there is any issue
+                with your submission, the Plurality team will let you know as
+                soon as possible.{" "}
+              </p>
+            )}
+          </section>
+          <section className="md:self-end md:px-4">
+            <div className="flex flex-wrap gap-3 my-3">
+              <NavButton name="Respond" />
+              <NavButton name="Draft" />
+            </div>
+            <Link to="/surveys" className="underline">
+              Play more Surveys
+            </Link>
+          </section>
+        </main>
+      </div>
       <Footer />
     </div>
   );

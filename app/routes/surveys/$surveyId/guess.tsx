@@ -168,8 +168,8 @@ type ActionData = {
 
 export const meta: MetaFunction = ({ data }: { data: LoaderData }) => {
   return {
-    title: `Plurality #${data.survey._id}`,
-    description: `Plurality #${data.survey._id}: ${data.survey.text}`,
+    title: `Plurality Survey #${data.survey._id}`,
+    description: `Plurality Survey #${data.survey._id}: ${data.survey.text}`,
   };
 };
 

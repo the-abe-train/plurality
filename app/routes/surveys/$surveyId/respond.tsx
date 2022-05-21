@@ -39,6 +39,13 @@ type LoaderData = {
   lastSurveyDate?: string;
 };
 
+export const meta: MetaFunction = ({ data }: { data: LoaderData }) => {
+  return {
+    title: `Plurality Survey #${data.survey._id}`,
+    description: `Plurality Survey #${data.survey._id}: ${data.survey.text}`,
+  };
+};
+
 async function getPreviews(userId: ObjectId, surveyId: number) {
   const futureSurveys = await getFutureSurveys(client, userId);
   const lastSurvey = futureSurveys[futureSurveys.length - 1];
@@ -82,7 +89,6 @@ export const loader: LoaderFunction = async ({ params, request }) => {
 
   // Get additional data from db and apis
   const game = await gameBySurveyUser({ client, surveyId, userId });
-
   invariant(game, "Game upsert failed");
 
   // If the player has already voted
@@ -101,13 +107,6 @@ export const loader: LoaderFunction = async ({ params, request }) => {
     previews,
     lastSurveyDate,
   });
-};
-
-export const meta: MetaFunction = ({ data }: { data: LoaderData }) => {
-  return {
-    title: `Plurality #${data.survey._id}`,
-    description: `Plurality #${data.survey._id}: ${data.survey.text}`,
-  };
 };
 
 type ActionData = {
@@ -192,6 +191,16 @@ export default () => {
     loaderData.lastSurveyDate
   );
 
+  // Derived variables
+  const placeholderText = "Type your Survey response here.";
+  const totalMinutes = dayjs(loaderData.survey.surveyClose).diff(
+    dayjs(),
+    "minutes"
+  );
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  const nextSurvey = `${hours}h ${minutes}m`;
+
   // Unsplash photo attributions
   const refLink = "?utm_source=plurality&utm_medium=referral";
   const unsplashLink = "https://unsplash.com/" + refLink;
@@ -219,8 +228,6 @@ export default () => {
       setPreviewSurveys(actionData.previews);
     }
   }, [actionData]);
-
-  const placeholderText = "Type your Survey response here.";
 
   // Text validation
   useEffect(() => {
@@ -283,9 +290,14 @@ export default () => {
             </button>
           </Form>
           {yourVote && (
-            <p className="min-h-[2rem]">
-              Your response is: <b>{yourVote}</b>
-            </p>
+            <div className="min-h-[2rem] max-w-survey">
+              <p>
+                Your response is <b>{yourVote}</b>.
+              </p>
+              <p>
+                Survey responses can be guessed in <b>{nextSurvey}</b>.
+              </p>
+            </div>
           )}
           {msg && <p style={{ color: msgColour }}>{msg}</p>}
         </section>

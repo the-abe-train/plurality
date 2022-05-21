@@ -25,7 +25,7 @@ export default function Survey({ survey }: Props) {
           />
         </div>
         <h2
-          className="text-lg p-2 font-bold border-t-2 z-30 border-outline
+          className="text-lg p-2 font-bold border-t z-30 border-outline
          rounded-b-lg"
         >
           #{survey._id} {survey.text}
