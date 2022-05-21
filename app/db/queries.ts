@@ -214,6 +214,16 @@ export async function getFutureSurveys(client: MongoClient, userId: ObjectId) {
   return collection;
 }
 
+export async function getAllSurveyIds(client: MongoClient) {
+  const db = await connectDb(client);
+  const surveysCollection = db.collection<SurveySchema>("surveys");
+  const collection = await surveysCollection
+    .find({}, { projection: { _id: 0, surveyClose: 1 } })
+    .map((doc) => doc.surveyClose)
+    .toArray();
+  return collection;
+}
+
 type SearchParams = {
   client: MongoClient;
   textSearch: RegExp;

@@ -1,9 +1,14 @@
 import { useEffect, useRef, useState } from "react";
-import type { ActionFunction, LinksFunction } from "@remix-run/node";
+import type {
+  ActionFunction,
+  LinksFunction,
+  LoaderFunction,
+} from "@remix-run/node";
 import { json } from "@remix-run/node";
 import {
   Form,
   useActionData,
+  useLoaderData,
   useSubmit,
   useTransition,
 } from "@remix-run/react";
@@ -15,7 +20,7 @@ import styles from "~/styles/app.css";
 import backgrounds from "~/styles/backgrounds.css";
 
 import { SurveySchema, VoteAggregation } from "~/db/schemas";
-import { surveyBySearch, votesBySurvey } from "~/db/queries";
+import { getAllSurveyIds, surveyBySearch, votesBySurvey } from "~/db/queries";
 import { client } from "~/db/connect.server";
 
 import { PER_PAGE } from "~/util/constants";
@@ -33,6 +38,22 @@ export const links: LinksFunction = () => {
     { rel: "stylesheet", href: styles },
     { rel: "stylesheet", href: backgrounds },
   ];
+};
+
+type LoaderData = {
+  firstSurvey: string;
+  lastSurvey: string;
+};
+
+export const loader: LoaderFunction = async () => {
+  const surveys = await getAllSurveyIds(client);
+  const formatDate = (date: Date) =>
+    dayjs(date).tz("America/Toronto").format("YYYY-MM-DD");
+  console.log("Surveys", surveys);
+  const firstSurvey = formatDate(surveys[0]);
+  const lastSurvey = formatDate(surveys[surveys.length - 1]);
+  const data = { firstSurvey, lastSurvey };
+  return json<LoaderData>(data);
 };
 
 type ActionData = {
@@ -109,22 +130,23 @@ export default () => {
   const formRef = useRef<HTMLFormElement>(null!);
   const transition = useTransition();
 
-  const data = useActionData<ActionData>();
-  const showData = (data?.metadata.totalSurveysNum || 0) > 0;
+  const loaderData = useLoaderData<LoaderData>();
+  const actionData = useActionData<ActionData>();
+  const showData = (actionData?.metadata.totalSurveysNum || 0) > 0;
 
   useEffect(() => {
-    if (data?.metadata) {
+    if (actionData?.metadata) {
       const maxPages = Math.max(
-        Math.ceil(data.metadata.totalSurveysNum / 5),
+        Math.ceil(actionData.metadata.totalSurveysNum / 5),
         1
       );
       setPage(Math.min(page || 1, maxPages));
     }
-  }, [data]);
+  }, [actionData]);
 
   async function turnPage(change: number) {
-    if (data?.metadata) {
-      const { pageSurveysNum, totalSurveysNum } = data?.metadata;
+    if (actionData?.metadata) {
+      const { pageSurveysNum, totalSurveysNum } = actionData?.metadata;
 
       const newFormData = new FormData(formRef.current);
       const currentPage = Number(newFormData.get("page"));
@@ -151,120 +173,124 @@ export default () => {
   }
 
   return (
-    <main className="flex-grow mx-4 md:mx-auto max-w-6xl">
-      <Form
-        method="post"
-        className="m-8 flex flex-col space-y-4 max-w-xl mx-auto px-4"
-        ref={formRef}
-      >
-        <AnimatedBanner icon={emptyLogo} text="Search" />
-        <input
-          type="text"
-          name="text"
-          placeholder="Search by keyword or Survey ID"
-          className="border border-black px-2"
-        />
-        <div
-          className="flex-grow flex flex-col justify-between space-y-3
-        md:flex-row md:space-y-0"
+    <>
+      <AnimatedBanner icon={emptyLogo} text="Search" />
+      <main className="flex-grow mx-4 md:mx-auto max-w-6xl">
+        <Form
+          method="post"
+          className="m-6 flex flex-col space-y-4 max-w-xl mx-auto px-4"
+          ref={formRef}
         >
           <input
-            type="date"
-            name="date"
-            id="date"
-            className="border border-black px-2 min-w-[300px]"
+            type="text"
+            name="text"
+            placeholder="Search by keyword or Survey ID"
+            className="border border-outline px-2"
           />
-          <div className="flex space-x-3 items-center">
-            <label className="flex items-center">
-              Community
-              <input
-                className="mx-2 accent-accent"
-                type="checkbox"
-                name="community"
-                id="community"
-                defaultChecked
-              />
-            </label>
-            <label className="flex items-center">
-              Standard
-              <input
-                className="mx-2 accent-accent"
-                type="checkbox"
-                name="standard"
-                id="standard"
-                defaultChecked
-              />
-            </label>
-          </div>
-        </div>
-        <div className="flex justify-between border-black ">
-          <div className="flex items-center">
-            <button
-              className="px-2 border border-outline rounded-full bg-white h-min"
-              // onClick={() => turnPage(-1)}
-              onClick={() => turnPage(-1)}
-              type="button"
-            >
-              -
-            </button>
-            <label className="flex mx-2 items-center">
-              Page:{"  "}
-              <input
-                type="text"
-                name="page"
-                id="page"
-                placeholder="Page"
-                className="text-center w-5"
-                onChange={(e) => e.target.value}
-                value={page}
-              />
-            </label>
-            <button
-              className="px-2 border border-outline rounded-full bg-white h-min"
-              onClick={() => turnPage(1)}
-              type="button"
-              disabled={transition.state !== "idle"}
-            >
-              +
-            </button>
-          </div>
-          <div className="space-x-4">
-            <button
-              type="reset"
-              className="cancel px-3 py-1"
-              onClick={() => setPage(1)}
-              disabled={transition.state !== "idle"}
-            >
-              Reset
-            </button>
-            <button
-              type="submit"
-              className="silver px-3 py-1"
-              disabled={transition.state !== "idle"}
-            >
-              Search
-            </button>
-          </div>
-        </div>
-      </Form>
-      <div className="md:px-4">
-        {showData && data?.metadata && (
-          <section className="my-4">
-            <div className="m-4 flex justify-between">
-              <span>
-                Showing {data.metadata.pageStart + 1} - {data.metadata.pageEnd}{" "}
-                out of {data.metadata.totalSurveysNum}
-              </span>
+          <div
+            className="flex-grow flex flex-col justify-between space-y-3
+        md:flex-row md:space-y-0"
+          >
+            <input
+              type="date"
+              name="date"
+              id="date"
+              min={loaderData.firstSurvey}
+              max={loaderData.lastSurvey}
+              className="border border-outline px-2 min-w-[300px]"
+            />
+            <div className="flex space-x-3 items-center">
+              <label className="flex items-center">
+                Community
+                <input
+                  className="mx-2 accent-accent"
+                  type="checkbox"
+                  name="community"
+                  id="community"
+                  defaultChecked
+                />
+              </label>
+              <label className="flex items-center">
+                Standard
+                <input
+                  className="mx-2 accent-accent"
+                  type="checkbox"
+                  name="standard"
+                  id="standard"
+                  defaultChecked
+                />
+              </label>
             </div>
-            <div className="flex flex-col md:flex-row flex-wrap gap-3">
-              {data.pageSurveys.map((q) => {
-                return <Survey survey={q} key={q._id} />;
-              })}
+          </div>
+          <div className="flex justify-between border-outline ">
+            <div className="flex items-center">
+              <button
+                className="px-2 border border-outline rounded-full bg-white h-min"
+                onClick={() => turnPage(-1)}
+                type="button"
+              >
+                -
+              </button>
+              <label className="flex mx-2 items-center">
+                Page:{"  "}
+                <input
+                  type="text"
+                  name="page"
+                  id="page"
+                  placeholder="Page"
+                  className="text-center w-5"
+                  onChange={(e) => e.target.value}
+                  value={page}
+                />
+              </label>
+              <button
+                className="px-2 border border-outline rounded-full bg-white h-min"
+                onClick={() => turnPage(1)}
+                type="button"
+                disabled={transition.state !== "idle"}
+              >
+                +
+              </button>
             </div>
-          </section>
-        )}
-        {!showData && data?.metadata && <p>No results returned.</p>}
-      </div>
-    </main>
+            <div className="space-x-4">
+              <button
+                type="reset"
+                className="cancel px-3 py-1"
+                onClick={() => setPage(1)}
+                disabled={transition.state !== "idle"}
+              >
+                Reset
+              </button>
+              <button
+                type="submit"
+                className="silver px-3 py-1"
+                disabled={transition.state !== "idle"}
+              >
+                Search
+              </button>
+            </div>
+          </div>
+        </Form>
+        <div className="md:px-4">
+          {showData && actionData?.metadata && (
+            <section className="my-4">
+              <div className="m-4 flex justify-between">
+                <span>
+                  Showing {actionData.metadata.pageStart + 1} -{" "}
+                  {actionData.metadata.pageEnd} out of{" "}
+                  {actionData.metadata.totalSurveysNum}
+                </span>
+              </div>
+              <div className="flex flex-col md:flex-row flex-wrap gap-3">
+                {actionData.pageSurveys.map((q) => {
+                  return <Survey survey={q} key={q._id} />;
+                })}
+              </div>
+            </section>
+          )}
+          {!showData && actionData?.metadata && <p>No results returned.</p>}
+        </div>
+      </main>
+    </>
   );
 };
