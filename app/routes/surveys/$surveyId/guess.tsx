@@ -46,6 +46,8 @@ import Modal from "~/components/modal/Modal";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
+// TODO when changing guess page, make sure Answers component remounts
+
 export const links: LinksFunction = () => {
   return [
     { rel: "stylesheet", href: styles },
@@ -204,9 +206,9 @@ export const action: ActionFunction = async ({ request, params }) => {
   if (game.guesses) {
     const alreadyGuessed = game.guesses.find((ans) => {
       const text = ans._id;
-      return (
-        trim(text) === trimmedGuess || parseAnswer(text).includes(trimmedGuess)
-      );
+      const parsedAnswer = parseAnswer(text);
+      if (typeof parsedAnswer === "number") return trim(text) === trimmedGuess;
+      return trim(text) === trimmedGuess || parsedAnswer.includes(trimmedGuess);
     });
     if (alreadyGuessed) {
       const message = `"${alreadyGuessed._id}" was already guessed.`;
@@ -218,9 +220,9 @@ export const action: ActionFunction = async ({ request, params }) => {
   const answers = await votesBySurvey(client, surveyId);
   const correctGuess = answers.find((ans) => {
     const text = ans._id;
-    return (
-      trim(text) === trimmedGuess || parseAnswer(text).includes(trimmedGuess)
-    );
+    const parsedAnswer = parseAnswer(text);
+    if (typeof parsedAnswer === "number") return trim(text) === trimmedGuess;
+    return trim(text) === trimmedGuess || parsedAnswer.includes(trimmedGuess);
   });
 
   // Reject incorrect guesses

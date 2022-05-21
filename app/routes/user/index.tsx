@@ -124,7 +124,8 @@ export const action: ActionFunction = async ({ request }) => {
 
   // Parse forms
   const { _action } = Object.fromEntries(form);
-  const newEmail = (form.get("email") as string).toLowerCase();
+  const newEmailRaw = form.get("email") as string;
+  const newEmail = newEmailRaw ? newEmailRaw.toLowerCase() : "";
   const newName = form.get("name") as string;
   const wallet = form.get("wallet") as string;
 

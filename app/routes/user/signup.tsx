@@ -16,6 +16,8 @@ type LoaderData = {
   message: string;
 };
 
+// TODO min requirements for password
+
 export const loader: LoaderFunction = async ({ request }) => {
   // Connect to database
   // Upon visitng the page, gets the session from the headers

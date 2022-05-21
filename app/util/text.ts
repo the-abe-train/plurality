@@ -17,12 +17,12 @@ export function percentFormat(number: number) {
   return `${(number * 100).toFixed(1)}%`;
 }
 
-export function trim(str: string) {
-  return str.trim().toLowerCase();
+export function trim(str: string | number) {
+  return String(str).trim().toLowerCase();
 }
 
-export function parseAnswer(ans: string) {
-  const trimmedAns = trim(ans);
+export function parseAnswer(ans: string | number) {
+  const trimmedAns = trim(String(ans));
   const splitAns = trimmedAns.split(/[\s,/]/);
   const options = splitAns.filter((a) => {
     const prepositions = ["a", "the", "in"];
