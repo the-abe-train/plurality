@@ -93,13 +93,11 @@ export default function questions() {
           <div className="col-start-2">
             <Survey survey={data.survey} />
           </div>
-          <div className="my-5 md:my-0">
-            <div className="flex flex-wrap gap-3 my-3 md:mt-1 md:mb-2">
-              <NavButton name="Respond" />
-              <NavButton name="Draft" />
-            </div>
-            <Link to="/surveys" className="underline text-right w-full md:my-2">
-              Play more Surveys
+          <div className="flex-wrap gap-3 mt-1 mb-2 items-end hidden md:flex">
+            <NavButton name="Respond" />
+            <NavButton name="Draft" />
+            <Link to="/surveys" className="underline inline">
+              More Surveys
             </Link>
           </div>
           <h2 className="text-2xl font-header row-start-1 mt-6 mb-2 md:my-0 col-start-1">

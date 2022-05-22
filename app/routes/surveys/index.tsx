@@ -49,7 +49,6 @@ export const loader: LoaderFunction = async () => {
   const surveys = await getAllSurveyIds(client);
   const formatDate = (date: Date) =>
     dayjs(date).tz("America/Toronto").format("YYYY-MM-DD");
-  console.log("Surveys", surveys);
   const firstSurvey = formatDate(surveys[0]);
   const lastSurvey = formatDate(surveys[surveys.length - 1]);
   const data = { firstSurvey, lastSurvey };

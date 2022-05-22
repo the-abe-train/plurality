@@ -12,7 +12,7 @@ export const loader: LoaderFunction = async ({ params }) => {
   const verifyToken = await createVerifyEmailToken(email);
   if (hash === verifyToken) {
     await verifyUser(client, email);
-    return redirect("/");
+    return redirect("/surveys/today");
   }
 };
 
