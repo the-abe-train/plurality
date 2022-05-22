@@ -2,7 +2,7 @@
 
 describe("Logging In - HTML Web Form", function () {
   // we can use these values to log in
-  const email = "test7@plurality.fun";
+  const email = "test@plurality.fun";
   const password = "password123";
 
   context("Unauthorized", function () {
@@ -55,7 +55,7 @@ describe("Logging In - HTML Web Form", function () {
       cy.get("[data-cy=login]").click();
 
       // we should be redirected to /dashboard
-      cy.url().should("equal", "http://localhost:3000/");
+      cy.url().should("contain", "guess");
 
       // navigate to user page
       cy.visit("/user");

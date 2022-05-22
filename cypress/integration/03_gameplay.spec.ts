@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-const email = "test15@plurality.fun";
+const email = "test3@plurality.fun";
 
 describe("Gameplay walkthrough", () => {
   it("plays the entire game", () => {
@@ -10,7 +10,7 @@ describe("Gameplay walkthrough", () => {
     cy.get('[placeholder="Password"]').type("password123");
     cy.get('[placeholder="Verify password"]').type("password123");
     cy.get("[data-cy=signup]").click();
-    cy.url().should("equal", "http://localhost:3000/");
+    cy.url().should("contain", "guess");
     cy.getCookie("user").should("exist");
 
     // Log user out
@@ -27,7 +27,7 @@ describe("Gameplay walkthrough", () => {
     cy.get('[placeholder="Password"]').type("password123");
     cy.get("[data-cy=login]").click();
     cy.wait(1000);
-    cy.url().should("equal", "http://localhost:3000/");
+    cy.url().should("contain", "guess");
     cy.visit("/user");
     cy.get("[data-cy=connect-btn]").should("not.contain.text", "Connect");
 
