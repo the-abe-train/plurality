@@ -16,8 +16,6 @@ type LoaderData = {
   message: string;
 };
 
-// TODO min requirements for password
-
 export const loader: LoaderFunction = async ({ request }) => {
   // Connect to database
   // Upon visitng the page, gets the session from the headers
@@ -28,7 +26,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
   const session = await getSession(request.headers.get("Cookie"));
   if (session.has("user")) {
-    return redirect("/");
+    return redirect("/surveys/today");
   }
 
   const message = session.get("message") || null;
@@ -62,7 +60,7 @@ export const action: ActionFunction = async ({ request }) => {
 
   // Parse form data
   const form = await request.formData();
-  const email = (form.get("email") as string).toLowerCase();
+  const email = form.get("email") as string;
   const password = form.get("password") as string;
   const verify = form.get("verify") as string;
   const wallet = form.get("wallet") as string;
@@ -74,7 +72,7 @@ export const action: ActionFunction = async ({ request }) => {
     const cookieString = await commitSession(session, {
       expires: nextWeek,
     });
-    return redirect("/", {
+    return redirect("/surveys/today", {
       headers: {
         "Set-Cookie": cookieString,
       },
@@ -166,18 +164,23 @@ export default function signup() {
               name="email"
               className="w-full px-4 py-2 text-sm border rounded-md border-outline"
               placeholder="Email Address"
+              required
             />
             <input
               className="w-full px-4 py-2 text-sm border rounded-md border-outline"
               placeholder="Password"
               type="password"
               name="password"
+              minLength={8}
+              required
             />
             <input
               className="w-full px-4 py-2 text-sm border rounded-md border-outline"
               placeholder="Verify password"
               type="password"
               name="verify"
+              minLength={8}
+              required
             />
             <input
               className="hidden"

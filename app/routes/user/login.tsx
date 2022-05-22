@@ -25,7 +25,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
   const session = await getSession(request.headers.get("Cookie"));
   if (session.has("user")) {
-    return redirect("/");
+    return redirect("/user");
   }
 
   const message = session.get("message") || null;
@@ -63,7 +63,7 @@ export const action: ActionFunction = async ({ request }) => {
     const cookieString = await commitSession(session, {
       expires: nextWeek,
     });
-    return redirect("/", {
+    return redirect("/surveys/today", {
       headers: {
         "Set-Cookie": cookieString,
       },
@@ -154,12 +154,15 @@ export default () => {
               name="email"
               className="w-full px-4 py-2 text-sm border rounded-md border-outline"
               placeholder="Email Address"
+              required
             />
             <input
               className="w-full px-4 py-2 text-sm border rounded-md border-outline"
               placeholder="Password"
               type="password"
               name="password"
+              minLength={8}
+              required
             />
             <input
               className="hidden"

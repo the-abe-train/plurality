@@ -18,7 +18,7 @@ async function connectDb(client: MongoClient) {
     await client.db(DATABASE_NAME).command({ ping: 1 });
   } catch {
     await client.connect();
-    console.log("Connected to DB success 🗃");
+    // console.log("Connected to DB success 🗃");
   }
   const db = client.db(DATABASE_NAME);
   return db;
@@ -37,7 +37,7 @@ export async function userByEmail(client: MongoClient, email: string) {
   const db = await connectDb(client);
   const usersCollection = db.collection<UserSchema>("users");
   return await usersCollection.findOne({
-    "email.address": email,
+    "email.address": email.toLowerCase(),
   });
 }
 
@@ -99,7 +99,6 @@ export async function userUpdateEmail(
 
   // First make sure no one already has this email address
   const existingUser = await userByEmail(client, newEmail);
-  console.log(existingUser);
   if (existingUser) return existingUser;
 
   const modifiedUser = await usersCollection.findOneAndUpdate(
@@ -134,7 +133,7 @@ export async function createUser(
 export async function connectUserWallet(client: MongoClient, wallet: string) {
   const db = await connectDb(client);
   const usersCollection = db.collection<UserSchema>("users");
-  const password = await randomPassword(8);
+  const password = await randomPassword(10);
   const user = await usersCollection.findOneAndUpdate(
     { wallet },
     {
@@ -376,7 +375,7 @@ export async function addGuess(
 export async function addVote(
   client: MongoClient,
   gameId: ObjectId,
-  voteText: string
+  voteText: string | number
 ) {
   const db = await connectDb(client);
   const gamesCollection = db.collection<GameSchema>("games");

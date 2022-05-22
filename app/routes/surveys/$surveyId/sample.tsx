@@ -35,7 +35,7 @@ import Switch from "~/components/buttons/Switch";
 import AnimatedBanner from "~/components/text/AnimatedBanner";
 import NavButton from "~/components/buttons/NavButton";
 import Modal from "~/components/modal/Modal";
-import { MAX_GUESSES, THRESHOLD } from "~/util/constants";
+import { MAX_GUESSES } from "~/util/constants";
 import { checkWin } from "~/util/gameplay";
 
 dayjs.extend(utc);
@@ -104,7 +104,7 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   // Get additional surveydata from db and apis
   const votes = await votesBySurvey(client, surveyId);
 
-  console.log("Votes", votes);
+  // console.log("Votes", votes);
   const totalVotes = votes.reduce((sum, ans) => {
     return sum + ans.votes;
   }, 0);
@@ -212,8 +212,7 @@ export default () => {
   const surveyId = loaderData.survey._id;
 
   // Unsplash photo attributions
-  const refLink = "?utm_source=plurality&utm_medium=referral";
-  const unsplashLink = "https://unsplash.com/" + refLink;
+  const unsplashLink = "https://unsplash.com/photos/" + loaderData.survey.photo;
 
   // The modal
   const [openModal, setOpenModal] = useState(actionData?.win || win);
@@ -336,6 +335,7 @@ export default () => {
               value={guess}
               disabled={gameOver}
               onChange={(e) => setGuess(e.target.value)}
+              required
             />
             <input
               className="hidden"
@@ -363,7 +363,10 @@ export default () => {
         </section>
         <section className="space-y-4">
           <div className="flex justify-between w-full items-center">
-            <p>You did not respond to this Survey.</p>
+            <p>
+              Survey closed on{" "}
+              {dayjs(loaderData.survey.surveyClose).format("D MMMM YYYY")}.
+            </p>
             <Switch mode={displayPercent} setMode={setDisplayPercent} />
           </div>
           <Answers

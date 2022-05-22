@@ -46,8 +46,6 @@ import Modal from "~/components/modal/Modal";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-// TODO when changing guess page, make sure Answers component remounts
-
 export const links: LinksFunction = () => {
   return [
     { rel: "stylesheet", href: styles },
@@ -98,8 +96,6 @@ export const loader: LoaderFunction = async ({ params, request }) => {
     });
   }
 
-  console.log("User ID", userId);
-
   // Get tomorrow's survey from db
   const midnight = dayjs().tz("America/Toronto").endOf("day");
   const tomorrowSc = midnight.toDate();
@@ -121,7 +117,7 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   // Get additional surveydata from db and apis
   const votes = await votesBySurvey(client, surveyId);
 
-  console.log("Votes", votes);
+  // console.log("Votes", votes);
   const totalVotes = votes.reduce((sum, ans) => {
     return sum + ans.votes;
   }, 0);
@@ -268,7 +264,7 @@ export default () => {
   const actionData = useActionData<ActionData>();
 
   // Initial states are from loader data
-  const [guesses, setGuesses] = useState(loaderData.game.guesses || []);
+  const [guesses, setGuesses] = useState(loaderData.game.guesses);
   const [guess, setGuess] = useState("");
   const [gameOver, setGameOver] = useState(loaderData.gameOver);
   const [message, setMessage] = useState(loaderData.message);
@@ -277,9 +273,13 @@ export default () => {
   const { totalVotes } = loaderData;
   const userVote = loaderData.game.vote;
 
+  // Loader data changes when the page changes
+  useEffect(() => {
+    setGuesses(loaderData.game.guesses);
+  }, [loaderData.game]);
+
   // Unsplash photo attributions
-  const refLink = "?utm_source=plurality&utm_medium=referral";
-  const unsplashLink = "https://unsplash.com/" + refLink;
+  const unsplashLink = "https://unsplash.com/photos/" + loaderData.survey.photo;
 
   // The modal
   const [openModal, setOpenModal] = useState(actionData?.win || win);
@@ -361,6 +361,7 @@ export default () => {
               disabled={gameOver}
               data-cy="guess-input"
               onChange={(e) => setGuess(e.target.value)}
+              required
             />
             <button
               className="silver px-3 py-1"
@@ -373,14 +374,17 @@ export default () => {
           </Form>
         </section>
         <section className="space-y-4">
-          <div className="flex justify-between w-full items-center">
+          <div className="flex justify-between w-full items-center my-1">
             {userVote ? (
               <p>
                 You responded <b>{userVote.text}</b> on{" "}
                 <b>{dayjs(userVote.date).format("D MMMM YYYY")}</b>
               </p>
             ) : (
-              <p>You did not respond to this Survey.</p>
+              <p>
+                Survey closed on{" "}
+                {dayjs(loaderData.survey.surveyClose).format("D MMMM YYYY")}.
+              </p>
             )}
             <Switch mode={displayPercent} setMode={setDisplayPercent} />
           </div>

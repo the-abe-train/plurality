@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { NAME_LENGTH } from "./constants";
 
 export function statFormat(number: number) {
@@ -39,7 +40,8 @@ export const truncateEthAddress = (address: string) => {
   return `${match[1]}…${match[2]}`;
 };
 
-export function capitalizeFirstLetter(string: string) {
+export function capitalizeFirstLetter(string: string | number) {
+  if (typeof string === "number") return string;
   return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 }
 
@@ -65,4 +67,20 @@ export function rankToLetter(num: number) {
     n = Math.floor(n / len) - 1;
   }
   return s;
+}
+
+export function parseFutureDate(surveyClose: Date) {
+  const MINUTES_PER_DAY = 1440;
+  const MINUTES_PER_HOUR = 60;
+  const totalMinutes = dayjs(surveyClose).diff(dayjs(), "minutes");
+  if (totalMinutes < MINUTES_PER_DAY) {
+    const hours = Math.floor(totalMinutes / MINUTES_PER_HOUR);
+    const minutes = totalMinutes % MINUTES_PER_HOUR;
+    return `${hours}h ${minutes}m`;
+  }
+  const days = Math.floor(totalMinutes / MINUTES_PER_DAY);
+  const leftoverMinutes = totalMinutes % MINUTES_PER_DAY;
+  const hours = Math.floor(leftoverMinutes / MINUTES_PER_HOUR);
+  const minutes = leftoverMinutes % MINUTES_PER_HOUR;
+  return `${days}d ${hours}h ${minutes}m`;
 }

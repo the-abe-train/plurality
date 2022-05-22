@@ -1,8 +1,8 @@
-import bcrypt from "bcryptjs";
+import { genSalt, hash, compare } from "bcryptjs";
 import { ObjectId } from "mongodb";
 import { client } from "~/db/connect.server";
 import { createUser, userByEmail, userByWallet } from "../db/queries";
-const { genSalt, hash, compare } = bcrypt;
+// const { genSalt, hash, compare } = bcrypt;
 
 export async function registerUser(email: string, password: string) {
   // Check if user already exists

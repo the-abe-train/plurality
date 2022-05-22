@@ -268,6 +268,7 @@ export default () => {
                 value={email}
                 name="email"
                 onChange={(e) => setEmail(e.target.value)}
+                required
               />
               <div className="my-2 md:my-0 space-x-2">
                 <button
@@ -305,6 +306,7 @@ export default () => {
                 className="px-3 py-1 border-outline border rounded-sm"
                 onChange={(e) => setName(e.target.value)}
                 maxLength={NAME_LENGTH}
+                required
               />
               <button
                 type="submit"

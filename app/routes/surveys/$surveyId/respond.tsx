@@ -28,6 +28,7 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import { respondIcon } from "~/images/icons";
+import { parseFutureDate } from "~/util/text";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -124,7 +125,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   ]);
 
   // Parse form
-  const newVote = form.get("vote") as string;
+  const newVote = Number(form.get("vote")) || (form.get("vote") as string);
   const newDate = form.get("date") as string;
   const { _action } = Object.fromEntries(form);
 
@@ -160,14 +161,11 @@ export const action: ActionFunction = async ({ request, params }) => {
   }
 
   if (_action === "changeSurvey") {
-    console.log("New date", newDate);
     const [year, month, day] = newDate.split("-").map((str) => Number(str));
     const midnight = new Date(
       Date.UTC(year, month - 1, day + 1, 3, 59, 59, 999)
     );
-    console.log("Midnight", midnight);
     const newSurvey = await surveyByClose(client, midnight);
-    console.log("New survey", newSurvey);
     return redirect(`/surveys/${newSurvey?._id}/respond`);
   }
 };
@@ -175,7 +173,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 export default () => {
   const loaderData = useLoaderData<LoaderData>();
   const actionData = useActionData<ActionData>();
-  const surveyClose = loaderData.survey.surveyClose;
+  const { surveyClose } = loaderData.survey;
   const [yourVote, setYourVote] = useState(loaderData.game.vote?.text);
   const [enabled, setEnabled] = useState(false);
   const [voteText, setVoteText] = useState("");
@@ -193,13 +191,7 @@ export default () => {
 
   // Derived variables
   const placeholderText = "Type your Survey response here.";
-  const totalMinutes = dayjs(loaderData.survey.surveyClose).diff(
-    dayjs(),
-    "minutes"
-  );
-  const hours = Math.floor(totalMinutes / 60);
-  const minutes = totalMinutes % 60;
-  const nextSurvey = `${hours}h ${minutes}m`;
+  const nextSurvey = parseFutureDate(surveyClose);
 
   // Unsplash photo attributions
   const refLink = "?utm_source=plurality&utm_medium=referral";
@@ -242,7 +234,6 @@ export default () => {
       setMsg("Response cannot contain a space.");
       setMsgColour("red");
     } else if (category === "number" && containsLetter && !isPlaceholder) {
-      console.log(voteText);
       setEnabled(false);
       setMsg("This survey only accepts numbers as responses.");
       setMsgColour("red");

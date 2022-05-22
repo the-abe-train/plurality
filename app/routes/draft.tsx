@@ -209,6 +209,8 @@ export default () => {
                   className="w-full px-4 py-2 text-sm border border-outline"
                   name="question"
                   placeholder="Enter question text here."
+                  minLength={10}
+                  required
                 />
                 <div>
                   <label
@@ -225,6 +227,7 @@ export default () => {
                     type="text"
                     className="w-full px-4 py-2 text-sm border border-outline"
                     name="photo"
+                    required
                   />
                 </div>
                 <label
