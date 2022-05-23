@@ -62,6 +62,13 @@ type LoaderData = {
   tomorrow: SurveySchema;
 };
 
+export const meta: MetaFunction = ({ data }: { data: LoaderData }) => {
+  return {
+    title: `Plurality Survey #${data.survey._id}`,
+    description: `Plurality Survey #${data.survey._id}: ${data.survey.text}`,
+  };
+};
+
 export const loader: LoaderFunction = async ({ params, request }) => {
   // Get user info
   const session = await getSession(request.headers.get("Cookie"));
@@ -162,13 +169,7 @@ type ActionData = {
   correctGuess?: VoteAggregation;
   gameOver?: boolean;
   win?: boolean;
-};
-
-export const meta: MetaFunction = ({ data }: { data: LoaderData }) => {
-  return {
-    title: `Plurality Survey #${data.survey._id}`,
-    description: `Plurality Survey #${data.survey._id}: ${data.survey.text}`,
-  };
+  guessesToWin?: number;
 };
 
 export const action: ActionFunction = async ({ request, params }) => {
@@ -255,7 +256,13 @@ export const action: ActionFunction = async ({ request, params }) => {
   } else {
     message = "Great guess!";
   }
-  return json<ActionData>({ message, correctGuess, win, gameOver });
+  return json<ActionData>({
+    message,
+    correctGuess,
+    win,
+    gameOver,
+    guessesToWin,
+  });
 };
 
 export default () => {
@@ -270,6 +277,9 @@ export default () => {
   const [message, setMessage] = useState(loaderData.message);
   const [win, setWin] = useState(loaderData.game.win || false);
   const [displayPercent, setDisplayPercent] = useState(false);
+  const [guessesToWin, setGuessesToWin] = useState(
+    loaderData.game.guessesToWin || loaderData.game.guesses.length
+  );
   const { totalVotes } = loaderData;
   const userVote = loaderData.game.vote;
 
@@ -302,6 +312,7 @@ export default () => {
     setMessage(actionData?.message || message);
     setWin(actionData?.win || win);
     setGameOver(actionData?.gameOver || gameOver);
+    setGuessesToWin(actionData?.guessesToWin || guessesToWin);
   }, [actionData]);
 
   // Upon winning, from action data or loader
@@ -335,7 +346,7 @@ export default () => {
     guesses,
     win,
     surveyId: loaderData.survey._id,
-    guessesToWin: loaderData.game.guessesToWin,
+    guessesToWin,
   };
 
   return (

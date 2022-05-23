@@ -6,6 +6,6 @@ export type ScorebarProps = {
   guesses: VoteAggregation[];
   win: boolean;
   surveyId: number;
-  guessesToWin?: number;
+  guessesToWin: number;
   instructions?: boolean;
 };

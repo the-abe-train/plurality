@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { isFirefox, isMobile } from "react-device-detect";
-import invariant from "tiny-invariant";
 import { shareIcon } from "~/images/icons";
 import { percentFormat } from "~/util/text";
 
@@ -8,7 +7,7 @@ type Props = {
   score: number;
   surveyId: number;
   guesses: number;
-  guessesToWin?: number | null;
+  guessesToWin: number;
 };
 
 export default function ShareButton({
@@ -21,7 +20,6 @@ export default function ShareButton({
   const [msg, setMsg] = useState("Share");
   const [copied, setCopied] = useState(false);
   async function shareScore() {
-    invariant(guessesToWin, "Game hasn't been won yet, can't share score");
     const purples = [...new Array(guessesToWin)].map(() => "🟪").join("");
     const oranges = [...new Array(guesses - guessesToWin)]
       .map(() => "🟧")
