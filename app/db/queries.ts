@@ -349,7 +349,7 @@ export async function addGuess(
   guess: VoteAggregation,
   win: boolean,
   score: number,
-  guessesToWin?: number
+  guessesUsed?: number
 ) {
   const db = await connectDb(client);
   const gamesCollection = db.collection<GameSchema>("games");
@@ -360,9 +360,9 @@ export async function addGuess(
       score,
     },
     $push: { guesses: guess },
-    $min: { guessesToWin },
+    $min: { guessesToWin: guessesUsed },
   };
-  if (!guessesToWin) delete newData["$min"];
+  if (!guessesUsed) delete newData["$min"];
   const updatedGameResult = await gamesCollection.findOneAndUpdate(
     { _id: gameId },
     newData,

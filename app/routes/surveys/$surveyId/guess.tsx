@@ -233,14 +233,14 @@ export const action: ActionFunction = async ({ request, params }) => {
   const points = guesses.reduce((sum, guess) => sum + guess.votes, 0);
   const score = points / game.totalVotes;
   const win = score >= 80 / 100;
-  const guessesToWin = win ? guesses.length : 0;
+  const guessesUsed = win ? guesses.length : 0;
   const updatedGame = await addGuess(
     client,
     game._id,
     correctGuess,
     win,
     score,
-    guessesToWin
+    guessesUsed
   );
   invariant(updatedGame, "Game update failed");
 
@@ -261,7 +261,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     correctGuess,
     win,
     gameOver,
-    guessesToWin,
+    guessesToWin: updatedGame.guessesToWin,
   });
 };
 

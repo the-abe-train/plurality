@@ -33,10 +33,8 @@ ${purples}${oranges}
 https://plurality.fun`;
     setCopied(true);
     setMsg("Shared!");
-    console.log("Share button pressed.");
     console.log("Share message:", shareString);
     if ("canShare" in navigator && isMobile && !isFirefox) {
-      console.log("Share API launched");
       return await navigator.share({
         title: "Plurality Stats",
         text: shareString,
