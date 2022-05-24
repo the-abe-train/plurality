@@ -7,7 +7,7 @@ import type {
 import { json, redirect } from "@remix-run/node";
 import { Form, Link, useActionData, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import {
   clearAllBodyScrollLocks,
@@ -28,6 +28,7 @@ import {
   gameBySurveyUser,
   surveyByClose,
   surveyById,
+  surveyVotes,
   votesBySurvey,
 } from "~/db/queries";
 import { GameSchema, SurveySchema, VoteAggregation } from "~/db/schemas";
@@ -42,6 +43,7 @@ import Switch from "~/components/buttons/Switch";
 import AnimatedBanner from "~/components/text/AnimatedBanner";
 import NavButton from "~/components/buttons/NavButton";
 import Modal from "~/components/modal/Modal";
+import { getLemma, surveyAnswers } from "~/util/nlp";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -108,9 +110,10 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   const tomorrowSc = midnight.toDate();
 
   // Get surveys
-  const [survey, tomorrow] = await Promise.all([
+  const [survey, tomorrow, totalVotes] = await Promise.all([
     surveyById(client, surveyId),
     surveyByClose(client, tomorrowSc),
+    surveyVotes(client, surveyId),
   ]);
   invariant(survey, "No survey found!");
   invariant(tomorrow, "Tomorrow's survey not found!");
@@ -120,14 +123,6 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   if (dayjs(surveyClose) >= dayjs()) {
     return redirect(`/surveys/${surveyId}/respond`);
   }
-
-  // Get additional surveydata from db and apis
-  const votes = await votesBySurvey(client, surveyId);
-
-  // console.log("Votes", votes);
-  const totalVotes = votes.reduce((sum, ans) => {
-    return sum + ans.votes;
-  }, 0);
 
   // Game upsert
   const game = await gameBySurveyUser({
@@ -212,9 +207,8 @@ export const action: ActionFunction = async ({ request, params }) => {
       return json<ActionData>({ message });
     }
   }
-
-  // Pull in more relevant data
-  const answers = await votesBySurvey(client, surveyId);
+  // Compare guess against actual survey responses
+  const answers = await surveyAnswers(client, surveyId);
   const correctGuess = answers.find((ans) => {
     const text = ans._id;
     const parsedAnswer = parseAnswer(text);
@@ -281,7 +275,32 @@ export default () => {
     loaderData.game.guessesToWin || loaderData.game.guesses.length
   );
   const { totalVotes } = loaderData;
-  const userVote = loaderData.game.vote;
+
+  // Displaying to the user what they voted
+  const userVote = useMemo(() => {
+    const rawUserVote = loaderData.game.vote?.text;
+    const voteDate = loaderData.game.vote?.date;
+    const surveyCloseDate = loaderData.survey.surveyClose;
+    if (!rawUserVote || !voteDate)
+      return (
+        <p className="text-sm mt-2">
+          Survey closed on {dayjs(surveyCloseDate).format("D MMMM YYYY")}.
+        </p>
+      );
+    let voteText = rawUserVote;
+    if (typeof rawUserVote === "string") {
+      const lemmaUserVote = getLemma(rawUserVote);
+      if (lemmaUserVote !== rawUserVote) {
+        voteText = `${lemmaUserVote} (${rawUserVote})`;
+      }
+    }
+    return (
+      <p className="text-sm mt-2">
+        You responded <b>{voteText}</b> on{" "}
+        <b>{dayjs(voteDate).format("D MMMM YYYY")}</b>.
+      </p>
+    );
+  }, []);
 
   // Loader data changes when the page changes
   useEffect(() => {
@@ -384,19 +403,9 @@ export default () => {
             </button>
           </Form>
         </section>
-        <section className="space-y-4">
+        <section className="space-y-4 md:px-4">
           <div className="flex justify-between w-full items-center my-1">
-            {userVote ? (
-              <p>
-                You responded <b>{userVote.text}</b> on{" "}
-                <b>{dayjs(userVote.date).format("D MMMM YYYY")}</b>
-              </p>
-            ) : (
-              <p>
-                Survey closed on{" "}
-                {dayjs(loaderData.survey.surveyClose).format("D MMMM YYYY")}.
-              </p>
-            )}
+            {userVote}
             <Switch mode={displayPercent} setMode={setDisplayPercent} />
           </div>
           <Answers
@@ -407,17 +416,17 @@ export default () => {
             category={loaderData.survey.category}
           />
         </section>
-        <section className="md:order-last md:self-end h-min">
+        <section className="md:order-last md:self-end h-min md:px-4">
           <Scorebar {...scorebarProps} instructions={true} />
         </section>
         <section className="md:self-end md:px-4">
           <div className="flex flex-wrap gap-3 my-3">
             <NavButton name="Respond" />
             <NavButton name="Draft" />
+            <Link to="/surveys" className="underline inline-block self-end">
+              More Surveys
+            </Link>
           </div>
-          <Link to="/surveys" className="underline">
-            Play more Surveys
-          </Link>
           <p className="text-sm my-2 italic">
             Survey photo from{" "}
             <a className="underline" href={unsplashLink}>

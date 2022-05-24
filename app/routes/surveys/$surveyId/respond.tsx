@@ -7,6 +7,7 @@ import type {
 import { json, redirect } from "@remix-run/node";
 import { Form, Link, useActionData, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
+
 import { GameSchema, SurveySchema } from "~/db/schemas";
 import { client } from "~/db/connect.server";
 import {
@@ -255,74 +256,75 @@ export default () => {
         className="max-w-4xl flex-grow mx-4 md:mx-auto flex flex-col md:flex-row
     my-6 flex-wrap"
       >
-        <section className="md:px-4 py-2 space-y-4 md:w-max">
-          <Survey survey={loaderData.survey} />
-          <Form method="post" className="w-full flex space-x-2 my-4">
-            <input
-              type="text"
-              name="vote"
-              className="border border-outline py-1 px-2 
+        <div className="flex flex-col md:flex-row">
+          <section className="md:px-4 py-2 space-y-4">
+            <Survey survey={loaderData.survey} />
+            <Form method="post" className="w-full flex space-x-2 my-4">
+              <input
+                type="text"
+                name="vote"
+                className="border border-outline py-1 px-2 
             bg-white disabled:bg-gray-300 w-full"
-              disabled={!!yourVote}
-              placeholder={placeholderText}
-              maxLength={20}
-              value={voteText}
-              onChange={(e) => setVoteText(e.target.value)}
-              spellCheck
-            />
-            <button
-              className="silver px-3 py-1"
-              type="submit"
-              name="_action"
-              value="submitResponse"
-              disabled={!enabled}
-            >
-              Enter
-            </button>
-          </Form>
-          {yourVote && (
-            <div className="min-h-[2rem] max-w-survey">
-              <p>
-                Your response is <b>{yourVote}</b>.
-              </p>
-              <p>
-                Survey responses can be guessed in <b>{nextSurvey}</b>.
-              </p>
-            </div>
-          )}
-          {msg && <p style={{ color: msgColour }}>{msg}</p>}
-        </section>
-        <section
-          className={`md:w-max md:px-4 ${yourVote && "hidden md:block"}`}
-        >
-          <h2 className="font-header mb-2 text-2xl">Instructions</h2>
-          <p>Use this page to respond to the survey for an upcoming game!</p>
-          <p>Your response to the survey should:</p>
-          <ul className="list-disc list-outside ml-8">
-            <li>Be only 1 word</li>
-            <li>Be spelled correctly (please proof-read carefully!)</li>
-            <li>Not have any profanity, obscenity, or hate speech</li>
-            <li>Only have standard English letters or numbers</li>
-          </ul>
+                disabled={!!yourVote}
+                placeholder={placeholderText}
+                maxLength={20}
+                value={voteText}
+                onChange={(e) => setVoteText(e.target.value)}
+                spellCheck
+              />
+              <button
+                className="silver px-3 py-1"
+                type="submit"
+                name="_action"
+                value="submitResponse"
+                disabled={!enabled}
+              >
+                Enter
+              </button>
+            </Form>
+            {yourVote && (
+              <div className="min-h-[2rem] max-w-survey">
+                <p>
+                  Your response is <b>{yourVote}</b>.
+                </p>
+                <p>
+                  Survey responses can be guessed in <b>{nextSurvey}</b>.
+                </p>
+              </div>
+            )}
+            {msg && <p style={{ color: msgColour }}>{msg}</p>}
+          </section>
+          <section className={`md:px-4 w-fit ${yourVote && "hidden md:block"}`}>
+            <h2 className="font-header mb-2 text-2xl">Instructions</h2>
+            <p>Use this page to respond to the survey for an upcoming game!</p>
+            <p>Your response to the survey should:</p>
+            <ul className="list-disc list-outside ml-8">
+              <li>Be only 1 word</li>
+              <li>
+                Be spelled correctly, with American English spellings preferred
+              </li>
+              <li>Not have any profanity or obscenity</li>
+              <li>Only have unaccented letters or numbers</li>
+            </ul>
 
-          <div className="my-4 md:mt-12">
-            <div className="flex flex-wrap gap-3 my-3">
-              <NavButton name="Guess" />
-              <NavButton name="Draft" />
+            <div className="my-4 md:mt-12">
+              <div className="flex flex-wrap gap-3 my-3">
+                <NavButton name="Guess" />
+                <NavButton name="Draft" />
+              </div>
+              <Link to="/surveys" className="underline text-right w-full">
+                Play more Surveys
+              </Link>
             </div>
-            <Link to="/surveys" className="underline text-right w-full">
-              Play more Surveys
-            </Link>
-          </div>
-        </section>
+          </section>
+        </div>
         {yourVote && (
-          <section className="w-full md:px-4">
+          <section className="md:px-4">
             <h2 className="font-header mb-2 text-2xl mt-2">
               Respond to another survey!
             </h2>
             <Form
-              className="md:w-max flex flex-wrap md:justify-between items-center 
-              md:space-x-4 mb-4 justify-around"
+              className="flex items-center md:space-x-4 mb-4 justify-around md:justify-start"
               method="post"
             >
               <label htmlFor="date" className="hidden md:block">
@@ -352,7 +354,7 @@ export default () => {
                 return <Survey survey={survey} key={idx} />;
               })}
             </div>
-            <p className="text-sm my-2 italic">
+            <p className="text-sm my-4 italic">
               Survey photos from{" "}
               <a className="underline my-3" href={unsplashLink}>
                 Unsplash

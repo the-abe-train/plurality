@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-const email = "test3@plurality.fun";
+const email = "test4@plurality.fun";
 
 describe("Gameplay walkthrough", () => {
   it("plays the entire game", () => {
@@ -15,6 +15,7 @@ describe("Gameplay walkthrough", () => {
 
     // Log user out
     cy.visit("/user");
+    cy.url().should("contain", "user");
     cy.get("[data-cy=logout]").click();
     cy.wait(1000);
     cy.url().should("equal", "http://localhost:3000/");

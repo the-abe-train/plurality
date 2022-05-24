@@ -15,7 +15,6 @@ import { client } from "~/db/connect.server";
 
 import AnimatedBanner from "~/components/text/AnimatedBanner";
 import Survey from "~/components/game/Survey";
-import NavButton from "~/components/buttons/NavButton";
 
 import { draftIcon, guessIcon, logo, respondIcon } from "~/images/icons";
 
@@ -93,9 +92,7 @@ export default function questions() {
           <div className="col-start-2">
             <Survey survey={data.survey} />
           </div>
-          <div className="flex-wrap gap-3 mt-1 mb-2 items-end hidden md:flex">
-            <NavButton name="Respond" />
-            <NavButton name="Draft" />
+          <div className="my-2 md:my-0 col-start-2 row-start-3">
             <Link to="/surveys" className="underline inline">
               More Surveys
             </Link>

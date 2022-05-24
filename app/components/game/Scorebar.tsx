@@ -141,8 +141,8 @@ export default function Scorebar({
             >
               {currentItem === "Guesses left" && (
                 <p className="m-0 h-max">
-                  You have <b>{MAX_GUESSES - guesses.length} guesses</b> left to
-                  reach a <b>{THRESHOLD}% score</b>.
+                  You have <b>{MAX_GUESSES - guesses.length} valid guesses</b>{" "}
+                  left to reach a <b>{THRESHOLD}% score</b>.
                 </p>
               )}
               {currentItem === "Points" && (

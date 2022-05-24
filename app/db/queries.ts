@@ -269,7 +269,7 @@ export async function votesBySurvey(client: MongoClient, surveyId: number) {
   const db = await connectDb(client);
   const gamesCollection = db.collection<GameSchema>("games");
   const votes = await gamesCollection
-    .aggregate([
+    .aggregate<VoteAggregation>([
       {
         $match: {
           survey: surveyId,
@@ -286,22 +286,9 @@ export async function votesBySurvey(client: MongoClient, surveyId: number) {
           },
         },
       },
-      {
-        $setWindowFields: {
-          partitionBy: "_id",
-          sortBy: {
-            votes: -1,
-          },
-          output: {
-            ranking: {
-              $rank: {},
-            },
-          },
-        },
-      },
     ])
     .toArray();
-  return votes as VoteAggregation[];
+  return votes;
 }
 
 type GameProps = {
@@ -379,17 +366,11 @@ export async function addVote(
 ) {
   const db = await connectDb(client);
   const gamesCollection = db.collection<GameSchema>("games");
+  const text =
+    typeof voteText === "string" ? capitalizeFirstLetter(voteText) : voteText;
   const updatedGameResult = await gamesCollection.findOneAndUpdate(
     { _id: gameId },
-    {
-      $set: {
-        lastUpdated: new Date(),
-        vote: {
-          text: capitalizeFirstLetter(voteText),
-          date: new Date(),
-        },
-      },
-    },
+    { $set: { lastUpdated: new Date(), vote: { text, date: new Date() } } },
     { upsert: false, returnDocument: "after" }
   );
   const updatedGame = updatedGameResult.value;
@@ -401,6 +382,15 @@ export async function gamesByUser(client: MongoClient, userId: ObjectId) {
   const gamesCollection = db.collection<GameSchema>("games");
   const games = await gamesCollection.find({ user: userId }).toArray();
   return games;
+}
+
+export async function surveyVotes(client: MongoClient, surveyId: number) {
+  const db = await connectDb(client);
+  const gamesCollection = db.collection<GameSchema>("games");
+  const games = await gamesCollection
+    .find({ survey: surveyId, vote: { $exists: true } })
+    .toArray();
+  return games.length;
 }
 
 // Session queries

@@ -7,7 +7,7 @@ import type {
 import { json, redirect } from "@remix-run/node";
 import { Form, Link, useActionData, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import {
   clearAllBodyScrollLocks,
@@ -23,7 +23,12 @@ import backgrounds from "~/styles/backgrounds.css";
 
 import { parseAnswer, trim } from "~/util/text";
 import { client } from "~/db/connect.server";
-import { surveyByClose, surveyById, votesBySurvey } from "~/db/queries";
+import {
+  surveyByClose,
+  surveyById,
+  surveyVotes,
+  votesBySurvey,
+} from "~/db/queries";
 import { SurveySchema, VoteAggregation } from "~/db/schemas";
 import { commitSession, getSession } from "~/sessions";
 import { exclamationIcon, guessIcon } from "~/images/icons";
@@ -37,6 +42,7 @@ import NavButton from "~/components/buttons/NavButton";
 import Modal from "~/components/modal/Modal";
 import { MAX_GUESSES } from "~/util/constants";
 import { checkWin } from "~/util/gameplay";
+import { surveyAnswers } from "~/util/nlp";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -88,9 +94,10 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   const tomorrowSc = midnight.toDate();
 
   // Get surveys
-  const [survey, tomorrow] = await Promise.all([
+  const [survey, tomorrow, totalVotes] = await Promise.all([
     surveyById(client, surveyId),
     surveyByClose(client, tomorrowSc),
+    surveyVotes(client, surveyId),
   ]);
   invariant(survey, "No survey found!");
   invariant(tomorrow, "Tomorrow's survey not found!");
@@ -100,14 +107,6 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   if (dayjs(surveyClose) >= dayjs()) {
     return redirect(`/surveys/${surveyId}/respond`);
   }
-
-  // Get additional surveydata from db and apis
-  const votes = await votesBySurvey(client, surveyId);
-
-  // console.log("Votes", votes);
-  const totalVotes = votes.reduce((sum, ans) => {
-    return sum + ans.votes;
-  }, 0);
 
   const data = { survey, totalVotes, tomorrow };
   return json<LoaderData>(data, {
@@ -161,8 +160,8 @@ export const action: ActionFunction = async ({ request, params }) => {
     return json<ActionData>({ message });
   }
 
-  // Pull in more relevant data
-  const answers = await votesBySurvey(client, surveyId);
+  // Compare guess against actual survey responses
+  const answers = await surveyAnswers(client, surveyId);
   const correctGuess = answers.find((ans) => {
     const text = ans._id;
     const parsedAnswer = parseAnswer(text);
@@ -384,10 +383,10 @@ export default () => {
           <div className="flex flex-wrap gap-3 my-3">
             <NavButton name="Respond" />
             <NavButton name="Draft" />
+            <Link to="/surveys" className="underline inline-block self-end">
+              More Surveys
+            </Link>
           </div>
-          <Link to="/surveys" className="underline">
-            Play more Surveys
-          </Link>
           <p className="text-sm my-2 italic">
             Survey photo from{" "}
             <a className="underline" href={unsplashLink}>

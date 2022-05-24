@@ -40,10 +40,14 @@ export const truncateEthAddress = (address: string) => {
   return `${match[1]}…${match[2]}`;
 };
 
-export function capitalizeFirstLetter(string: string | number) {
-  if (typeof string === "number") return string;
-  return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+export function capitalizeFirstLetter(word: string) {
+  return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
 }
+
+// export function capitalizeFirstLetter(string: string | number) {
+//   if (typeof string === "number") return string;
+//   return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+// }
 
 export function truncateName(name: string | undefined): string {
   if (!name) return "Connect";
