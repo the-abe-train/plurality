@@ -39,15 +39,20 @@ https://plurality.fun`;
         title: "Plurality Stats",
         text: shareString,
       });
-    } else {
+    } else if ("clipboard" in navigator) {
       setMsg("Copied!");
-      if ("clipboard" in navigator) {
-        return await navigator.clipboard.writeText(shareString);
-      } else {
-        return document.execCommand("copy", true, shareString);
+      return await navigator.clipboard.writeText(shareString);
+    } else {
+      try {
+        document.execCommand("copy", true, shareString);
+        setMsg("Copied!");
+        return;
+      } catch (e) {
+        setMsg("Open browser to share");
       }
     }
   }
+
   return (
     <div className="flex flex-col items-center">
       <button
