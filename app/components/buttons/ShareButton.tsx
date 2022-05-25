@@ -58,7 +58,7 @@ https://plurality.fun`;
       >
         <img src={shareIcon} width={16} height={16} alt="Share icon" />
       </button>
-      <p>{msg}</p>
+      <p className="text-center">{msg}</p>
     </div>
   );
 }
