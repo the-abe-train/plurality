@@ -32,24 +32,28 @@ ${purples}${oranges}
 
 https://plurality.fun`;
     setCopied(true);
-    setMsg("Shared!");
-    console.log("Share message:", shareString);
-    if ("canShare" in navigator && isMobile && !isFirefox) {
-      return await navigator.share({
-        title: "Plurality Stats",
-        text: shareString,
-      });
-    } else if ("clipboard" in navigator) {
-      setMsg("Copied!");
-      return await navigator.clipboard.writeText(shareString);
-    } else {
-      try {
+    try {
+      if ("canShare" in navigator && isMobile && !isFirefox) {
+        console.log("Option 1");
+        setMsg("Shared!");
+        return await navigator.share({
+          title: "Plurality Stats",
+          text: shareString,
+        });
+      } else if (navigator.clipboard && window.isSecureContext) {
+        console.log("Option 2");
+        setMsg("Copied!");
+        return await navigator.clipboard.writeText(shareString);
+      } else {
+        console.log("Option 3");
         document.execCommand("copy", true, shareString);
         setMsg("Copied!");
         return;
-      } catch (e) {
-        setMsg("Open browser to share");
       }
+    } catch (e) {
+      console.log("Option 4");
+      setMsg("This browser cannot share.");
+      return;
     }
   }
 
