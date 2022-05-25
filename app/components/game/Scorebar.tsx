@@ -147,8 +147,8 @@ export default function Scorebar({
               )}
               {currentItem === "Points" && (
                 <p className="m-0 h-max">
-                  <b>Points</b> are the number votes received by all correctly
-                  guessed survey responses.
+                  Your <b>points</b> are the total of number of individual user
+                  responses that you have correctly guessed.
                 </p>
               )}
               {currentItem === "Score" && (

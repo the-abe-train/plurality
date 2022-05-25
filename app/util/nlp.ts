@@ -28,8 +28,5 @@ export async function surveyAnswers(client: MongoClient, surveyId: number) {
       return { ...resp, ranking: idx + 1 };
     });
 
-  console.log(rankedResponses);
-  console.log(lemmatize.noun("Women"), lemmatize.noun("Woman"));
-  console.log(lemmatize.noun("banana"), lemmatize.noun("bananas"));
   return rankedResponses;
 }
