@@ -19,6 +19,7 @@ export default function ShareButton({
   // Sharing your score
   const [msg, setMsg] = useState("Share");
   const [copied, setCopied] = useState(false);
+
   async function shareScore() {
     const purples = [...new Array(guessesToWin)].map(() => "🟪").join("");
     const oranges = [...new Array(guesses - guessesToWin)]
@@ -32,22 +33,22 @@ ${purples}${oranges}
 
 https://plurality.fun`;
     setCopied(true);
-    setMsg("Shared!");
-    console.log("Share message:", shareString);
-    if ("canShare" in navigator && isMobile && !isFirefox) {
-      return await navigator.share({
-        title: "Plurality Stats",
-        text: shareString,
-      });
-    } else {
-      setMsg("Copied!");
-      if ("clipboard" in navigator) {
-        return await navigator.clipboard.writeText(shareString);
+    try {
+      if ("canShare" in navigator && isMobile && !isFirefox) {
+        await navigator.share({ title: "Plurality Stats", text: shareString });
+        return setMsg("Shared!");
+      } else if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(shareString);
+        return setMsg("Copied!");
       } else {
-        return document.execCommand("copy", true, shareString);
+        document.execCommand("copy", true, shareString);
+        return setMsg("Copied!");
       }
+    } catch (e) {
+      return setMsg("This browser cannot share");
     }
   }
+
   return (
     <div className="flex flex-col items-center">
       <button
