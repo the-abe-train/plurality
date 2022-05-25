@@ -66,6 +66,8 @@ export const action: ActionFunction = async ({ request }) => {
   const wallet = form.get("wallet") as string;
   const localData = form.get("localData") as string;
 
+  console.log(localData);
+
   // Successful redirect function
   async function successfulRedirect(userId: ObjectId) {
     session.set("user", userId);
@@ -106,6 +108,7 @@ export const action: ActionFunction = async ({ request }) => {
   // If there is a game in the local storage, uplaod it for the user.
   if (localData) {
     const { win, guesses, survey, guessesToWin } = JSON.parse(localData);
+    console.log(win, guesses, survey, guessesToWin);
     await gameBySurveyUser({
       client,
       userId,
@@ -146,6 +149,8 @@ export default function signup() {
     const guessesToWin = localStorage.getItem("guessesToWin");
     setLocalData(JSON.stringify({ survey, guesses, win, guessesToWin }));
   }, []);
+
+  useEffect(() => console.log(localData), [localData]);
 
   return (
     <main className="container flex-grow px-4 sm:px-0 mx-auto w-full max-w-4xl">
