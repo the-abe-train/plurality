@@ -24,7 +24,7 @@ export default function ShareButton({
     const purples = [...new Array(guessesToWin)].map(() => "🟪").join("");
     const oranges = [...new Array(guesses - guessesToWin)]
       .map(() => "🟧")
-      .join();
+      .join("");
     let shareString = `#Plurality Survey ${surveyId}
 Score: ${percentFormat(score)}
 Guesses to win: ${guessesToWin}
