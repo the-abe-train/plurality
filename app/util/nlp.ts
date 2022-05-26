@@ -23,7 +23,11 @@ export async function surveyAnswers(client: MongoClient, surveyId: number) {
   }, [] as VoteAggregation[]);
 
   const rankedResponses = lemmatizedResponses
-    .sort((a, z) => z.votes - a.votes)
+    .sort((a, z) => {
+      const voteDiff = z.votes - a.votes;
+      if (voteDiff !== 0) return voteDiff;
+      return a._id.localeCompare(z._id);
+    })
     .map((resp, idx) => {
       return { ...resp, ranking: idx + 1 };
     });

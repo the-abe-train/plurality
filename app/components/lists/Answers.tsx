@@ -19,7 +19,7 @@ export default function Answers({
   category,
 }: Props) {
   const nodeRef = useRef<HTMLDivElement>(null!);
-  const sortedGuesses = guesses.sort((a, z) => z.votes - a.votes);
+  const sortedGuesses = guesses.sort((a, z) => a.ranking - z.ranking);
   const guessedVotes = guesses.reduce((total, guess) => {
     return total + guess.votes;
   }, 0);
