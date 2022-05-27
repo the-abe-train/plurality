@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+  <!-- created with Free Online Sitemap Generator www.xml-sitemaps.com -->
+
+
+  <url>
+    <loc>https://plurality.fun/</loc>
+    <lastmod>2022-05-27T00:08:35+00:00</lastmod>
+    <priority>1.00</priority>
+  </url>
+  <url>
+    <loc>https://plurality.fun/surveys/2/sample</loc>
+    <lastmod>2022-05-27T00:08:35+00:00</lastmod>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://plurality.fun/surveys</loc>
+    <lastmod>2022-05-27T00:08:35+00:00</lastmod>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://plurality.fun/user/signup</loc>
+    <lastmod>2022-05-27T00:08:35+00:00</lastmod>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://plurality.fun/help/what-is-plurality</loc>
+    <lastmod>2022-05-27T00:08:35+00:00</lastmod>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://plurality.fun/help/policies</loc>
+    <lastmod>2022-05-27T00:08:35+00:00</lastmod>
+    <priority>0.64</priority>
+  </url>
+  <url>
+    <loc>https://plurality.fun/user/login</loc>
+    <lastmod>2022-05-27T00:08:35+00:00</lastmod>
+    <priority>0.64</priority>
+  </url>
+  <url>
+    <loc>https://plurality.fun/help/how-to-play</loc>
+    <lastmod>2022-05-27T00:08:35+00:00</lastmod>
+    <priority>0.64</priority>
+  </url>
+  <url>
+    <loc>https://plurality.fun/help/faq</loc>
+    <lastmod>2022-05-27T00:08:35+00:00</lastmod>
+    <priority>0.64</priority>
+  </url>
+  <url>
+    <loc>https://plurality.fun/help/terminology</loc>
+    <lastmod>2022-05-27T00:08:35+00:00</lastmod>
+    <priority>0.64</priority>
+  </url>
+
+
+</urlset>
