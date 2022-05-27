@@ -148,10 +148,10 @@ export default function signup() {
   }, []);
 
   return (
-    <main className="container flex-grow px-4 sm:px-0 mx-auto w-full max-w-4xl">
+    <main className="container flex-grow px-4 md:px-0 mx-auto w-full max-w-4xl">
       <AnimatedBanner text="Sign up" icon={userIcon} />
       <section className="flex justify-around flex-col md:flex-row my-4 md:my-8">
-        <article className="max-w-sm ">
+        <article className="max-w-sm mx-auto md:mx-0">
           <h2 className="text-center text-2xl font-header">
             Option 1: Email & Password
           </h2>
@@ -199,7 +199,7 @@ export default function signup() {
             <p className="text-red-700 text-left self-start">{message}</p>
           </Form>
         </article>
-        <article className="max-w-sm">
+        <article className="max-w-sm mx-auto md:mx-0">
           <h2 className="text-center text-2xl font-header">
             Option 2: Ethereum wallet
           </h2>
