@@ -74,7 +74,7 @@ const instructions = [
   },
 ];
 
-export default function questions() {
+export default () => {
   const data = useLoaderData<LoaderData>();
   return (
     <div className="light w-full top-0 bottom-0 flex flex-col min-h-screen">
@@ -132,4 +132,4 @@ export default function questions() {
       </div>
     </div>
   );
-}
+};

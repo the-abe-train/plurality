@@ -1,6 +1,7 @@
 import { Link } from "@remix-run/react";
 import AnimatedBanner from "~/components/text/AnimatedBanner";
 import InfoMenu from "~/components/navigation/InfoMenu";
+import { THRESHOLD } from "~/util/constants";
 
 export default function howToPlay() {
   return (
@@ -28,9 +29,10 @@ export default function howToPlay() {
             <p>
               Every day there is a new Survey. To play a Survey, you must try to
               guess the most common responses to the Survey question. To win,
-              you must guess how over 80% of players responded to that Survey.
-              You are only allowed 20 guesses to pass the 80% threshold. A guess
-              is only valid if it was the response of at least 1 person.
+              you must guess how over {THRESHOLD}% of players responded to that
+              Survey. You are only allowed 20 guesses to pass the {THRESHOLD}%
+              threshold. A guess is only valid if it was the response of at
+              least 1 person.
             </p>
             <p>
               Hint: If you guess a response nobody gave, don't worry, it doesn't
