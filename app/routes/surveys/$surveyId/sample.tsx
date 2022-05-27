@@ -5,7 +5,13 @@ import type {
   MetaFunction,
 } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Form, Link, useActionData, useLoaderData } from "@remix-run/react";
+import {
+  Form,
+  Link,
+  useActionData,
+  useCatch,
+  useLoaderData,
+} from "@remix-run/react";
 import invariant from "tiny-invariant";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence } from "framer-motion";
@@ -37,6 +43,7 @@ import Modal from "~/components/modal/Modal";
 import { MAX_GUESSES } from "~/util/constants";
 import { checkWin } from "~/util/gameplay";
 import { getLemma, surveyAnswers } from "~/util/nlp";
+import { CatchBoundaryComponent } from "@remix-run/react/routeModules";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -88,13 +95,28 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   const tomorrowSc = midnight.toDate();
 
   // Get surveys
-  const [survey, tomorrow, totalVotes] = await Promise.all([
+  let [survey, tomorrow, totalVotes] = await Promise.all([
     surveyById(client, surveyId),
     surveyByClose(client, tomorrowSc),
     surveyVotes(client, surveyId),
   ]);
+  if (!survey) {
+    throw new Response("Survey has not been drafted yet.", {
+      status: 404,
+    });
+  }
   invariant(survey, "No survey found!");
-  invariant(tomorrow, "Tomorrow's survey not found!");
+  if (!tomorrow) {
+    tomorrow = {
+      _id: 1,
+      text: "What is the most expensive single item in your home?",
+      surveyClose: new Date("2022-05-25T03:59:59.999+00:00"),
+      photo: "v-unZQ5EeU8",
+      community: false,
+      drafted: new Date(),
+      category: "word",
+    };
+  }
 
   // Redirect to Respond if survey close hasn't happened yet
   const surveyClose = survey.surveyClose;
@@ -111,6 +133,11 @@ export const loader: LoaderFunction = async ({ params, request }) => {
 };
 
 export const meta: MetaFunction = ({ data }: { data: LoaderData }) => {
+  if (!data) {
+    return {
+      title: `Plurality Survey Not Found`,
+    };
+  }
   return {
     title: `Plurality Survey #${data.survey._id}`,
     description: `Plurality Survey #${data.survey._id}: ${data.survey.text}`,
@@ -176,6 +203,20 @@ export const action: ActionFunction = async ({ request, params }) => {
     message = "Great guess!";
   }
   return json<ActionData>({ message, correctGuess, win, gameOver });
+};
+
+export const CatchBoundary: CatchBoundaryComponent = () => {
+  const caught = useCatch();
+
+  return (
+    <main className="max-w-4xl flex-grow mx-4 flex flex-col my-6 flex-wrap">
+      <h1 className="font-header mb-2 text-2xl">Survey not found</h1>
+      <p>Status: {caught.status}</p>
+      <pre>
+        <code>{JSON.stringify(caught.data, null, 2)}</code>
+      </pre>
+    </main>
+  );
 };
 
 export default () => {

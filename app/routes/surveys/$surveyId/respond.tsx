@@ -5,7 +5,13 @@ import type {
   MetaFunction,
 } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Form, Link, useActionData, useLoaderData } from "@remix-run/react";
+import {
+  Form,
+  Link,
+  useActionData,
+  useCatch,
+  useLoaderData,
+} from "@remix-run/react";
 import invariant from "tiny-invariant";
 
 import { GameSchema, SurveySchema } from "~/db/schemas";
@@ -30,6 +36,7 @@ import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import { respondIcon } from "~/images/icons";
 import { parseFutureDate } from "~/util/text";
+import { CatchBoundaryComponent } from "@remix-run/react/routeModules";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -42,6 +49,11 @@ type LoaderData = {
 };
 
 export const meta: MetaFunction = ({ data }: { data: LoaderData }) => {
+  if (!data) {
+    return {
+      title: `Plurality Survey Not Found`,
+    };
+  }
   return {
     title: `Plurality Survey #${data.survey._id}`,
     description: `Plurality Survey #${data.survey._id}: ${data.survey.text}`,
@@ -81,6 +93,11 @@ export const loader: LoaderFunction = async ({ params, request }) => {
 
   // Get data from db and apis
   const survey = await surveyById(client, surveyId);
+  if (!survey) {
+    throw new Response("Survey has not been drafted yet.", {
+      status: 404,
+    });
+  }
   invariant(survey, "No Survey found!");
 
   // Redirect to guess if the survey is closed
@@ -169,6 +186,20 @@ export const action: ActionFunction = async ({ request, params }) => {
     const newSurvey = await surveyByClose(client, midnight);
     return redirect(`/surveys/${newSurvey?._id}/respond`);
   }
+};
+
+export const CatchBoundary: CatchBoundaryComponent = () => {
+  const caught = useCatch();
+
+  return (
+    <main className="max-w-4xl flex-grow mx-4 flex flex-col my-6 flex-wrap">
+      <h1 className="font-header mb-2 text-2xl">Survey not found</h1>
+      <p>Status: {caught.status}</p>
+      <pre>
+        <code>{JSON.stringify(caught.data, null, 2)}</code>
+      </pre>
+    </main>
+  );
 };
 
 export default () => {
