@@ -11,6 +11,7 @@ import { capitalizeFirstLetter, truncateEthAddress } from "~/util/text";
 import { randomPassword } from "../util/authorize";
 import dayjs from "dayjs";
 import { SessionData } from "@remix-run/node";
+import { MAX_GUESSES } from "~/util/constants";
 
 // Connect database
 async function connectDb(client: MongoClient) {
@@ -320,7 +321,7 @@ export async function gameBySurveyUser({
         guesses: guesses || [],
         win: win || false,
         score: 0,
-        guessesToWin: guessesToWin || undefined,
+        guessesToWin: guessesToWin || MAX_GUESSES,
       },
       $max: { totalVotes },
     },
@@ -336,7 +337,7 @@ export async function addGuess(
   guess: VoteAggregation,
   win: boolean,
   score: number,
-  guessesUsed?: number
+  guessesToWin: number
 ) {
   const db = await connectDb(client);
   const gamesCollection = db.collection<GameSchema>("games");
@@ -347,9 +348,9 @@ export async function addGuess(
       score,
     },
     $push: { guesses: guess },
-    $min: { guessesToWin: guessesUsed },
+    $min: { guessesToWin },
   };
-  if (!guessesUsed) delete newData["$min"];
+  if (!win) delete newData["$min"];
   const updatedGameResult = await gamesCollection.findOneAndUpdate(
     { _id: gameId },
     newData,

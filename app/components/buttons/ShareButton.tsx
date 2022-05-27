@@ -25,11 +25,12 @@ export default function ShareButton({
     const oranges = [...new Array(guesses - guessesToWin)]
       .map(() => "🟧")
       .join("");
+    const colours = guesses >= guessesToWin ? purples + oranges : "";
     let shareString = `#Plurality Survey ${surveyId}
 Score: ${percentFormat(score)}
 Guesses to win: ${guessesToWin}
 Guesses total: ${guesses}
-${purples}${oranges}
+${colours}
 
 https://plurality.fun`;
     setCopied(true);
