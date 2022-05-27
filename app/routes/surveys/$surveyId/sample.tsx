@@ -7,7 +7,7 @@ import type {
 import { json, redirect } from "@remix-run/node";
 import { Form, Link, useActionData, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import {
   clearAllBodyScrollLocks,
@@ -21,14 +21,8 @@ import timezone from "dayjs/plugin/timezone";
 import styles from "~/styles/app.css";
 import backgrounds from "~/styles/backgrounds.css";
 
-import { parseAnswer, trim } from "~/util/text";
 import { client } from "~/db/connect.server";
-import {
-  surveyByClose,
-  surveyById,
-  surveyVotes,
-  votesBySurvey,
-} from "~/db/queries";
+import { surveyByClose, surveyById, surveyVotes } from "~/db/queries";
 import { SurveySchema, VoteAggregation } from "~/db/schemas";
 import { commitSession, getSession } from "~/sessions";
 import { exclamationIcon, guessIcon } from "~/images/icons";
@@ -42,7 +36,7 @@ import NavButton from "~/components/buttons/NavButton";
 import Modal from "~/components/modal/Modal";
 import { MAX_GUESSES } from "~/util/constants";
 import { checkWin } from "~/util/gameplay";
-import { surveyAnswers } from "~/util/nlp";
+import { getLemma, surveyAnswers } from "~/util/nlp";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -145,16 +139,11 @@ export const action: ActionFunction = async ({ request, params }) => {
 
   // Pull in relevant data
   const surveyId = Number(params.surveyId);
-  const trimmedGuess = guess.trim().toLowerCase();
+  const lemmaGuess = getLemma(guess);
 
   // Reject already guessed answers
   const guessesArray: VoteAggregation[] = JSON.parse(guesses);
-  const alreadyGuessed = guessesArray.find((ans) => {
-    const text = ans._id;
-    const parsedAnswer = parseAnswer(text);
-    if (typeof parsedAnswer === "number") return trim(text) === trimmedGuess;
-    return trim(text) === trimmedGuess || parsedAnswer.includes(trimmedGuess);
-  });
+  const alreadyGuessed = guessesArray.find((ans) => ans._id === lemmaGuess);
   if (alreadyGuessed) {
     const message = `"${alreadyGuessed._id}" was already guessed.`;
     return json<ActionData>({ message });
@@ -162,12 +151,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 
   // Compare guess against actual survey responses
   const answers = await surveyAnswers(client, surveyId);
-  const correctGuess = answers.find((ans) => {
-    const text = ans._id;
-    const parsedAnswer = parseAnswer(text);
-    if (typeof parsedAnswer === "number") return trim(text) === trimmedGuess;
-    return trim(text) === trimmedGuess || parsedAnswer.includes(trimmedGuess);
-  });
+  const correctGuess = answers.find((ans) => ans._id === lemmaGuess);
 
   // Reject incorrect guesses
   if (!correctGuess) {
@@ -323,7 +307,7 @@ export default () => {
       >
         <section className="md:px-4 space-y-4 mx-auto md:mx-0 justify-self-start">
           <Survey {...surveyProps} />
-          <p>{gameOver}</p>
+          {message !== "" && <p data-cy="message">{message}</p>}
           <Form className="w-survey mx-auto flex space-x-2" method="post">
             <input
               className="border border-outline py-1 px-2 
@@ -334,6 +318,7 @@ export default () => {
               value={guess}
               disabled={gameOver}
               onChange={(e) => setGuess(e.target.value)}
+              data-cy="guess-input"
               required
             />
             <input
@@ -358,9 +343,8 @@ export default () => {
               Enter
             </button>
           </Form>
-          {message !== "" && <p>{message}</p>}
         </section>
-        <section className="space-y-4">
+        <section className="space-y-4 md:px-4">
           <div className="flex justify-between w-full items-center">
             <p>
               Survey closed on{" "}
@@ -376,7 +360,7 @@ export default () => {
             category={loaderData.survey.category}
           />
         </section>
-        <section className="md:order-last">
+        <section className="md:order-last md:self-end h-min md:px-4">
           <Scorebar {...scorebarProps} instructions />
         </section>
         <section className="md:self-end md:px-4">

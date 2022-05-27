@@ -226,6 +226,9 @@ export default () => {
   useEffect(() => {
     const containsLetter = !!voteText.match(/[a-zA-Z]/);
     const containsNumber = !!voteText.match(/\d/);
+    const containsSymbol = !!voteText.match(
+      /[-!$%^&*()_+|~=`{}\[\]:";'<>?,.\/]/
+    );
     const { category } = loaderData.survey;
     const isPlaceholder = voteText === placeholderText;
     if (voteText.length < 1 || voteText.length >= 20) {
@@ -233,6 +236,10 @@ export default () => {
     } else if (voteText.includes(" ")) {
       setEnabled(false);
       setMsg("Response cannot contain a space.");
+      setMsgColour("red");
+    } else if (containsSymbol) {
+      setEnabled(false);
+      setMsg("Response cannot contain a symbol.");
       setMsgColour("red");
     } else if (category === "number" && containsLetter && !isPlaceholder) {
       setEnabled(false);

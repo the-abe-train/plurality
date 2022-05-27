@@ -21,7 +21,6 @@ import timezone from "dayjs/plugin/timezone";
 import styles from "~/styles/app.css";
 import backgrounds from "~/styles/backgrounds.css";
 
-import { parseAnswer, trim } from "~/util/text";
 import { client } from "~/db/connect.server";
 import {
   addGuess,
@@ -29,11 +28,10 @@ import {
   surveyByClose,
   surveyById,
   surveyVotes,
-  votesBySurvey,
 } from "~/db/queries";
 import { GameSchema, SurveySchema, VoteAggregation } from "~/db/schemas";
 import { commitSession, getSession } from "~/sessions";
-import { MAX_GUESSES } from "~/util/constants";
+import { MAX_GUESSES, THRESHOLD } from "~/util/constants";
 import { exclamationIcon, guessIcon } from "~/images/icons";
 
 import Answers from "~/components/lists/Answers";
@@ -192,16 +190,12 @@ export const action: ActionFunction = async ({ request, params }) => {
     userId,
   });
   invariant(game, "Game upsert failed");
-  const trimmedGuess = guess.trim().toLowerCase();
+  const lemmaGuess = getLemma(guess);
 
   // Reject already guessed answers
+  const guessesArray = game.guesses;
   if (game.guesses) {
-    const alreadyGuessed = game.guesses.find((ans) => {
-      const text = ans._id;
-      const parsedAnswer = parseAnswer(text);
-      if (typeof parsedAnswer === "number") return trim(text) === trimmedGuess;
-      return trim(text) === trimmedGuess || parsedAnswer.includes(trimmedGuess);
-    });
+    const alreadyGuessed = guessesArray.find((ans) => ans._id === lemmaGuess);
     if (alreadyGuessed) {
       const message = `"${alreadyGuessed._id}" was already guessed.`;
       return json<ActionData>({ message });
@@ -209,12 +203,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   }
   // Compare guess against actual survey responses
   const answers = await surveyAnswers(client, surveyId);
-  const correctGuess = answers.find((ans) => {
-    const text = ans._id;
-    const parsedAnswer = parseAnswer(text);
-    if (typeof parsedAnswer === "number") return trim(text) === trimmedGuess;
-    return trim(text) === trimmedGuess || parsedAnswer.includes(trimmedGuess);
-  });
+  const correctGuess = answers.find((ans) => ans._id === lemmaGuess);
 
   // Reject incorrect guesses
   if (!correctGuess) {
@@ -226,7 +215,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   const guesses = [...game.guesses, correctGuess];
   const points = guesses.reduce((sum, guess) => sum + guess.votes, 0);
   const score = points / game.totalVotes;
-  const win = score >= 80 / 100;
+  const win = score >= THRESHOLD / 100;
   const guessesUsed = win ? guesses.length : 0;
   const updatedGame = await addGuess(
     client,
@@ -379,7 +368,7 @@ export default () => {
       >
         <section className="md:px-4 space-y-4 mx-auto md:mx-0 justify-self-start">
           <Survey {...surveyProps} />
-          {message !== "" && <p className="">{message}</p>}
+          {message !== "" && <p data-cy="message">{message}</p>}
           <Form className="w-full flex space-x-2" method="post">
             <input
               className="border border-outline py-1 px-2 
