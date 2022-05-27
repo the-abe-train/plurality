@@ -55,6 +55,7 @@ https://plurality.fun`;
         className="silver px-3 py-2"
         onClick={shareScore}
         disabled={copied}
+        data-cy="share-btn"
       >
         <img src={shareIcon} width={16} height={16} alt="Share icon" />
       </button>

@@ -14,7 +14,7 @@ export default function Switch({ mode, setMode }: Props) {
           className="w-full h-full"
           onChange={() => console.log("Switch toggled")}
         />
-        <span className="slider"></span>
+        <span className="slider" data-cy="percent-toggle"></span>
       </div>
     </form>
   );

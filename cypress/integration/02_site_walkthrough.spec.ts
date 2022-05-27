@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-const email = "test4@plurality.fun";
+const email = "test@plurality.fun";
 
 describe("Gameplay walkthrough", () => {
   it("plays the entire game", () => {
@@ -14,6 +14,7 @@ describe("Gameplay walkthrough", () => {
     cy.getCookie("user").should("exist");
 
     // Log user out
+    cy.wait(500);
     cy.visit("/user");
     cy.url().should("contain", "user");
     cy.get("[data-cy=logout]").click();
@@ -34,10 +35,17 @@ describe("Gameplay walkthrough", () => {
 
     // Guess survey 1
     cy.visit("/surveys/1/guess");
-    cy.get("[data-cy=guess-input]").type("broken");
+    cy.get("[data-cy=guess-input]").type("jewelry");
     cy.get("[data-cy=guess-enter]").click();
     cy.wait(1000);
-    cy.contains("3. Broken").should("exist");
+    cy.contains("1. Jewelry").should("exist");
+
+    // Guess survey 8
+    cy.visit("/surveys/8/guess");
+    cy.get("[data-cy=guess-input]").type("7");
+    cy.get("[data-cy=guess-enter]").click();
+    cy.wait(1000);
+    cy.contains("B. 7").should("exist");
 
     // Respond to tomorrow's survey
     cy.visit("/surveys/tomorrow");

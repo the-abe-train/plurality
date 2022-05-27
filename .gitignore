@@ -6,3 +6,6 @@ node_modules
 .env
 
 app/styles/app.css
+
+cypress/fixtures/auth.json
+cypress/fixtures/answers.json

@@ -15,6 +15,7 @@ export default ({ children, onClick }: Props) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
+      data-cy="backdrop"
     >
       {children}
     </motion.div>

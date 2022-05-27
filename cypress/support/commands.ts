@@ -1,29 +1,3 @@
-// ***********************************************
-// This example commands.js shows you how to
-// create various custom commands and overwrite
-// existing commands.
-//
-// For more comprehensive examples of custom
-// commands please read more here:
-// https://on.cypress.io/custom-commands
-// ***********************************************
-//
-//
-// -- This is a parent command --
-// Cypress.Commands.add('login', (email, password) => { ... })
-//
-//
-// -- This is a child command --
-// Cypress.Commands.add('drag', { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add('dismiss', { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This will overwrite an existing command --
-// Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
-
 Cypress.Commands.add("loginByForm", (email: string, password: string) => {
   Cypress.log({
     name: "loginByForm",
@@ -38,6 +12,43 @@ Cypress.Commands.add("loginByForm", (email: string, password: string) => {
       email,
       password,
     },
+    followRedirect: true,
+  });
+});
+
+Cypress.Commands.add("signupByForm", (email: string, password: string) => {
+  Cypress.log({
+    name: "signupByForm",
+    message: `${email} | ${password}`,
+  });
+
+  return cy.request({
+    method: "POST",
+    url: "/user/signup?_data=routes%2Fuser%signup",
+    form: true,
+    body: {
+      email,
+      password,
+      verify: password,
+    },
+    followRedirect: true,
+  });
+});
+
+Cypress.Commands.add("deleteAccountForm", () => {
+  Cypress.log({
+    name: "deleteAccountForm",
+    message: "Account deleted",
+  });
+
+  return cy.request({
+    method: "POST",
+    url: "/user?index=&_data=routes%2Fuser%2Findex",
+    form: true,
+    body: {
+      _action: "delete",
+    },
+    followRedirect: true,
   });
 });
 
