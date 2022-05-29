@@ -333,9 +333,10 @@ export default () => {
     );
   }, []);
 
-  // Loader data changes when the page changes
+  // Ensure state changes when the Survey number changes
   useEffect(() => {
     setGuesses(loaderData.game.guesses);
+    setWin(loaderData.game.win || false);
   }, [loaderData.game]);
 
   // Unsplash photo attributions
