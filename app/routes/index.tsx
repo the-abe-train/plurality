@@ -114,6 +114,7 @@ export default () => {
                         src={instr.icon}
                         alt={instr.name}
                         width={44}
+                        height={44}
                         className="block"
                       />
                     </Link>
