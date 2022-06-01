@@ -44,6 +44,7 @@ import { MAX_GUESSES } from "~/util/constants";
 import { checkWin } from "~/util/gameplay";
 import { getLemma, surveyAnswers } from "~/util/nlp";
 import { CatchBoundaryComponent } from "@remix-run/react/routeModules";
+import { surveyMeta } from "~/routeApis/surveyMeta";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -132,17 +133,7 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   });
 };
 
-export const meta: MetaFunction = ({ data }: { data: LoaderData }) => {
-  if (!data) {
-    return {
-      title: `Plurality Survey Not Found`,
-    };
-  }
-  return {
-    title: `Plurality Survey #${data.survey._id}`,
-    description: `Plurality Survey #${data.survey._id}: ${data.survey.text}`,
-  };
-};
+export const meta = surveyMeta;
 
 type ActionData = {
   message: string;

@@ -49,6 +49,7 @@ import AnimatedBanner from "~/components/text/AnimatedBanner";
 import NavButton from "~/components/buttons/NavButton";
 import Modal from "~/components/modal/Modal";
 import { getLemma, surveyAnswers } from "~/util/nlp";
+import { surveyMeta } from "~/routeApis/surveyMeta";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -69,17 +70,7 @@ type LoaderData = {
   tomorrow: SurveySchema;
 };
 
-export const meta: MetaFunction = ({ data }: { data: LoaderData }) => {
-  if (!data) {
-    return {
-      title: `Plurality Survey Not Found`,
-    };
-  }
-  return {
-    title: `Plurality Survey #${data.survey._id}`,
-    description: `Plurality Survey #${data.survey._id}: ${data.survey.text}`,
-  };
-};
+export const meta = surveyMeta;
 
 export const loader: LoaderFunction = async ({ params, request }) => {
   // Get user info
