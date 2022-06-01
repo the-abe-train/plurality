@@ -37,6 +37,7 @@ import timezone from "dayjs/plugin/timezone";
 import { respondIcon } from "~/images/icons";
 import { parseFutureDate } from "~/util/text";
 import { CatchBoundaryComponent } from "@remix-run/react/routeModules";
+import { surveyMeta } from "~/routeApis/surveyMeta";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -48,17 +49,7 @@ type LoaderData = {
   lastSurveyDate?: string;
 };
 
-export const meta: MetaFunction = ({ data }: { data: LoaderData }) => {
-  if (!data) {
-    return {
-      title: `Plurality Survey Not Found`,
-    };
-  }
-  return {
-    title: `Plurality Survey #${data.survey._id}`,
-    description: `Plurality Survey #${data.survey._id}: ${data.survey.text}`,
-  };
-};
+export const meta = surveyMeta;
 
 async function getPreviews(userId: ObjectId, surveyId: number) {
   const futureSurveys = await getFutureSurveys(client, userId);
