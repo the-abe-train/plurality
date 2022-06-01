@@ -82,6 +82,12 @@ export const loader: LoaderFunction = async ({ params, request }) => {
     });
   }
 
+  return redirect(`/surveys/${surveyId}/sample`, {
+    headers: {
+      "Set-Cookie": await commitSession(session),
+    },
+  });
+
   // Get data from db and apis
   const survey = await surveyById(client, surveyId);
   if (!survey) {

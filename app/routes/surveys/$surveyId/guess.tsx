@@ -78,6 +78,12 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   const userId = session.get("user");
   const surveyId = Number(params.surveyId);
 
+  return redirect(`/surveys/${surveyId}/sample`, {
+    headers: {
+      "Set-Cookie": await commitSession(session),
+    },
+  });
+
   // Redirect not signed-in users to home page
   if (!userId) {
     // User can play exactly one game if they're not signed in.
@@ -322,7 +328,7 @@ export default () => {
         <b>{dayjs(voteDate).format("D MMMM YYYY")}</b>.
       </p>
     );
-  }, []);
+  }, [loaderData.game, loaderData.survey]);
 
   // Ensure state changes when the Survey number changes
   useEffect(() => {

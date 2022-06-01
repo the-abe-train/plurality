@@ -68,25 +68,26 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   const userId = session.get("user");
   const surveyId = Number(params.surveyId);
 
+  // IN THIS BRANCH, NEVER REDIRECT TO GUESS
   // Redirect users who are signed-in to regular page
-  if (userId) {
-    return redirect(`/surveys/${surveyId}/guess`);
-  }
+  // if (userId) {
+  //   return redirect(`/surveys/${surveyId}/guess`);
+  // }
 
   // User can play exactly one game if they're not signed in.
   // Check if the player already has a game in the session
-  if (session.has("game") && session.get("game") !== surveyId) {
-    session.flash(
-      "message",
-      `You need to be logged-in to play more Surveys.
-        (You have already played Survey ${session.get("game")})`
-    );
-    return redirect("/user/signup", {
-      headers: {
-        "Set-Cookie": await commitSession(session),
-      },
-    });
-  }
+  // if (session.has("game") && session.get("game") !== surveyId) {
+  //   session.flash(
+  //     "message",
+  //     `You need to be logged-in to play more Surveys.
+  //       (You have already played Survey ${session.get("game")})`
+  //   );
+  //   return redirect("/user/signup", {
+  //     headers: {
+  //       "Set-Cookie": await commitSession(session),
+  //     },
+  //   });
+  // }
 
   // Set the sample game for this not-logged-in user
   session.set("game", surveyId);
@@ -119,11 +120,12 @@ export const loader: LoaderFunction = async ({ params, request }) => {
     };
   }
 
+  // IN THIS BRANCH, NEVER REDIRECT TO RESPOND
   // Redirect to Respond if survey close hasn't happened yet
-  const surveyClose = survey.surveyClose;
-  if (dayjs(surveyClose) >= dayjs()) {
-    return redirect(`/surveys/${surveyId}/respond`);
-  }
+  // const surveyClose = survey.surveyClose;
+  // if (dayjs(surveyClose) >= dayjs()) {
+  //   return redirect(`/surveys/${surveyId}/respond`);
+  // }
 
   const data = { survey, totalVotes, tomorrow };
   return json<LoaderData>(data, {
