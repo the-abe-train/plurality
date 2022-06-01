@@ -322,7 +322,7 @@ export default () => {
         <b>{dayjs(voteDate).format("D MMMM YYYY")}</b>.
       </p>
     );
-  }, []);
+  }, [loaderData.game, loaderData.survey]);
 
   // Ensure state changes when the Survey number changes
   useEffect(() => {
