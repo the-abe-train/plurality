@@ -92,11 +92,6 @@ export default () => {
           <div className="col-start-2">
             <Survey survey={data.survey} />
           </div>
-          <div className="my-2 md:my-0 col-start-2 row-start-3">
-            <Link to="/surveys" className="underline inline">
-              More Surveys
-            </Link>
-          </div>
           <h2 className="text-2xl font-header row-start-1 mt-6 mb-2 md:my-0 col-start-1">
             Instructions
           </h2>
@@ -123,11 +118,6 @@ export default () => {
                 </div>
               );
             })}
-          </div>
-          <div className="my-2 md:my-0 col-start-1 row-start-3">
-            <Link to="/help/what-is-plurality" className="underline">
-              What is Plurality?
-            </Link>
           </div>
         </div>
       </div>
