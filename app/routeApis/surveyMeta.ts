@@ -16,7 +16,7 @@ export const surveyMeta: MetaFunction = ({ data }: { data: LoaderData }) => {
     description: data.survey.text,
     "twitter:image": `https://source.unsplash.com/${data.survey.photo}/600x300`,
     "twitter:image:alt": data.survey.text,
-    "twitter:card": "summary_large_image",
+    "twitter:card": "summary",
     "og:url": `https://plurality.fun/surveys/${data.survey._id}/guess`,
     "og:title": `Plurality Survey #${data.survey._id}`,
     "og:description": data.survey.text,
