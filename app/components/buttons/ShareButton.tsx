@@ -32,7 +32,7 @@ Guesses to win: ${guessesToWin}
 Guesses total: ${guesses}
 ${colours}
 
-https://plurality.fun/surveys/${surveyId}/guess`;
+https://plurality.fun/surveys/${surveyId}/sample`;
     setCopied(true);
     try {
       if ("canShare" in navigator && isMobile && !isFirefox) {
