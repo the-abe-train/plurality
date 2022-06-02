@@ -302,7 +302,7 @@ export default () => {
   // Ensure state changes when the Survey number changes
   useEffect(() => {
     setGuesses(loaderData.game.guesses);
-    setWin(loaderData.game.win || win);
+    setWin(loaderData.game.win || false);
     setGuessesToWin(loaderData.game.guessesToWin || guessesToWin);
     setGameOver(loaderData.gameOver || gameOver);
   }, [loaderData.game, loaderData.gameOver]);
