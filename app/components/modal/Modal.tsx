@@ -6,13 +6,9 @@ import xIcon from "~/images/icons/X.svg";
 import Backdrop from "./Backdrop";
 import { ScorebarProps } from "../schemas";
 
-type SurveyProps = {
-  survey: SurveySchema;
-};
-
 type Props = {
   scorebarProps: ScorebarProps;
-  surveyProps: SurveyProps;
+  surveyProps?: SurveySchema;
   handleClose: any;
 };
 
@@ -28,6 +24,15 @@ const dropIn = {
 };
 
 export default ({ scorebarProps, surveyProps, handleClose }: Props) => {
+  const survey = surveyProps || {
+    _id: 1,
+    text: "What is the most expensive single item in your home?",
+    surveyClose: new Date("2022-05-25T03:59:59.999+00:00"),
+    photo: "v-unZQ5EeU8",
+    community: false,
+    drafted: new Date(),
+    category: "word",
+  };
   return (
     <Backdrop onClick={handleClose}>
       <motion.div
@@ -49,7 +54,7 @@ export default ({ scorebarProps, surveyProps, handleClose }: Props) => {
         <h2 className="font-header mb-2 text-2xl sm:text-left mt-8">
           Respond to an open Survey!
         </h2>
-        <Survey {...surveyProps} />
+        <Survey survey={survey} />
       </motion.div>
     </Backdrop>
   );

@@ -2,17 +2,15 @@ import type {
   ActionFunction,
   LinksFunction,
   LoaderFunction,
-  MetaFunction,
 } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import {
   Form,
   Link,
   useActionData,
-  useCatch,
   useLoaderData,
+  useTransition,
 } from "@remix-run/react";
-import { CatchBoundaryComponent } from "@remix-run/react/routeModules";
 import invariant from "tiny-invariant";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence } from "framer-motion";
@@ -36,10 +34,13 @@ import {
   surveyById,
   surveyVotes,
 } from "~/db/queries";
-import { GameSchema, SurveySchema, VoteAggregation } from "~/db/schemas";
+import { GameSchema, SurveySchema } from "~/db/schemas";
 import { commitSession, getSession } from "~/sessions";
 import { MAX_GUESSES, THRESHOLD } from "~/util/constants";
 import { exclamationIcon, guessIcon } from "~/images/icons";
+import { getLemma, surveyAnswers } from "~/util/nlp";
+import { surveyMeta } from "~/routeApis/surveyMeta";
+import { surveyCatch } from "~/routeApis/surveyCatch";
 
 import Answers from "~/components/lists/Answers";
 import Survey from "~/components/game/Survey";
@@ -48,8 +49,6 @@ import Switch from "~/components/buttons/Switch";
 import AnimatedBanner from "~/components/text/AnimatedBanner";
 import NavButton from "~/components/buttons/NavButton";
 import Modal from "~/components/modal/Modal";
-import { getLemma, surveyAnswers } from "~/util/nlp";
-import { surveyMeta } from "~/routeApis/surveyMeta";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -61,16 +60,17 @@ export const links: LinksFunction = () => {
   ];
 };
 
+export const meta = surveyMeta;
+export const CatchBoundary = surveyCatch;
+
 type LoaderData = {
   game: GameSchema;
   message: string;
   gameOver: boolean;
   survey: SurveySchema;
   totalVotes: number;
-  tomorrow: SurveySchema;
+  tomorrow?: SurveySchema;
 };
-
-export const meta = surveyMeta;
 
 export const loader: LoaderFunction = async ({ params, request }) => {
   // Get user info
@@ -106,33 +106,18 @@ export const loader: LoaderFunction = async ({ params, request }) => {
     });
   }
 
-  // Get tomorrow's survey from db
-  const midnight = dayjs().tz("America/Toronto").endOf("day");
-  const tomorrowSc = midnight.toDate();
-
   // Get surveys
-  let [survey, tomorrow, totalVotes] = await Promise.all([
+  let [survey, totalVotes, game] = await Promise.all([
     surveyById(client, surveyId),
-    surveyByClose(client, tomorrowSc),
     surveyVotes(client, surveyId),
+    gameBySurveyUser({ client, surveyId, userId }),
   ]);
   if (!survey) {
     throw new Response("Survey has not been drafted yet.", {
       status: 404,
     });
   }
-  invariant(survey, "No survey found!");
-  if (!tomorrow) {
-    tomorrow = {
-      _id: 1,
-      text: "What is the most expensive single item in your home?",
-      surveyClose: new Date("2022-05-25T03:59:59.999+00:00"),
-      photo: "v-unZQ5EeU8",
-      community: false,
-      drafted: new Date(),
-      category: "word",
-    };
-  }
+  invariant(game, "Game upsert failed");
 
   // Redirect to Respond if survey close hasn't happened yet
   const surveyClose = survey.surveyClose;
@@ -140,30 +125,39 @@ export const loader: LoaderFunction = async ({ params, request }) => {
     return redirect(`/surveys/${surveyId}/respond`);
   }
 
-  // Game upsert
-  const game = await gameBySurveyUser({
-    client,
-    surveyId,
-    userId,
-    totalVotes,
-  });
-  invariant(game, "Game upsert failed");
+  const gameOver = game.guesses.length >= MAX_GUESSES;
+
+  // If the player has won, get tomorrow's survey for the preview
+  if (game.win) {
+    // Get tomorrow's survey from db
+    const midnight = dayjs().tz("America/Toronto").endOf("day");
+    const tomorrowSc = midnight.toDate();
+    const tomorrow = await surveyByClose(client, tomorrowSc);
+    invariant(tomorrow, "Tomorrow's survey not found.");
+    const message = gameOver
+      ? "You win! No more guesses."
+      : "You win! Keep guessing to improve your score.";
+    const data = {
+      totalVotes,
+      game,
+      tomorrow,
+      message,
+      gameOver,
+      survey,
+    };
+    return json<LoaderData>(data, {
+      headers: {
+        "Set-Cookie": await commitSession(session),
+      },
+    });
+  }
 
   // Set initial message for player
-  const gameOver = game.guesses.length >= MAX_GUESSES;
-  let message = "";
-  if (game.win && !gameOver) {
-    message = "You win! Keep guessing to improve your score.";
-  } else if (game.win && gameOver) {
-    message = "You win! No more guesses.";
-  } else if (!game.win && gameOver) {
-    message = "No more guesses.";
-  }
+  const message = gameOver ? "No more guesses." : "";
 
   const data = {
     totalVotes,
     game,
-    tomorrow,
     message,
     gameOver,
     survey,
@@ -177,10 +171,6 @@ export const loader: LoaderFunction = async ({ params, request }) => {
 
 type ActionData = {
   message: string;
-  correctGuess?: VoteAggregation;
-  gameOver?: boolean;
-  win?: boolean;
-  guessesToWin?: number;
 };
 
 export const action: ActionFunction = async ({ request, params }) => {
@@ -219,8 +209,12 @@ export const action: ActionFunction = async ({ request, params }) => {
       return json<ActionData>({ message });
     }
   }
+
   // Compare guess against actual survey responses
   const answers = await surveyAnswers(client, surveyId);
+  const totalVotes = answers.reduce((sum, ans) => {
+    return sum + ans.votes;
+  }, 0);
   const correctGuess = answers.find((ans) => ans._id === lemmaGuess);
 
   // Reject incorrect guesses
@@ -232,7 +226,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   // Update game with new guess
   const guesses = [...game.guesses, correctGuess];
   const points = guesses.reduce((sum, guess) => sum + guess.votes, 0);
-  const score = points / game.totalVotes;
+  const score = points / totalVotes;
   const win = score >= THRESHOLD / 100;
   const guessesToWin = win ? guesses.length : MAX_GUESSES;
   const updatedGame = await addGuess(
@@ -259,26 +253,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   }
   return json<ActionData>({
     message,
-    correctGuess,
-    win,
-    gameOver,
-    guessesToWin: updatedGame.guessesToWin,
   });
-};
-
-// export const action: ActionFunction = async ({ request, params }) => {
-export const CatchBoundary: CatchBoundaryComponent = () => {
-  const caught = useCatch();
-
-  return (
-    <main className="max-w-4xl flex-grow mx-4 flex flex-col my-6 flex-wrap">
-      <h1 className="font-header mb-2 text-2xl">Survey not found</h1>
-      <p>Status: {caught.status}</p>
-      <pre>
-        <code>{JSON.stringify(caught.data, null, 2)}</code>
-      </pre>
-    </main>
-  );
 };
 
 export default () => {
@@ -327,14 +302,16 @@ export default () => {
   // Ensure state changes when the Survey number changes
   useEffect(() => {
     setGuesses(loaderData.game.guesses);
-    setWin(loaderData.game.win || false);
-  }, [loaderData.game]);
+    setWin(loaderData.game.win || win);
+    setGuessesToWin(loaderData.game.guessesToWin || guessesToWin);
+    setGameOver(loaderData.gameOver || gameOver);
+  }, [loaderData.game, loaderData.gameOver]);
 
   // Unsplash photo attributions
   const unsplashLink = "https://unsplash.com/photos/" + loaderData.survey.photo;
 
   // The modal
-  const [openModal, setOpenModal] = useState(actionData?.win || win);
+  const [openModal, setOpenModal] = useState(loaderData.game.win || win);
   const mainRef = useRef<HTMLDivElement>(null!);
   useEffect(() => {
     if (openModal) {
@@ -347,15 +324,8 @@ export default () => {
 
   // Updates from action data
   useEffect(() => {
-    if (actionData?.correctGuess) {
-      setGuesses([...guesses, actionData.correctGuess]);
-      setGuess("");
-    }
     setMessage(actionData?.message || message);
-    setWin(actionData?.win || win);
-    setGameOver(actionData?.gameOver || gameOver);
-    setGuessesToWin(actionData?.guessesToWin || guessesToWin);
-  }, [actionData]);
+  }, [loaderData, actionData]);
 
   // Upon winning, from action data or loader
   useEffect(() => {
@@ -379,9 +349,7 @@ export default () => {
   }, 0);
   const score = points / totalVotes;
   const surveyProps = { survey: loaderData.survey };
-  const tomorrowSurveyProps = {
-    survey: loaderData.tomorrow,
-  };
+  const tomorrowSurveyProps = loaderData.tomorrow;
   const scorebarProps = {
     points,
     score,
@@ -390,6 +358,19 @@ export default () => {
     surveyId: loaderData.survey._id,
     guessesToWin,
   };
+
+  // Clearing the form after submission
+  const formRef = useRef<HTMLFormElement>(null!);
+  const inputRef = useRef<HTMLInputElement>(null!);
+  const transition = useTransition();
+  const submitting = transition.state === "submitting";
+  useEffect(() => {
+    if (!submitting) {
+      setGuess("");
+      formRef.current.reset();
+      inputRef.current.focus();
+    }
+  }, [submitting]);
 
   return (
     <>
@@ -403,7 +384,7 @@ export default () => {
         <section className="md:px-4 space-y-4 mx-auto md:mx-0 justify-self-start">
           <Survey {...surveyProps} />
           {message !== "" && <p data-cy="message">{message}</p>}
-          <Form className="w-full flex space-x-2" method="post">
+          <Form className="w-full flex space-x-2" method="post" ref={formRef}>
             <input
               className="border border-outline py-1 px-2 
               bg-white disabled:bg-gray-300 w-full"
@@ -414,6 +395,7 @@ export default () => {
               disabled={gameOver}
               data-cy="guess-input"
               onChange={(e) => setGuess(e.target.value)}
+              ref={inputRef}
               required
             />
             <button
@@ -443,7 +425,7 @@ export default () => {
           <Scorebar {...scorebarProps} instructions={true} />
         </section>
         <section className="md:self-end md:px-4">
-          <div className="flex flex-wrap gap-3 my-3">
+          <div className="flex flex-wrap space-x-3 my-3">
             <NavButton name="Respond" />
             <NavButton name="Draft" />
             <Link to="/surveys" className="underline inline-block self-end">
