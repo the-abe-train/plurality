@@ -23,7 +23,7 @@ export const links: LinksFunction = () => {
 };
 
 type LoaderData = {
-  user?: UserSchema;
+  name?: string;
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -31,7 +31,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   const session = await getSession(request.headers.get("Cookie"));
   const userId = session.get("user");
   const user = (await userById(client, userId)) || undefined;
-  const data = { user };
+  const data = { name: user?.name };
   return json<LoaderData>(data);
 };
 
@@ -39,7 +39,7 @@ export default () => {
   const data = useLoaderData<LoaderData>();
   return (
     <div className="light w-full top-0 bottom-0 flex flex-col min-h-screen">
-      <Header name={data.user ? data.user.name : "Connect"} />
+      <Header name={data.name || "Connect"} />
       <div className="flex-grow">
         <Outlet />
       </div>

@@ -10,8 +10,14 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 
+import { surveyMeta } from "~/routeApis/surveyMeta";
+import { surveyCatch } from "~/routeApis/surveyCatch";
+
 dayjs.extend(utc);
 dayjs.extend(timezone);
+
+export const meta = surveyMeta;
+export const CatchBoundary = surveyCatch;
 
 export const loader: LoaderFunction = async ({ request, params }) => {
   // Async requests

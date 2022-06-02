@@ -296,7 +296,6 @@ type GameProps = {
   client: MongoClient;
   surveyId: number;
   userId: ObjectId;
-  totalVotes?: number;
   win?: boolean;
   guesses?: VoteAggregation[];
   guessesToWin?: number;
@@ -306,7 +305,6 @@ export async function gameBySurveyUser({
   client,
   surveyId,
   userId,
-  totalVotes,
   win,
   guesses,
   guessesToWin,
@@ -323,7 +321,6 @@ export async function gameBySurveyUser({
         score: 0,
         guessesToWin: guessesToWin || MAX_GUESSES,
       },
-      $max: { totalVotes },
     },
     { upsert: true, returnDocument: "after" }
   );
@@ -362,7 +359,8 @@ export async function addGuess(
 
 export async function addVote(
   client: MongoClient,
-  gameId: ObjectId,
+  surveyId: number,
+  userId: ObjectId,
   voteText: string | number
 ) {
   const db = await connectDb(client);
@@ -370,7 +368,7 @@ export async function addVote(
   const text =
     typeof voteText === "string" ? capitalizeFirstLetter(voteText) : voteText;
   const updatedGameResult = await gamesCollection.findOneAndUpdate(
-    { _id: gameId },
+    { survey: surveyId, user: userId },
     { $set: { lastUpdated: new Date(), vote: { text, date: new Date() } } },
     { upsert: false, returnDocument: "after" }
   );

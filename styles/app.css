@@ -4,7 +4,9 @@
 
 @font-face {
   font-family: "Kanit";
-  src: url("/fonts/Kanit-Light.ttf") format("truetype");
+  src: url("/fonts/kanit-light-webfont.woff2") format("woff2"),
+    url("/fonts/kanit-light-webfont.woff") format("woff"),
+    url("/fonts/Kanit-Light.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -12,7 +14,9 @@
 
 @font-face {
   font-family: "Kanit";
-  src: url("/fonts/Kanit-Regular.ttf") format("truetype");
+  src: url("/fonts/kanit-regular-webfont.woff2") format("woff2"),
+    url("/fonts/kanit-regular-webfont.woff") format("woff"),
+    url("/fonts/Kanit-Regular.ttf") format("truetype");
   font-weight: bold;
   font-style: normal;
   font-display: swap;
@@ -20,7 +24,9 @@
 
 @font-face {
   font-family: "Amaranth";
-  src: url("/fonts/Amaranth-Regular.ttf") format("truetype");
+  src: url("/fonts/amaranth-regular-webfont.woff2") format("woff2"),
+    url("/fonts/amaranth-regular-webfont.woff") format("woff"),
+    url("/fonts/Amaranth-Regular.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;

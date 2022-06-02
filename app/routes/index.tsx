@@ -32,7 +32,7 @@ type LoaderData = {
   survey: SurveySchema;
 };
 
-export const loader: LoaderFunction = async ({ request }) => {
+export const loader: LoaderFunction = async () => {
   const midnight = dayjs().tz("America/Toronto").endOf("day");
   const surveyClose = midnight.subtract(1, "day").toDate();
   const survey = await surveyByClose(client, surveyClose);
