@@ -7,5 +7,6 @@ export type ScorebarProps = {
   win: boolean;
   surveyId: number;
   guessesToWin: number;
+  maxGuesses: number;
   instructions?: boolean;
 };

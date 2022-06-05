@@ -6,13 +6,9 @@ import xIcon from "~/images/icons/X.svg";
 import Backdrop from "./Backdrop";
 import { ScorebarProps } from "../schemas";
 
-type SurveyProps = {
-  survey: SurveySchema;
-};
-
 type Props = {
   scorebarProps: ScorebarProps;
-  surveyProps: SurveyProps;
+  survey: SurveySchema;
   handleClose: any;
 };
 
@@ -27,7 +23,7 @@ const dropIn = {
   exit: { y: "100vh", x: "-50%", opacity: 0 },
 };
 
-export default ({ scorebarProps, surveyProps, handleClose }: Props) => {
+export default ({ scorebarProps, survey, handleClose }: Props) => {
   return (
     <Backdrop onClick={handleClose}>
       <motion.div
@@ -49,7 +45,7 @@ export default ({ scorebarProps, surveyProps, handleClose }: Props) => {
         <h2 className="font-header mb-2 text-2xl sm:text-left mt-8">
           Respond to an open Survey!
         </h2>
-        <Survey {...surveyProps} />
+        <Survey survey={survey} />
       </motion.div>
     </Backdrop>
   );

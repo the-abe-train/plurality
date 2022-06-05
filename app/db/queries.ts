@@ -11,7 +11,6 @@ import { capitalizeFirstLetter, truncateEthAddress } from "~/util/text";
 import { randomPassword } from "../util/authorize";
 import dayjs from "dayjs";
 import { SessionData } from "@remix-run/node";
-import { MAX_GUESSES } from "~/util/constants";
 
 // Connect database
 async function connectDb(client: MongoClient) {
@@ -321,7 +320,7 @@ export async function gameBySurveyUser({
         guesses: guesses || [],
         win: win || false,
         score: 0,
-        guessesToWin: guessesToWin || MAX_GUESSES,
+        guessesToWin: guessesToWin || 999,
       },
       $max: { totalVotes },
     },

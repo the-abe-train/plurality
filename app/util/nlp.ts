@@ -1,7 +1,7 @@
 import { MongoClient } from "mongodb";
 import lemmatize from "wink-lemmatizer";
 import { votesBySurvey } from "~/db/queries";
-import { VoteAggregation } from "~/db/schemas";
+import { RankedVote, VoteAggregation } from "~/db/schemas";
 import { capitalizeFirstLetter } from "./text";
 
 export function getLemma(word: string | number): string {
@@ -24,7 +24,7 @@ export async function surveyAnswers(client: MongoClient, surveyId: number) {
     return [...output, lemmatized];
   }, [] as VoteAggregation[]);
 
-  const rankedResponses = lemmatizedResponses
+  const rankedResponses: RankedVote[] = lemmatizedResponses
     .sort((a, z) => {
       const voteDiff = z.votes - a.votes;
       if (voteDiff !== 0) return voteDiff;

@@ -52,5 +52,10 @@ export type GameSchema = {
 export type VoteAggregation = {
   _id: string;
   votes: number;
+};
+
+export type RankedVote = {
+  _id: string;
+  votes: number;
   ranking: number;
 };

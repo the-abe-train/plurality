@@ -1,6 +1,6 @@
 import { AnimatePresence, motion, useAnimation } from "framer-motion";
 import { useState } from "react";
-import { MAX_GUESSES, THRESHOLD } from "~/util/constants";
+import { THRESHOLD } from "~/util/gameplay";
 import Counter from "~/components/text/Counter";
 import ShareButton from "~/components/buttons/ShareButton";
 import { percentFormat } from "~/util/text";
@@ -14,12 +14,13 @@ export default function Scorebar({
   instructions,
   surveyId,
   guessesToWin,
+  maxGuesses,
 }: ScorebarProps) {
   const items = [
     {
       name: "Guesses left",
       text: <p className="text-center">Guesses</p>,
-      value: MAX_GUESSES - guesses.length,
+      value: maxGuesses - guesses.length,
       percentage: false,
     },
     {
@@ -141,7 +142,7 @@ export default function Scorebar({
             >
               {currentItem === "Guesses left" && (
                 <p className="m-0 h-max">
-                  You have <b>{MAX_GUESSES - guesses.length} valid guesses</b>{" "}
+                  You have <b>{maxGuesses - guesses.length} valid guesses</b>{" "}
                   left to reach a <b>{THRESHOLD}% score</b>.
                 </p>
               )}
