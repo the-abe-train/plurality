@@ -10,7 +10,7 @@
     "dev:css": "tailwindcss -w -i ./styles/app.css -o app/styles/app.css",
     "dev": "concurrently \"npm run dev:css\" \"cross-env NODE_ENV=development netlify dev\"",
     "start": "cross-env NODE_ENV=production netlify dev",
-    "cypress:open": "cypress open"
+    "cypress": "cypress open"
   },
   "dependencies": {
     "@metamask/providers": "^8.1.1",

@@ -1,7 +1,6 @@
 describe("My First Test", () => {
   it("goes to every help page", () => {
-    cy.visit("/");
-    cy.get('[href="/help/what-is-plurality"]').click();
+    cy.visit("/help/what-is-plurality");
     cy.contains("But seriously, what IS Plurality?").should("exist");
 
     cy.get('[data-cy="how-to-play"]').click();
@@ -18,4 +17,4 @@ describe("My First Test", () => {
   });
 });
 
-export default 0;
+export default {};
