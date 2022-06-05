@@ -44,6 +44,7 @@ import { getLemma, surveyAnswers } from "~/util/nlp";
 import { CatchBoundaryComponent } from "@remix-run/react/routeModules";
 import { surveyMeta } from "~/routeApis/surveyMeta";
 import useValidation from "~/hooks/useValidation";
+import { isMobile } from "react-device-detect";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -347,7 +348,7 @@ export default () => {
   const formRef = useRef<HTMLFormElement>(null!);
   const inputRef = useRef<HTMLInputElement>(null!);
   useEffect(() => {
-    if (!!actionData?.correctGuess) {
+    if (!!actionData?.correctGuess && isMobile) {
       setGuess("");
       formRef.current.reset();
       inputRef.current.blur();
