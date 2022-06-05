@@ -43,6 +43,7 @@ import { calcMaxGuesses, checkWin, getTotalVotes } from "~/util/gameplay";
 import { getLemma, surveyAnswers } from "~/util/nlp";
 import { CatchBoundaryComponent } from "@remix-run/react/routeModules";
 import { surveyMeta } from "~/routeApis/surveyMeta";
+import useValidation from "~/hooks/useValidation";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -224,7 +225,9 @@ export default () => {
   const [guesses, setGuesses] = useState<RankedVote[]>([]);
   const [guess, setGuess] = useState("");
   const [gameOver, setGameOver] = useState(false);
-  const [message, setMessage] = useState("");
+  const [msg, setMsg] = useState(
+    "Try to guess the most popular survey responses!"
+  );
   const [win, setWin] = useState(false);
   const [guessesToWin, setGuessesToWin] = useState(0);
   const [displayPercent, setDisplayPercent] = useState(false);
@@ -233,6 +236,17 @@ export default () => {
 
   // Unsplash photo attributions
   const unsplashLink = "https://unsplash.com/photos/" + loaderData.survey.photo;
+
+  // Guess validation
+  const [enabled, setEnabled] = useState(true);
+  const [msgColour, setMsgColour] = useState("inherit");
+  useValidation({
+    voteText: guess,
+    category: survey.category,
+    setEnabled,
+    setMsgColour,
+    setMsg,
+  });
 
   // The modal
   const [openModal, setOpenModal] = useState(actionData?.win || win);
@@ -282,7 +296,8 @@ export default () => {
         setGuesses([...guesses, actionData.correctGuess]);
         setGuess("");
       }
-      setMessage(actionData.message);
+      setMsg(actionData.message);
+      setMsgColour("inherit");
       setWin(actionData?.win || win);
       setGameOver(actionData?.gameOver || gameOver);
     }
@@ -294,6 +309,7 @@ export default () => {
     localStorage.setItem("gameOver", JSON.stringify(gameOver));
   }, [guesses, gameOver]);
 
+  // Upon winning
   useEffect(() => {
     localStorage.setItem("win", JSON.stringify(win));
     if (win) {
@@ -341,7 +357,13 @@ export default () => {
       >
         <section className="md:px-4 space-y-4 mx-auto md:mx-0 justify-self-start">
           <Survey survey={survey} />
-          {message !== "" && <p data-cy="message">{message}</p>}
+          <p
+            className="md:max-w-survey"
+            data-cy="message"
+            style={{ color: msgColour }}
+          >
+            {msg}
+          </p>
           <Form className="w-survey mx-auto flex space-x-2" method="post">
             <input
               className="border border-outline py-1 px-2 
@@ -371,7 +393,7 @@ export default () => {
             />
             <button
               className="silver px-3 py-1"
-              disabled={gameOver}
+              disabled={gameOver || !enabled}
               type="submit"
             >
               Enter

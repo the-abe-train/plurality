@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { NAME_LENGTH } from "./constants";
+import { NAME_LENGTH } from "./gameplay";
 
 export function statFormat(number: number) {
   if (number >= 1000) {
@@ -41,7 +41,8 @@ export const truncateEthAddress = (address: string) => {
 };
 
 export function capitalizeFirstLetter(word: string) {
-  return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+  const trimmed = word.trim();
+  return trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase();
 }
 
 // export function capitalizeFirstLetter(string: string | number) {

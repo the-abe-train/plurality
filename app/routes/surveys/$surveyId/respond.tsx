@@ -38,6 +38,7 @@ import { respondIcon } from "~/images/icons";
 import { parseFutureDate } from "~/util/text";
 import { CatchBoundaryComponent } from "@remix-run/react/routeModules";
 import { surveyMeta } from "~/routeApis/surveyMeta";
+import useValidation from "~/hooks/useValidation";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -88,41 +89,41 @@ export const loader: LoaderFunction = async ({ params, request }) => {
     },
   });
 
-  // Get data from db and apis
-  const survey = await surveyById(client, surveyId);
-  if (!survey) {
-    throw new Response("Survey has not been drafted yet.", {
-      status: 404,
-    });
-  }
-  invariant(survey, "No Survey found!");
+  // // Get data from db and apis
+  // const survey = await surveyById(client, surveyId);
+  // if (!survey) {
+  //   throw new Response("Survey has not been drafted yet.", {
+  //     status: 404,
+  //   });
+  // }
+  // invariant(survey, "No Survey found!");
 
-  // Redirect to guess if the survey is closed
-  const surveyClose = survey.surveyClose;
-  if (dayjs(surveyClose) < dayjs()) {
-    return redirect(`/surveys/${surveyId}/guess`);
-  }
+  // // Redirect to guess if the survey is closed
+  // const surveyClose = survey.surveyClose;
+  // if (dayjs(surveyClose) < dayjs()) {
+  //   return redirect(`/surveys/${surveyId}/guess`);
+  // }
 
-  // Get additional data from db and apis
-  const game = await gameBySurveyUser({ client, surveyId, userId });
-  invariant(game, "Game upsert failed");
+  // // Get additional data from db and apis
+  // const game = await gameBySurveyUser({ client, surveyId, userId });
+  // invariant(game, "Game upsert failed");
 
-  // If the player has already voted
-  if (!game.vote) {
-    const data = { game, survey };
-    return json<LoaderData>(data);
-  }
+  // // If the player has already voted
+  // if (!game.vote) {
+  //   const data = { game, survey };
+  //   return json<LoaderData>(data);
+  // }
 
-  // Get future surveys
-  const { previews, lastSurveyDate } = await getPreviews(userId, surveyId);
+  // // Get future surveys
+  // const { previews, lastSurveyDate } = await getPreviews(userId, surveyId);
 
-  // Accept correct guess
-  return json<LoaderData>({
-    game,
-    survey,
-    previews,
-    lastSurveyDate,
-  });
+  // // Accept correct guess
+  // return json<LoaderData>({
+  //   game,
+  //   survey,
+  //   previews,
+  //   lastSurveyDate,
+  // });
 };
 
 type ActionData = {
@@ -251,38 +252,13 @@ export default () => {
   }, [actionData]);
 
   // Text validation
-  useEffect(() => {
-    const containsLetter = !!voteText.match(/[a-zA-Z]/);
-    const containsNumber = !!voteText.match(/\d/);
-    const containsSymbol = !!voteText.match(
-      /[-!$%^&*()_+|~=`{}\[\]:";'<>?,.\/]/
-    );
-    const { category } = loaderData.survey;
-    const isPlaceholder = voteText === placeholderText;
-    if (voteText.length < 1 || voteText.length >= 20) {
-      setEnabled(false);
-    } else if (voteText.includes(" ")) {
-      setEnabled(false);
-      setMsg("Response cannot contain a space.");
-      setMsgColour("red");
-    } else if (containsSymbol) {
-      setEnabled(false);
-      setMsg("Response cannot contain a symbol.");
-      setMsgColour("red");
-    } else if (category === "number" && containsLetter && !isPlaceholder) {
-      setEnabled(false);
-      setMsg("This survey only accepts numbers as responses.");
-      setMsgColour("red");
-    } else if (category === "word" && containsNumber) {
-      setEnabled(false);
-      setMsg("This survey does not accept numbers in responses.");
-      setMsgColour("red");
-    } else {
-      setEnabled(true);
-      setMsg("");
-      setMsgColour("auto");
-    }
-  }, [voteText]);
+  useValidation({
+    voteText,
+    category: loaderData.survey.category,
+    setEnabled,
+    setMsgColour,
+    setMsg,
+  });
 
   return (
     <>
