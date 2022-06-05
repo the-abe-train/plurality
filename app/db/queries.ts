@@ -4,6 +4,7 @@ import {
   UserSchema,
   GameSchema,
   SessionSchema,
+  RankedVote,
 } from "./schemas";
 import { DATABASE_NAME } from "../util/env";
 import { MongoClient, ObjectId, UpdateFilter } from "mongodb";
@@ -297,7 +298,7 @@ type GameProps = {
   userId: ObjectId;
   totalVotes?: number;
   win?: boolean;
-  guesses?: VoteAggregation[];
+  guesses?: RankedVote[];
   guessesToWin?: number;
 };
 
@@ -333,7 +334,7 @@ export async function gameBySurveyUser({
 export async function addGuess(
   client: MongoClient,
   gameId: ObjectId,
-  guess: VoteAggregation,
+  guess: RankedVote,
   win: boolean,
   score: number,
   guessesToWin: number

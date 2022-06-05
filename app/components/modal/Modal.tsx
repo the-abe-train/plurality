@@ -9,7 +9,7 @@ import { ScorebarProps } from "../schemas";
 type Props = {
   scorebarProps: ScorebarProps;
   survey: SurveySchema;
-  handleClose: any;
+  handleClose: () => void;
 };
 
 const dropIn = {

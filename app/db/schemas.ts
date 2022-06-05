@@ -37,7 +37,7 @@ export type GameSchema = {
   _id: ObjectId;
   survey: number;
   user: ObjectId;
-  guesses: VoteAggregation[];
+  guesses: RankedVote[];
   win?: boolean;
   vote?: {
     text: string | number;

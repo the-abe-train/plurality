@@ -68,26 +68,25 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   const userId = session.get("user");
   const surveyId = Number(params.surveyId);
 
-  // IN THIS BRANCH, NEVER REDIRECT TO GUESS
   // Redirect users who are signed-in to regular page
-  // if (userId) {
-  //   return redirect(`/surveys/${surveyId}/guess`);
-  // }
+  if (userId) {
+    return redirect(`/surveys/${surveyId}/guess`);
+  }
 
   // User can play exactly one game if they're not signed in.
   // Check if the player already has a game in the session
-  // if (session.has("game") && session.get("game") !== surveyId) {
-  //   session.flash(
-  //     "message",
-  //     `You need to be logged-in to play more Surveys.
-  //       (You have already played Survey ${session.get("game")})`
-  //   );
-  //   return redirect("/user/signup", {
-  //     headers: {
-  //       "Set-Cookie": await commitSession(session),
-  //     },
-  //   });
-  // }
+  if (session.has("game") && session.get("game") !== surveyId) {
+    session.flash(
+      "message",
+      `You need to be logged-in to play more Surveys.
+        (You have already played Survey ${session.get("game")})`
+    );
+    return redirect("/user/signup", {
+      headers: {
+        "Set-Cookie": await commitSession(session),
+      },
+    });
+  }
 
   // Set the sample game for this not-logged-in user
   session.set("game", surveyId);
@@ -125,10 +124,10 @@ export const loader: LoaderFunction = async ({ params, request }) => {
 
   // IN THIS BRANCH, NEVER REDIRECT TO RESPOND
   // Redirect to Respond if survey close hasn't happened yet
-  // const surveyClose = survey.surveyClose;
-  // if (dayjs(surveyClose) >= dayjs()) {
-  //   return redirect(`/surveys/${surveyId}/respond`);
-  // }
+  const surveyClose = survey.surveyClose;
+  if (dayjs(surveyClose) >= dayjs()) {
+    return redirect(`/surveys/${surveyId}/respond`);
+  }
 
   const data = { survey, totalVotes, tomorrow, maxGuesses };
   return json<LoaderData>(data, {
@@ -220,6 +219,8 @@ export default () => {
   // Data from server
   const loaderData = useLoaderData<LoaderData>();
   const actionData = useActionData<ActionData>();
+  const { totalVotes, maxGuesses, survey, tomorrow } = loaderData;
+  const surveyId = survey._id;
 
   // Initial states are from loader data
   const [guesses, setGuesses] = useState<RankedVote[]>([]);
@@ -231,8 +232,6 @@ export default () => {
   const [win, setWin] = useState(false);
   const [guessesToWin, setGuessesToWin] = useState(0);
   const [displayPercent, setDisplayPercent] = useState(false);
-  const { totalVotes, maxGuesses, survey, tomorrow } = loaderData;
-  const surveyId = survey._id;
 
   // Unsplash photo attributions
   const unsplashLink = "https://unsplash.com/photos/" + loaderData.survey.photo;
@@ -332,9 +331,7 @@ export default () => {
   }, [openModal]);
 
   // Calculated values
-  const points = guesses.reduce((sum, guess) => {
-    return sum + guess.votes;
-  }, 0);
+  const points = getTotalVotes(guesses);
   const score = points / totalVotes;
   const scorebarProps = {
     points,
@@ -346,6 +343,17 @@ export default () => {
     maxGuesses,
   };
 
+  // Clearing the form after submission
+  const formRef = useRef<HTMLFormElement>(null!);
+  const inputRef = useRef<HTMLInputElement>(null!);
+  useEffect(() => {
+    if (!!actionData?.correctGuess) {
+      setGuess("");
+      formRef.current.reset();
+      inputRef.current.blur();
+    }
+  }, [actionData?.correctGuess]);
+
   return (
     <>
       {!win && <AnimatedBanner text="Guess" icon={guessIcon} />}
@@ -355,7 +363,10 @@ export default () => {
         gap-4 my-6 justify-center md:mx-auto mx-4"
         ref={mainRef}
       >
-        <section className="md:px-4 space-y-4 mx-auto md:mx-0 justify-self-start">
+        <section
+          className="md:px-4 space-y-4 w-full md:w-fit md:mx-0 
+        justify-self-start"
+        >
           <Survey survey={survey} />
           <p
             className="md:max-w-survey"
@@ -364,7 +375,11 @@ export default () => {
           >
             {msg}
           </p>
-          <Form className="w-survey mx-auto flex space-x-2" method="post">
+          <Form
+            className="md:w-survey mx-auto flex space-x-2"
+            method="post"
+            ref={formRef}
+          >
             <input
               className="border border-outline py-1 px-2 
               bg-white disabled:bg-gray-300 w-full"
@@ -374,6 +389,7 @@ export default () => {
               value={guess}
               disabled={gameOver}
               onChange={(e) => setGuess(e.target.value)}
+              ref={inputRef}
               data-cy="guess-input"
               required
             />

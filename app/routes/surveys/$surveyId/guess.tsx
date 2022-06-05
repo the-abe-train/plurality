@@ -2,7 +2,6 @@ import type {
   ActionFunction,
   LinksFunction,
   LoaderFunction,
-  MetaFunction,
 } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import {
@@ -34,11 +33,10 @@ import {
   gameBySurveyUser,
   surveyByClose,
   surveyById,
-  surveyVotes,
 } from "~/db/queries";
-import { GameSchema, SurveySchema, VoteAggregation } from "~/db/schemas";
+import { GameSchema, RankedVote, SurveySchema } from "~/db/schemas";
 import { commitSession, getSession } from "~/sessions";
-import { MAX_GUESSES, THRESHOLD } from "~/util/constants";
+import { calcMaxGuesses, getTotalVotes, THRESHOLD } from "~/util/gameplay";
 import { exclamationIcon, guessIcon } from "~/images/icons";
 
 import Answers from "~/components/lists/Answers";
@@ -50,6 +48,7 @@ import NavButton from "~/components/buttons/NavButton";
 import Modal from "~/components/modal/Modal";
 import { getLemma, surveyAnswers } from "~/util/nlp";
 import { surveyMeta } from "~/routeApis/surveyMeta";
+import useValidation from "~/hooks/useValidation";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -68,6 +67,7 @@ type LoaderData = {
   survey: SurveySchema;
   totalVotes: number;
   tomorrow: SurveySchema;
+  maxGuesses: number;
 };
 
 export const meta = surveyMeta;
@@ -77,12 +77,6 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   const session = await getSession(request.headers.get("Cookie"));
   const userId = session.get("user");
   const surveyId = Number(params.surveyId);
-
-  return redirect(`/surveys/${surveyId}/sample`, {
-    headers: {
-      "Set-Cookie": await commitSession(session),
-    },
-  });
 
   // Redirect not signed-in users to home page
   if (!userId) {
@@ -117,10 +111,10 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   const tomorrowSc = midnight.toDate();
 
   // Get surveys
-  let [survey, tomorrow, totalVotes] = await Promise.all([
+  let [survey, tomorrow, answers] = await Promise.all([
     surveyById(client, surveyId),
     surveyByClose(client, tomorrowSc),
-    surveyVotes(client, surveyId),
+    surveyAnswers(client, surveyId),
   ]);
   if (!survey) {
     throw new Response("Survey has not been drafted yet.", {
@@ -139,6 +133,8 @@ export const loader: LoaderFunction = async ({ params, request }) => {
       category: "word",
     };
   }
+  const totalVotes = getTotalVotes(answers);
+  const maxGuesses = calcMaxGuesses(answers);
 
   // Redirect to Respond if survey close hasn't happened yet
   const surveyClose = survey.surveyClose;
@@ -156,7 +152,7 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   invariant(game, "Game upsert failed");
 
   // Set initial message for player
-  const gameOver = game.guesses.length >= MAX_GUESSES;
+  const gameOver = game.guesses.length >= maxGuesses;
   let message = "";
   if (game.win && !gameOver) {
     message = "You win! Keep guessing to improve your score.";
@@ -173,6 +169,7 @@ export const loader: LoaderFunction = async ({ params, request }) => {
     message,
     gameOver,
     survey,
+    maxGuesses,
   };
   return json<LoaderData>(data, {
     headers: {
@@ -183,7 +180,7 @@ export const loader: LoaderFunction = async ({ params, request }) => {
 
 type ActionData = {
   message: string;
-  correctGuess?: VoteAggregation;
+  correctGuess?: RankedVote;
   gameOver?: boolean;
   win?: boolean;
   guessesToWin?: number;
@@ -228,6 +225,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   // Compare guess against actual survey responses
   const answers = await surveyAnswers(client, surveyId);
   const correctGuess = answers.find((ans) => ans._id === lemmaGuess);
+  const maxGuesses = calcMaxGuesses(answers);
 
   // Reject incorrect guesses
   if (!correctGuess) {
@@ -240,7 +238,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   const points = guesses.reduce((sum, guess) => sum + guess.votes, 0);
   const score = points / game.totalVotes;
   const win = score >= THRESHOLD / 100;
-  const guessesToWin = win ? guesses.length : MAX_GUESSES;
+  const guessesToWin = win ? guesses.length : maxGuesses;
   const updatedGame = await addGuess(
     client,
     game._id,
@@ -252,7 +250,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   invariant(updatedGame, "Game update failed");
 
   // Pick message to send to player
-  const gameOver = updatedGame.guesses.length >= MAX_GUESSES;
+  const gameOver = updatedGame.guesses.length >= maxGuesses;
   let message: string;
   if (win && !gameOver) {
     message = "You win! Keep guessing to improve your score.";
@@ -291,24 +289,40 @@ export default () => {
   // Data from server
   const loaderData = useLoaderData<LoaderData>();
   const actionData = useActionData<ActionData>();
+  const { totalVotes, maxGuesses, survey, tomorrow, game } = loaderData;
 
   // Initial states are from loader data
-  const [guesses, setGuesses] = useState(loaderData.game.guesses);
+  const [guesses, setGuesses] = useState(game.guesses);
   const [guess, setGuess] = useState("");
   const [gameOver, setGameOver] = useState(loaderData.gameOver);
-  const [message, setMessage] = useState(loaderData.message);
-  const [win, setWin] = useState(loaderData.game.win || false);
+  const [msg, setMsg] = useState(
+    "Try to guess the most popular survey responses!"
+  );
+  const [win, setWin] = useState(game.win || false);
   const [displayPercent, setDisplayPercent] = useState(false);
   const [guessesToWin, setGuessesToWin] = useState(
-    loaderData.game.guessesToWin || loaderData.game.guesses.length
+    game.guessesToWin || game.guesses.length
   );
-  const { totalVotes } = loaderData;
+
+  // Unsplash photo attributions
+  const unsplashLink = "https://unsplash.com/photos/" + loaderData.survey.photo;
+
+  // Guess validation
+  const [enabled, setEnabled] = useState(true);
+  const [msgColour, setMsgColour] = useState("inherit");
+  useValidation({
+    voteText: guess,
+    category: survey.category,
+    setEnabled,
+    setMsgColour,
+    setMsg,
+  });
 
   // Displaying to the user what they voted
   const userVote = useMemo(() => {
-    const rawUserVote = loaderData.game.vote?.text;
-    const voteDate = loaderData.game.vote?.date;
-    const surveyCloseDate = loaderData.survey.surveyClose;
+    const rawUserVote = game.vote?.text;
+    const voteDate = game.vote?.date;
+    const surveyCloseDate = survey.surveyClose;
     if (!rawUserVote || !voteDate)
       return (
         <p className="text-sm mt-2">
@@ -328,16 +342,14 @@ export default () => {
         <b>{dayjs(voteDate).format("D MMMM YYYY")}</b>.
       </p>
     );
-  }, [loaderData.game, loaderData.survey]);
+  }, [game, survey]);
 
   // Ensure state changes when the Survey number changes
   useEffect(() => {
-    setGuesses(loaderData.game.guesses);
-    setWin(loaderData.game.win || false);
-  }, [loaderData.game]);
-
-  // Unsplash photo attributions
-  const unsplashLink = "https://unsplash.com/photos/" + loaderData.survey.photo;
+    setGuesses(game.guesses);
+    setWin(game.win || false);
+    setMsg("Try to guess the most popular survey responses!");
+  }, [game._id]);
 
   // The modal
   const [openModal, setOpenModal] = useState(actionData?.win || win);
@@ -357,13 +369,14 @@ export default () => {
       setGuesses([...guesses, actionData.correctGuess]);
       setGuess("");
     }
-    setMessage(actionData?.message || message);
+    setMsg(actionData?.message || msg);
+    setMsgColour("inherit");
     setWin(actionData?.win || win);
     setGameOver(actionData?.gameOver || gameOver);
     setGuessesToWin(actionData?.guessesToWin || guessesToWin);
   }, [actionData]);
 
-  // Upon winning, from action data or loader
+  // Upon winning
   useEffect(() => {
     if (win && !openModal) {
       setTimeout(() => {
@@ -380,14 +393,8 @@ export default () => {
   }, [openModal]);
 
   // Calculated values
-  const points = guesses.reduce((sum, guess) => {
-    return sum + guess.votes;
-  }, 0);
+  const points = getTotalVotes(guesses);
   const score = points / totalVotes;
-  const surveyProps = { survey: loaderData.survey };
-  const tomorrowSurveyProps = {
-    survey: loaderData.tomorrow,
-  };
   const scorebarProps = {
     points,
     score,
@@ -395,7 +402,19 @@ export default () => {
     win,
     surveyId: loaderData.survey._id,
     guessesToWin,
+    maxGuesses,
   };
+
+  // Clearing the form after submission
+  const formRef = useRef<HTMLFormElement>(null!);
+  const inputRef = useRef<HTMLInputElement>(null!);
+  useEffect(() => {
+    if (!!actionData?.correctGuess) {
+      setGuess("");
+      formRef.current.reset();
+      inputRef.current.blur();
+    }
+  }, [actionData?.correctGuess]);
 
   return (
     <>
@@ -406,10 +425,23 @@ export default () => {
     gap-4 my-6 justify-center md:mx-auto mx-4"
         ref={mainRef}
       >
-        <section className="md:px-4 space-y-4 mx-auto md:mx-0 justify-self-start">
-          <Survey {...surveyProps} />
-          {message !== "" && <p data-cy="message">{message}</p>}
-          <Form className="w-full flex space-x-2" method="post">
+        <section
+          className="md:px-4 space-y-4 w-full md:w-fit md:mx-0 
+        justify-self-start"
+        >
+          <Survey survey={survey} />
+          <p
+            className="w-full md:max-w-survey"
+            data-cy="message"
+            style={{ color: msgColour }}
+          >
+            {msg}
+          </p>
+          <Form
+            className="md:w-survey mx-auto flex space-x-2"
+            method="post"
+            ref={formRef}
+          >
             <input
               className="border border-outline py-1 px-2 
               bg-white disabled:bg-gray-300 w-full"
@@ -418,14 +450,15 @@ export default () => {
               placeholder="Guess survey responses"
               value={guess}
               disabled={gameOver}
-              data-cy="guess-input"
               onChange={(e) => setGuess(e.target.value)}
+              ref={inputRef}
+              data-cy="guess-input"
               required
             />
             <button
               className="silver px-3 py-1"
               data-cy="guess-enter"
-              disabled={gameOver}
+              disabled={gameOver || !enabled}
               type="submit"
             >
               Enter
@@ -468,7 +501,7 @@ export default () => {
         {openModal && (
           <Modal
             scorebarProps={scorebarProps}
-            surveyProps={tomorrowSurveyProps}
+            survey={tomorrow}
             handleClose={() => setOpenModal(false)}
           />
         )}

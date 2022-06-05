@@ -32,14 +32,14 @@ export default function useValidation({
       setMsgColour("red");
     } else if (category === "number" && containsLetter) {
       setEnabled(false);
-      setMsg("This survey only accepts numbers.");
+      setMsg("Response cannot contain letters.");
       setMsgColour("red");
     } else if (category === "word" && containsNumber) {
       setEnabled(false);
-      setMsg("This survey does not accept numbers.");
+      setMsg("Response cannot contain numbers.");
       setMsgColour("red");
     } else {
       setEnabled(true);
     }
-  });
+  }, [voteText]);
 }

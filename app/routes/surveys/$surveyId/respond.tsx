@@ -1,9 +1,5 @@
 import { useEffect, useState } from "react";
-import type {
-  ActionFunction,
-  LoaderFunction,
-  MetaFunction,
-} from "@remix-run/node";
+import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import {
   Form,
@@ -83,47 +79,41 @@ export const loader: LoaderFunction = async ({ params, request }) => {
     });
   }
 
-  return redirect(`/surveys/${surveyId}/sample`, {
-    headers: {
-      "Set-Cookie": await commitSession(session),
-    },
+  // Get data from db and apis
+  const survey = await surveyById(client, surveyId);
+  if (!survey) {
+    throw new Response("Survey has not been drafted yet.", {
+      status: 404,
+    });
+  }
+  invariant(survey, "No Survey found!");
+
+  // Redirect to guess if the survey is closed
+  const surveyClose = survey.surveyClose;
+  if (dayjs(surveyClose) < dayjs()) {
+    return redirect(`/surveys/${surveyId}/guess`);
+  }
+
+  // Get additional data from db and apis
+  const game = await gameBySurveyUser({ client, surveyId, userId });
+  invariant(game, "Game upsert failed");
+
+  // If the player has already voted
+  if (!game.vote) {
+    const data = { game, survey };
+    return json<LoaderData>(data);
+  }
+
+  // Get future surveys
+  const { previews, lastSurveyDate } = await getPreviews(userId, surveyId);
+
+  // Accept correct guess
+  return json<LoaderData>({
+    game,
+    survey,
+    previews,
+    lastSurveyDate,
   });
-
-  // // Get data from db and apis
-  // const survey = await surveyById(client, surveyId);
-  // if (!survey) {
-  //   throw new Response("Survey has not been drafted yet.", {
-  //     status: 404,
-  //   });
-  // }
-  // invariant(survey, "No Survey found!");
-
-  // // Redirect to guess if the survey is closed
-  // const surveyClose = survey.surveyClose;
-  // if (dayjs(surveyClose) < dayjs()) {
-  //   return redirect(`/surveys/${surveyId}/guess`);
-  // }
-
-  // // Get additional data from db and apis
-  // const game = await gameBySurveyUser({ client, surveyId, userId });
-  // invariant(game, "Game upsert failed");
-
-  // // If the player has already voted
-  // if (!game.vote) {
-  //   const data = { game, survey };
-  //   return json<LoaderData>(data);
-  // }
-
-  // // Get future surveys
-  // const { previews, lastSurveyDate } = await getPreviews(userId, surveyId);
-
-  // // Accept correct guess
-  // return json<LoaderData>({
-  //   game,
-  //   survey,
-  //   previews,
-  //   lastSurveyDate,
-  // });
 };
 
 type ActionData = {
@@ -281,6 +271,7 @@ export default () => {
                 maxLength={20}
                 value={voteText}
                 onChange={(e) => setVoteText(e.target.value)}
+                data-cy="respond-input"
                 spellCheck
               />
               <button
