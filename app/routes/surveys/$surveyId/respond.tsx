@@ -32,7 +32,6 @@ import useValidation from "~/hooks/useValidation";
 
 import { surveyCatch } from "~/routeApis/surveyCatch";
 
-
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
@@ -143,6 +142,8 @@ export const action: ActionFunction = async ({ request, params }) => {
     const surveyId = Number(params.surveyId);
     const updatedGame = await addVote(client, surveyId, userId, newVote);
     invariant(updatedGame, "Game update failed");
+    const message = `Response "${newVote}" successfully submitted for Survey #${surveyId}`;
+    return json<ActionData>({ message });
   }
 
   if (_action === "changeSurvey") {
@@ -154,7 +155,8 @@ export const action: ActionFunction = async ({ request, params }) => {
     return redirect(`/surveys/${newSurvey?._id}/respond`);
   }
 
-  return null;
+  const message = "Action not recognized.";
+  return json<ActionData>({ message });
 };
 
 export default () => {
