@@ -23,7 +23,7 @@ import { SurveySchema, VoteAggregation } from "~/db/schemas";
 import { getAllSurveyIds, surveyBySearch, votesBySurvey } from "~/db/queries";
 import { client } from "~/db/connect.server";
 
-import { PER_PAGE } from "~/util/constants";
+import { PER_PAGE } from "~/util/gameplay";
 
 import Survey from "~/components/game/Survey";
 import AnimatedBanner from "~/components/text/AnimatedBanner";
@@ -132,6 +132,8 @@ export default () => {
   const loaderData = useLoaderData<LoaderData>();
   const actionData = useActionData<ActionData>();
   const showData = (actionData?.metadata.totalSurveysNum || 0) > 0;
+
+  console.log(loaderData);
 
   useEffect(() => {
     if (actionData?.metadata) {
