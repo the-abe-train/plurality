@@ -10,7 +10,7 @@ export default function Survey({ survey }: Props) {
   const surveyClose = dayjs(survey.surveyClose);
   const action = surveyClose > dayjs() ? "respond" : "guess";
   return (
-    <Link to={`/surveys/${survey._id}/${action}`} style={{ width: "100%" }}>
+    <Link to={`/surveys/${survey._id}/${action}`} className="w-full md:w-fit">
       <div
         className={`border border-outline rounded-lg 
      z-20 md:max-w-survey min-w-[260px] w-full mx-auto ${
