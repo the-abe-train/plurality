@@ -339,15 +339,14 @@ export default () => {
   useEffect(() => {
     setGuesses(game.guesses);
     setWin(game.win || false);
-    setMsg("Try to guess the most popular survey responses!");
-    setGuessesToWin(loaderData.game.guessesToWin || guessesToWin);
+    setGuessesToWin(game.guessesToWin || guessesToWin);
     setGameOver(loaderData.gameOver || gameOver);
-  }, [game._id, survey]);
+  }, [game, loaderData.gameOver]);
 
-  const unsplashLink = "https://unsplash.com/photos/" + loaderData.survey.photo;
+  const unsplashLink = "https://unsplash.com/photos/" + survey.photo;
 
   // The modal
-  const [openModal, setOpenModal] = useState(loaderData.game.win || win);
+  const [openModal, setOpenModal] = useState(game.win || win);
   const mainRef = useRef<HTMLDivElement>(null!);
   useEffect(() => {
     if (openModal) {
@@ -360,8 +359,14 @@ export default () => {
 
   // Updates from action data
   useEffect(() => {
-    setMsg(actionData?.message || msg);
-  }, [loaderData, actionData]);
+    if (actionData?.message) {
+      setMsg(actionData?.message);
+      setMsgColour("inherit");
+    } else {
+      setMsg("Try to guess the most popular survey responses!");
+      setMsgColour("inherit");
+    }
+  }, [actionData]);
 
   // Upon winning
   useEffect(() => {
