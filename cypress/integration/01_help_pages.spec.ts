@@ -1,4 +1,4 @@
-describe("My First Test", () => {
+describe("Visit all the help pages", () => {
   it("goes to every help page", () => {
     cy.visit("/help/what-is-plurality");
     cy.contains("But seriously, what IS Plurality?").should("exist");

@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-describe("Gameplay walkthrough", () => {
+describe("Respond page test", () => {
   it("responds to Survey 30 (text)", () => {
     cy.fixture("auth").then((authFixture) => {
       // Authenticate

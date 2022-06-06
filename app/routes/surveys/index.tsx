@@ -133,8 +133,6 @@ export default () => {
   const actionData = useActionData<ActionData>();
   const showData = (actionData?.metadata.totalSurveysNum || 0) > 0;
 
-  console.log(loaderData);
-
   useEffect(() => {
     if (actionData?.metadata) {
       const maxPages = Math.max(
@@ -187,6 +185,7 @@ export default () => {
             name="text"
             placeholder="Search by keyword or Survey ID"
             className="border border-outline px-2"
+            data-cy="text-search"
           />
           <div
             className="flex-grow flex flex-col justify-between space-y-3
@@ -282,7 +281,10 @@ export default () => {
                   {actionData.metadata.totalSurveysNum}
                 </span>
               </div>
-              <div className="flex flex-col md:flex-row flex-wrap gap-3">
+              <div
+                className="flex flex-col md:flex-row flex-wrap gap-3"
+                data-cy="search-results"
+              >
                 {actionData.pageSurveys.map((q) => {
                   return <Survey survey={q} key={q._id} />;
                 })}

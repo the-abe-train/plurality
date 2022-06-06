@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-describe("Gameplay walkthrough", () => {
+describe("Guess page test", () => {
   it("Plays Survey 1 (sample page)", () => {
     cy.fixture("answers").then(({ survey1 }) => {
       cy.visit("http://localhost:3000/surveys/1/sample");
