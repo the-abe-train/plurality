@@ -4,13 +4,7 @@ import type {
   LoaderFunction,
 } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import {
-  Form,
-  Link,
-  useActionData,
-  useCatch,
-  useLoaderData,
-} from "@remix-run/react";
+import { Form, Link, useActionData, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence } from "framer-motion";
@@ -26,11 +20,16 @@ import timezone from "dayjs/plugin/timezone";
 import styles from "~/styles/app.css";
 import backgrounds from "~/styles/backgrounds.css";
 
+import { MAX_GUESSES } from "~/util/constants";
+import { checkWin } from "~/util/gameplay";
+import { getLemma, surveyAnswers } from "~/util/nlp";
 import { client } from "~/db/connect.server";
 import { surveyByClose, surveyById } from "~/db/queries";
 import { RankedVote, SurveySchema } from "~/db/schemas";
 import { commitSession, getSession } from "~/sessions";
 import { exclamationIcon, guessIcon } from "~/images/icons";
+import { surveyMeta } from "~/routeApis/surveyMeta";
+import { surveyCatch } from "~/routeApis/surveyCatch";
 
 import Answers from "~/components/lists/Answers";
 import Survey from "~/components/game/Survey";
@@ -39,12 +38,14 @@ import Switch from "~/components/buttons/Switch";
 import AnimatedBanner from "~/components/text/AnimatedBanner";
 import NavButton from "~/components/buttons/NavButton";
 import Modal from "~/components/modal/Modal";
+
 import { calcMaxGuesses, checkWin, getTotalVotes } from "~/util/gameplay";
 import { getLemma, surveyAnswers } from "~/util/nlp";
 import { CatchBoundaryComponent } from "@remix-run/react/routeModules";
 import { surveyMeta } from "~/routeApis/surveyMeta";
 import useValidation from "~/hooks/useValidation";
 import { isMobile } from "react-device-detect";
+
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -56,11 +57,18 @@ export const links: LinksFunction = () => {
   ];
 };
 
+export const meta = surveyMeta;
+export const CatchBoundary = surveyCatch;
+
 type LoaderData = {
   survey: SurveySchema;
   totalVotes: number;
-  tomorrow: SurveySchema;
+
+
   maxGuesses: number;
+
+  tomorrow?: SurveySchema;
+
 };
 
 export const loader: LoaderFunction = async ({ params, request }) => {
@@ -92,32 +100,16 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   // Set the sample game for this not-logged-in user
   session.set("game", surveyId);
 
-  // Get tomorrow's survey from db
-  const midnight = dayjs().tz("America/Toronto").endOf("day");
-  const tomorrowSc = midnight.toDate();
-
   // Get surveys
-  let [survey, tomorrow, answers] = await Promise.all([
+  let [survey, answers] = await Promise.all([
     surveyById(client, surveyId),
-    surveyByClose(client, tomorrowSc),
     surveyAnswers(client, surveyId),
+
   ]);
   if (!survey) {
     throw new Response("Survey has not been drafted yet.", {
       status: 404,
     });
-  }
-  invariant(survey, "No survey found!");
-  if (!tomorrow) {
-    tomorrow = {
-      _id: 1,
-      text: "What is the most expensive single item in your home?",
-      surveyClose: new Date("2022-05-25T03:59:59.999+00:00"),
-      photo: "v-unZQ5EeU8",
-      community: false,
-      drafted: new Date(),
-      category: "word",
-    };
   }
 
   const totalVotes = getTotalVotes(answers);
@@ -130,15 +122,20 @@ export const loader: LoaderFunction = async ({ params, request }) => {
     return redirect(`/surveys/${surveyId}/respond`);
   }
 
+  // Tomorrow's survey
+  const midnight = dayjs().tz("America/Toronto").endOf("day");
+  const tomorrowSc = midnight.toDate();
+  const tomorrow = await surveyByClose(client, tomorrowSc);
+  invariant(tomorrow, "Tomorrow's survey not found.");
+
   const data = { survey, totalVotes, tomorrow, maxGuesses };
+
   return json<LoaderData>(data, {
     headers: {
       "Set-Cookie": await commitSession(session),
     },
   });
 };
-
-export const meta = surveyMeta;
 
 type ActionData = {
   message: string;
@@ -200,20 +197,6 @@ export const action: ActionFunction = async ({ request, params }) => {
     message = "Great guess!";
   }
   return json<ActionData>({ message, correctGuess, win, gameOver });
-};
-
-export const CatchBoundary: CatchBoundaryComponent = () => {
-  const caught = useCatch();
-
-  return (
-    <main className="max-w-4xl flex-grow mx-4 flex flex-col my-6 flex-wrap">
-      <h1 className="font-header mb-2 text-2xl">Survey not found</h1>
-      <p>Status: {caught.status}</p>
-      <pre>
-        <code>{JSON.stringify(caught.data, null, 2)}</code>
-      </pre>
-    </main>
-  );
 };
 
 export default () => {
@@ -437,7 +420,7 @@ export default () => {
           <Scorebar {...scorebarProps} instructions />
         </section>
         <section className="md:self-end md:px-4">
-          <div className="flex flex-wrap gap-3 my-3">
+          <div className="flex flex-wrap space-x-3 my-3">
             <NavButton name="Respond" />
             <NavButton name="Draft" />
             <Link to="/surveys" className="underline inline-block self-end">

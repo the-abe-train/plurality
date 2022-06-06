@@ -1,13 +1,7 @@
 import { useEffect, useState } from "react";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import {
-  Form,
-  Link,
-  useActionData,
-  useCatch,
-  useLoaderData,
-} from "@remix-run/react";
+import { Form, Link, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
 import { GameSchema, SurveySchema } from "~/db/schemas";
@@ -32,9 +26,12 @@ import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import { respondIcon } from "~/images/icons";
 import { parseFutureDate } from "~/util/text";
-import { CatchBoundaryComponent } from "@remix-run/react/routeModules";
 import { surveyMeta } from "~/routeApis/surveyMeta";
+
 import useValidation from "~/hooks/useValidation";
+
+import { surveyCatch } from "~/routeApis/surveyCatch";
+
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -47,6 +44,7 @@ type LoaderData = {
 };
 
 export const meta = surveyMeta;
+export const CatchBoundary = surveyCatch;
 
 async function getPreviews(userId: ObjectId, surveyId: number) {
   const futureSurveys = await getFutureSurveys(client, userId);
@@ -118,9 +116,6 @@ export const loader: LoaderFunction = async ({ params, request }) => {
 
 type ActionData = {
   message: string;
-  newVoteResult?: string | number;
-  previews?: SurveySchema[];
-  lastSurveyDate?: string;
 };
 
 export const action: ActionFunction = async ({ request, params }) => {
@@ -142,28 +137,12 @@ export const action: ActionFunction = async ({ request, params }) => {
       const message = "Please enter a vote";
       return json<ActionData>({ message });
     }
-    // Pull in relevant data
-    const userId = session.get("user");
-    const surveyId = Number(params.surveyId);
-    const game = await gameBySurveyUser({ client, surveyId, userId });
-    invariant(game, "Game upsert failed");
 
     // Update game with new guess
-    const updatedGame = await addVote(client, game._id, newVote);
+    const userId = session.get("user");
+    const surveyId = Number(params.surveyId);
+    const updatedGame = await addVote(client, surveyId, userId, newVote);
     invariant(updatedGame, "Game update failed");
-    const message = "Thank you for voting!";
-    const newVoteResult = updatedGame.vote?.text;
-
-    // Get future surveys
-    const { previews, lastSurveyDate } = await getPreviews(userId, surveyId);
-
-    // Accept correct guess
-    return json<ActionData>({
-      message,
-      newVoteResult,
-      previews,
-      lastSurveyDate,
-    });
   }
 
   if (_action === "changeSurvey") {
@@ -174,25 +153,12 @@ export const action: ActionFunction = async ({ request, params }) => {
     const newSurvey = await surveyByClose(client, midnight);
     return redirect(`/surveys/${newSurvey?._id}/respond`);
   }
-};
 
-export const CatchBoundary: CatchBoundaryComponent = () => {
-  const caught = useCatch();
-
-  return (
-    <main className="max-w-4xl flex-grow mx-4 flex flex-col my-6 flex-wrap">
-      <h1 className="font-header mb-2 text-2xl">Survey not found</h1>
-      <p>Status: {caught.status}</p>
-      <pre>
-        <code>{JSON.stringify(caught.data, null, 2)}</code>
-      </pre>
-    </main>
-  );
+  return null;
 };
 
 export default () => {
   const loaderData = useLoaderData<LoaderData>();
-  const actionData = useActionData<ActionData>();
   const { surveyClose } = loaderData.survey;
   const [yourVote, setYourVote] = useState(loaderData.game.vote?.text);
   const [enabled, setEnabled] = useState(false);
@@ -226,20 +192,20 @@ export default () => {
 
   // Updates from action data
   useEffect(() => {
-    const newVote = actionData?.newVoteResult;
+    const newVote = loaderData.game.vote?.text;
     if (newVote) {
       setEnabled(false);
       setYourVote(newVote);
     }
 
     // Search for other surveys to respond to
-    if (actionData?.lastSurveyDate) {
-      setLastSurveyDate(actionData.lastSurveyDate);
+    if (loaderData?.lastSurveyDate) {
+      setLastSurveyDate(loaderData.lastSurveyDate);
     }
-    if (actionData?.previews) {
-      setPreviewSurveys(actionData.previews);
+    if (loaderData?.previews) {
+      setPreviewSurveys(loaderData.previews);
     }
-  }, [actionData]);
+  }, [loaderData.lastSurveyDate, loaderData.previews]);
 
   // Text validation
   useValidation({

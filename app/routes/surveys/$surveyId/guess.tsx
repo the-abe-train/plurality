@@ -8,10 +8,9 @@ import {
   Form,
   Link,
   useActionData,
-  useCatch,
   useLoaderData,
+  useTransition,
 } from "@remix-run/react";
-import { CatchBoundaryComponent } from "@remix-run/react/routeModules";
 import invariant from "tiny-invariant";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence } from "framer-motion";
@@ -34,10 +33,15 @@ import {
   surveyByClose,
   surveyById,
 } from "~/db/queries";
+
 import { GameSchema, RankedVote, SurveySchema } from "~/db/schemas";
+
 import { commitSession, getSession } from "~/sessions";
 import { calcMaxGuesses, getTotalVotes, THRESHOLD } from "~/util/gameplay";
 import { exclamationIcon, guessIcon } from "~/images/icons";
+import { getLemma, surveyAnswers } from "~/util/nlp";
+import { surveyMeta } from "~/routeApis/surveyMeta";
+import { surveyCatch } from "~/routeApis/surveyCatch";
 
 import Answers from "~/components/lists/Answers";
 import Survey from "~/components/game/Survey";
@@ -46,10 +50,12 @@ import Switch from "~/components/buttons/Switch";
 import AnimatedBanner from "~/components/text/AnimatedBanner";
 import NavButton from "~/components/buttons/NavButton";
 import Modal from "~/components/modal/Modal";
+
 import { getLemma, surveyAnswers } from "~/util/nlp";
 import { surveyMeta } from "~/routeApis/surveyMeta";
 import useValidation from "~/hooks/useValidation";
 import { isMobile } from "react-device-detect";
+
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -61,17 +67,18 @@ export const links: LinksFunction = () => {
   ];
 };
 
+export const meta = surveyMeta;
+export const CatchBoundary = surveyCatch;
+
 type LoaderData = {
   game: GameSchema;
   message: string;
   gameOver: boolean;
   survey: SurveySchema;
   totalVotes: number;
-  tomorrow: SurveySchema;
   maxGuesses: number;
+  tomorrow?: SurveySchema;
 };
-
-export const meta = surveyMeta;
 
 export const loader: LoaderFunction = async ({ params, request }) => {
   // Get user info
@@ -107,10 +114,6 @@ export const loader: LoaderFunction = async ({ params, request }) => {
     });
   }
 
-  // Get tomorrow's survey from db
-  const midnight = dayjs().tz("America/Toronto").endOf("day");
-  const tomorrowSc = midnight.toDate();
-
   // Get surveys
   let [survey, tomorrow, answers] = await Promise.all([
     surveyById(client, surveyId),
@@ -122,26 +125,16 @@ export const loader: LoaderFunction = async ({ params, request }) => {
       status: 404,
     });
   }
-  invariant(survey, "No survey found!");
-  if (!tomorrow) {
-    tomorrow = {
-      _id: 1,
-      text: "What is the most expensive single item in your home?",
-      surveyClose: new Date("2022-05-25T03:59:59.999+00:00"),
-      photo: "v-unZQ5EeU8",
-      community: false,
-      drafted: new Date(),
-      category: "word",
-    };
-  }
-  const totalVotes = getTotalVotes(answers);
-  const maxGuesses = calcMaxGuesses(answers);
+
+  invariant(game, "Game upsert failed");
+
 
   // Redirect to Respond if survey close hasn't happened yet
   const surveyClose = survey.surveyClose;
   if (dayjs(surveyClose) >= dayjs()) {
     return redirect(`/surveys/${surveyId}/respond`);
   }
+
 
   // Game upsert
   const game = await gameBySurveyUser({
@@ -154,19 +147,39 @@ export const loader: LoaderFunction = async ({ params, request }) => {
 
   // Set initial message for player
   const gameOver = game.guesses.length >= maxGuesses;
-  let message = "";
-  if (game.win && !gameOver) {
-    message = "You win! Keep guessing to improve your score.";
-  } else if (game.win && gameOver) {
-    message = "You win! No more guesses.";
-  } else if (!game.win && gameOver) {
-    message = "No more guesses.";
+
+  // If the player has won, get tomorrow's survey for the preview
+  if (game.win) {
+    // Get tomorrow's survey from db
+    const midnight = dayjs().tz("America/Toronto").endOf("day");
+    const tomorrowSc = midnight.toDate();
+    const tomorrow = await surveyByClose(client, tomorrowSc);
+    invariant(tomorrow, "Tomorrow's survey not found.");
+    const message = gameOver
+      ? "You win! No more guesses."
+      : "You win! Keep guessing to improve your score.";
+    const data = {
+      totalVotes,
+      game,
+      tomorrow,
+      message,
+      gameOver,
+      survey,
+    };
+    return json<LoaderData>(data, {
+      headers: {
+        "Set-Cookie": await commitSession(session),
+      },
+    });
+
   }
+
+  // Set initial message for player
+  const message = gameOver ? "No more guesses." : "";
 
   const data = {
     totalVotes,
     game,
-    tomorrow,
     message,
     gameOver,
     survey,
@@ -181,10 +194,6 @@ export const loader: LoaderFunction = async ({ params, request }) => {
 
 type ActionData = {
   message: string;
-  correctGuess?: RankedVote;
-  gameOver?: boolean;
-  win?: boolean;
-  guessesToWin?: number;
 };
 
 export const action: ActionFunction = async ({ request, params }) => {
@@ -223,8 +232,12 @@ export const action: ActionFunction = async ({ request, params }) => {
       return json<ActionData>({ message });
     }
   }
+
   // Compare guess against actual survey responses
   const answers = await surveyAnswers(client, surveyId);
+  const totalVotes = answers.reduce((sum, ans) => {
+    return sum + ans.votes;
+  }, 0);
   const correctGuess = answers.find((ans) => ans._id === lemmaGuess);
   const maxGuesses = calcMaxGuesses(answers);
 
@@ -237,7 +250,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   // Update game with new guess
   const guesses = [...game.guesses, correctGuess];
   const points = guesses.reduce((sum, guess) => sum + guess.votes, 0);
-  const score = points / game.totalVotes;
+  const score = points / totalVotes;
   const win = score >= THRESHOLD / 100;
   const guessesToWin = win ? guesses.length : maxGuesses;
   const updatedGame = await addGuess(
@@ -264,26 +277,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   }
   return json<ActionData>({
     message,
-    correctGuess,
-    win,
-    gameOver,
-    guessesToWin: updatedGame.guessesToWin,
   });
-};
-
-// export const action: ActionFunction = async ({ request, params }) => {
-export const CatchBoundary: CatchBoundaryComponent = () => {
-  const caught = useCatch();
-
-  return (
-    <main className="max-w-4xl flex-grow mx-4 flex flex-col my-6 flex-wrap">
-      <h1 className="font-header mb-2 text-2xl">Survey not found</h1>
-      <p>Status: {caught.status}</p>
-      <pre>
-        <code>{JSON.stringify(caught.data, null, 2)}</code>
-      </pre>
-    </main>
-  );
 };
 
 export default () => {
@@ -343,6 +337,7 @@ export default () => {
         <b>{dayjs(voteDate).format("D MMMM YYYY")}</b>.
       </p>
     );
+
   }, [game, survey]);
 
   // Ensure state changes when the Survey number changes
@@ -350,10 +345,14 @@ export default () => {
     setGuesses(game.guesses);
     setWin(game.win || false);
     setMsg("Try to guess the most popular survey responses!");
+            setGuessesToWin(loaderData.game.guessesToWin || guessesToWin);
+    setGameOver(loaderData.gameOver || gameOver);
   }, [game._id]);
+      const unsplashLink = "https://unsplash.com/photos/" + loaderData.survey.photo;
+
 
   // The modal
-  const [openModal, setOpenModal] = useState(actionData?.win || win);
+  const [openModal, setOpenModal] = useState(loaderData.game.win || win);
   const mainRef = useRef<HTMLDivElement>(null!);
   useEffect(() => {
     if (openModal) {
@@ -375,7 +374,8 @@ export default () => {
     setWin(actionData?.win || win);
     setGameOver(actionData?.gameOver || gameOver);
     setGuessesToWin(actionData?.guessesToWin || guessesToWin);
-  }, [actionData]);
+  }, [loaderData, actionData]);
+
 
   // Upon winning
   useEffect(() => {
@@ -426,6 +426,7 @@ export default () => {
     gap-4 my-6 justify-center md:mx-auto mx-4"
         ref={mainRef}
       >
+
         <section
           className="md:px-4 space-y-4 w-full md:w-fit md:mx-0 
         justify-self-start"
@@ -443,6 +444,7 @@ export default () => {
             method="post"
             ref={formRef}
           >
+
             <input
               className="border border-outline py-1 px-2 
               bg-white disabled:bg-gray-300 w-full"
@@ -453,7 +455,9 @@ export default () => {
               disabled={gameOver}
               onChange={(e) => setGuess(e.target.value)}
               ref={inputRef}
+
               data-cy="guess-input"
+
               required
             />
             <button
@@ -483,7 +487,7 @@ export default () => {
           <Scorebar {...scorebarProps} instructions={true} />
         </section>
         <section className="md:self-end md:px-4">
-          <div className="flex flex-wrap gap-3 my-3">
+          <div className="flex flex-wrap space-x-3 my-3">
             <NavButton name="Respond" />
             <NavButton name="Draft" />
             <Link to="/surveys" className="underline inline-block self-end">

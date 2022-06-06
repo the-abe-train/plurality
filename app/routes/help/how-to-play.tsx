@@ -3,7 +3,7 @@ import AnimatedBanner from "~/components/text/AnimatedBanner";
 import InfoMenu from "~/components/navigation/InfoMenu";
 import { THRESHOLD } from "~/util/constants";
 
-export default function howToPlay() {
+export default () => {
   return (
     <main className="flex-grow mx-4 md:mx-auto mb-4 max-w-4xl my-4">
       <AnimatedBanner text="How to Play" />
@@ -82,4 +82,4 @@ export default function howToPlay() {
       </div>
     </main>
   );
-}
+};

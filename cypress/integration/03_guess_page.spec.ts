@@ -42,6 +42,7 @@ describe("Gameplay walkthrough", () => {
       cy.visit("http://localhost:3000/surveys/3/sample");
 
       cy.get("[data-cy=guess-input]").type(`${survey3.guess1}{enter}`);
+
       cy.wait(500);
       cy.contains(survey3.answer1).should("exist");
 

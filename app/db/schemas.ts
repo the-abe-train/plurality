@@ -43,7 +43,6 @@ export type GameSchema = {
     text: string | number;
     date: Date;
   };
-  totalVotes: number;
   lastUpdated: Date;
   score: number;
   guessesToWin: number;

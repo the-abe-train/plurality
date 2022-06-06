@@ -23,7 +23,17 @@ const dropIn = {
   exit: { y: "100vh", x: "-50%", opacity: 0 },
 };
 
+
 export default ({ scorebarProps, survey, handleClose }: Props) => {
+  const survey = surveyProps || {
+    _id: 1,
+    text: "What is the most expensive single item in your home?",
+    surveyClose: new Date("2022-05-25T03:59:59.999+00:00"),
+    photo: "v-unZQ5EeU8",
+    community: false,
+    drafted: new Date(),
+    category: "word",
+  };
   return (
     <Backdrop onClick={handleClose}>
       <motion.div

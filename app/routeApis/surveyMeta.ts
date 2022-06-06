@@ -1,11 +1,6 @@
 import { MetaFunction } from "@remix-run/node";
-import { SurveySchema } from "~/db/schemas";
 
-type LoaderData = {
-  survey: SurveySchema;
-};
-
-export const surveyMeta: MetaFunction = ({ data }: { data: LoaderData }) => {
+export const surveyMeta: MetaFunction = ({ data, location }) => {
   if (!data) {
     return {
       title: `Plurality Survey Not Found`,
@@ -18,7 +13,7 @@ export const surveyMeta: MetaFunction = ({ data }: { data: LoaderData }) => {
     "twitter:image:alt": data.survey.text,
     "twitter:card": "summary_large_image",
     "twitter:text:title": `Plurality Survey #${data.survey._id}`,
-    "og:url": `https://plurality.fun/surveys/${data.survey._id}/sample`,
+    "og:url": `https://plurality.fun${location.pathname}`,
     "og:title": `Plurality Survey #${data.survey._id}`,
     "og:description": data.survey.text,
     "og:site_name": "Plurality",
