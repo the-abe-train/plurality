@@ -20,15 +20,11 @@ import timezone from "dayjs/plugin/timezone";
 import styles from "~/styles/app.css";
 import backgrounds from "~/styles/backgrounds.css";
 
-import { MAX_GUESSES } from "~/util/constants";
-import { checkWin } from "~/util/gameplay";
-import { getLemma, surveyAnswers } from "~/util/nlp";
 import { client } from "~/db/connect.server";
 import { surveyByClose, surveyById } from "~/db/queries";
 import { RankedVote, SurveySchema } from "~/db/schemas";
 import { commitSession, getSession } from "~/sessions";
 import { exclamationIcon, guessIcon } from "~/images/icons";
-import { surveyMeta } from "~/routeApis/surveyMeta";
 import { surveyCatch } from "~/routeApis/surveyCatch";
 
 import Answers from "~/components/lists/Answers";
@@ -45,7 +41,6 @@ import { CatchBoundaryComponent } from "@remix-run/react/routeModules";
 import { surveyMeta } from "~/routeApis/surveyMeta";
 import useValidation from "~/hooks/useValidation";
 import { isMobile } from "react-device-detect";
-
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -64,11 +59,9 @@ type LoaderData = {
   survey: SurveySchema;
   totalVotes: number;
 
-
   maxGuesses: number;
 
   tomorrow?: SurveySchema;
-
 };
 
 export const loader: LoaderFunction = async ({ params, request }) => {
@@ -97,14 +90,18 @@ export const loader: LoaderFunction = async ({ params, request }) => {
     });
   }
 
+  // Tomorrow's survey
+  const midnight = dayjs().tz("America/Toronto").endOf("day");
+  const tomorrowSc = midnight.toDate();
+
   // Set the sample game for this not-logged-in user
   session.set("game", surveyId);
 
   // Get surveys
-  let [survey, answers] = await Promise.all([
+  let [survey, answers, tomorrow] = await Promise.all([
     surveyById(client, surveyId),
     surveyAnswers(client, surveyId),
-
+    surveyByClose(client, tomorrowSc),
   ]);
   if (!survey) {
     throw new Response("Survey has not been drafted yet.", {
@@ -122,12 +119,7 @@ export const loader: LoaderFunction = async ({ params, request }) => {
     return redirect(`/surveys/${surveyId}/respond`);
   }
 
-  // Tomorrow's survey
-  const midnight = dayjs().tz("America/Toronto").endOf("day");
-  const tomorrowSc = midnight.toDate();
-  const tomorrow = await surveyByClose(client, tomorrowSc);
   invariant(tomorrow, "Tomorrow's survey not found.");
-
   const data = { survey, totalVotes, tomorrow, maxGuesses };
 
   return json<LoaderData>(data, {

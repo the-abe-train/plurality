@@ -8,7 +8,7 @@ import { ScorebarProps } from "../schemas";
 
 type Props = {
   scorebarProps: ScorebarProps;
-  survey: SurveySchema;
+  survey?: SurveySchema;
   handleClose: () => void;
 };
 
@@ -23,9 +23,8 @@ const dropIn = {
   exit: { y: "100vh", x: "-50%", opacity: 0 },
 };
 
-
 export default ({ scorebarProps, survey, handleClose }: Props) => {
-  const survey = surveyProps || {
+  const fallBackSurvey: SurveySchema = {
     _id: 1,
     text: "What is the most expensive single item in your home?",
     surveyClose: new Date("2022-05-25T03:59:59.999+00:00"),
@@ -55,7 +54,7 @@ export default ({ scorebarProps, survey, handleClose }: Props) => {
         <h2 className="font-header mb-2 text-2xl sm:text-left mt-8">
           Respond to an open Survey!
         </h2>
-        <Survey survey={survey} />
+        <Survey survey={survey || fallBackSurvey} />
       </motion.div>
     </Backdrop>
   );
