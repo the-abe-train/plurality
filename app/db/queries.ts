@@ -4,6 +4,7 @@ import {
   UserSchema,
   GameSchema,
   SessionSchema,
+  RankedVote,
 } from "./schemas";
 import { DATABASE_NAME } from "../util/env";
 import { MongoClient, ObjectId, UpdateFilter } from "mongodb";
@@ -11,7 +12,6 @@ import { capitalizeFirstLetter, truncateEthAddress } from "~/util/text";
 import { randomPassword } from "../util/authorize";
 import dayjs from "dayjs";
 import { SessionData } from "@remix-run/node";
-import { MAX_GUESSES } from "~/util/constants";
 
 // Connect database
 async function connectDb(client: MongoClient) {
@@ -297,7 +297,7 @@ type GameProps = {
   surveyId: number;
   userId: ObjectId;
   win?: boolean;
-  guesses?: VoteAggregation[];
+  guesses?: RankedVote[];
   guessesToWin?: number;
 };
 
@@ -319,7 +319,7 @@ export async function gameBySurveyUser({
         guesses: guesses || [],
         win: win || false,
         score: 0,
-        guessesToWin: guessesToWin || MAX_GUESSES,
+        guessesToWin: guessesToWin || 999,
       },
     },
     { upsert: true, returnDocument: "after" }
@@ -331,7 +331,7 @@ export async function gameBySurveyUser({
 export async function addGuess(
   client: MongoClient,
   gameId: ObjectId,
-  guess: VoteAggregation,
+  guess: RankedVote,
   win: boolean,
   score: number,
   guessesToWin: number

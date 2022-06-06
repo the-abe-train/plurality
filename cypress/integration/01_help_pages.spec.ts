@@ -17,4 +17,4 @@ describe("My First Test", () => {
   });
 });
 
-export default 0;
+export default {};

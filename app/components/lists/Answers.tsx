@@ -1,23 +1,23 @@
 import { percentFormat, rankToLetter, statFormat } from "~/util/text";
 import { motion } from "framer-motion";
 import { useRef } from "react";
-import { VoteAggregation } from "~/db/schemas";
+import { RankedVote } from "~/db/schemas";
 
 type Props = {
-  guesses: VoteAggregation[];
+  guesses: RankedVote[];
   totalVotes: number;
   score: number;
   displayPercent: boolean;
   category: "word" | "number";
 };
 
-export default function Answers({
+export default ({
   guesses,
   totalVotes,
   score,
   displayPercent,
   category,
-}: Props) {
+}: Props) => {
   const nodeRef = useRef<HTMLDivElement>(null!);
   const sortedGuesses = guesses.sort((a, z) => a.ranking - z.ranking);
   const guessedVotes = guesses.reduce((total, guess) => {
@@ -97,4 +97,4 @@ export default function Answers({
       </div>
     </section>
   );
-}
+};

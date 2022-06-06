@@ -42,9 +42,12 @@ describe("Gameplay walkthrough", () => {
       cy.visit("http://localhost:3000/surveys/3/sample");
 
       cy.get("[data-cy=guess-input]").type(`${survey3.guess1}{enter}`);
+
+      cy.wait(500);
       cy.contains(survey3.answer1).should("exist");
 
       cy.get("[data-cy=guess-input]").type(`${survey3.guess2}{enter}`);
+      cy.wait(500);
       cy.contains(survey3.answer2).should("exist");
 
       cy.get("[data-cy=guess-input]").type(`${survey3.guess3}{enter}`);
@@ -58,9 +61,9 @@ describe("Gameplay walkthrough", () => {
       cy.contains("%").should("exist");
 
       cy.get("[data-cy=guess-input]").type(`${survey3.guess4}{enter}`);
-      cy.wait(500);
+      cy.wait(1000);
       cy.get("[data-cy=guess-input]").type(`${survey3.guess5}{enter}`);
-      cy.wait(500);
+      cy.wait(1000);
 
       cy.wait(2000);
       cy.contains("Share your score!").should("exist");

@@ -17,9 +17,7 @@ describe("Gameplay walkthrough", () => {
       cy.get("[data-cy=respond-input]").clear();
 
       cy.get("[data-cy=respond-input]").type("80085");
-      cy.contains("This survey does not accept numbers in responses.").should(
-        "exist"
-      );
+      cy.contains("Response cannot contain numbers.").should("exist");
       cy.get("[data-cy=respond-input]").clear();
 
       cy.get("[data-cy=respond-input]").type("Batmobile!");
@@ -57,9 +55,7 @@ describe("Gameplay walkthrough", () => {
       cy.get("[data-cy=respond-input]").clear();
 
       cy.get("[data-cy=respond-input]").type("batmobile");
-      cy.contains("This survey only accepts numbers as responses.").should(
-        "exist"
-      );
+      cy.contains("Response cannot contain letters.").should("exist");
       cy.get("[data-cy=respond-input]").clear();
 
       cy.get("[data-cy=respond-input]").type("80085{enter}");
@@ -72,8 +68,6 @@ describe("Gameplay walkthrough", () => {
       cy.url().should("contain", "signup");
     });
   });
-
-  // it("responds to Survey 35 (number)", () => {});
 });
 
 export {};

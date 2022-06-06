@@ -33,6 +33,11 @@ Guesses total: ${guesses}
 ${colours}
 
 https://plurality.fun/surveys/${surveyId}/sample`;
+
+    if (guessesToWin >= 999) {
+      shareString = "Error sharing score.";
+    }
+
     setCopied(true);
     try {
       if ("canShare" in navigator && isMobile && !isFirefox) {

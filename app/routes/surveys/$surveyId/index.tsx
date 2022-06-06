@@ -58,16 +58,16 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     });
   }
 
-  // Redirect to Respond if survey close hasn't happened yet
-  const surveyClose = survey.surveyClose;
-  if (dayjs(surveyClose) >= dayjs()) {
-    return redirect(`/surveys/${surveyId}/respond`);
-  }
+  // // Redirect to Respond if survey close hasn't happened yet
+  // const surveyClose = survey.surveyClose;
+  // if (dayjs(surveyClose) >= dayjs()) {
+  //   return redirect(`/surveys/${surveyId}/respond`);
+  // }
 
-  // Redirect to Guess if the survey is closed
-  if (dayjs(surveyClose) < dayjs()) {
-    return redirect(`/surveys/${surveyId}/guess`);
-  }
+  // // Redirect to Guess if the survey is closed
+  // if (dayjs(surveyClose) < dayjs()) {
+  //   return redirect(`/surveys/${surveyId}/guess`);
+  // }
 };
 
 export default () => <></>;
