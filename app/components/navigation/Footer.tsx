@@ -47,9 +47,9 @@ export default () => {
           <a href="https://github.com/the-abe-train/plurality">
             <img src={githubIcon} width={20} height={20} alt="GitHub" />
           </a>
-          <a href="mailto:team@plurality.fun">
+          {/* <a href="mailto:team@plurality.fun">
             <img src={emailIcon} width={20} height={20} alt="Email" />
-          </a>
+          </a> */}
         </section>
         <section>
           <ul className="grid grid-cols-4 gap-x-4 justify-items-center">
