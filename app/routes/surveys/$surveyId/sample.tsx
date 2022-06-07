@@ -37,7 +37,6 @@ import Modal from "~/components/modal/Modal";
 
 import { calcMaxGuesses, checkWin, getTotalVotes } from "~/util/gameplay";
 import { getLemma, surveyAnswers } from "~/util/nlp";
-import { CatchBoundaryComponent } from "@remix-run/react/routeModules";
 import { surveyMeta } from "~/routeApis/surveyMeta";
 import useValidation from "~/hooks/useValidation";
 import { isMobile } from "react-device-detect";
@@ -314,6 +313,7 @@ export default () => {
     score,
     guesses,
     win,
+    gameOver,
     surveyId,
     guessesToWin,
     maxGuesses,

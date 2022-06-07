@@ -4,13 +4,7 @@ import type {
   LoaderFunction,
 } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import {
-  Form,
-  Link,
-  useActionData,
-  useLoaderData,
-  useTransition,
-} from "@remix-run/react";
+import { Form, Link, useActionData, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence } from "framer-motion";
@@ -34,7 +28,7 @@ import {
   surveyById,
 } from "~/db/queries";
 
-import { GameSchema, RankedVote, SurveySchema } from "~/db/schemas";
+import { GameSchema, SurveySchema } from "~/db/schemas";
 
 import { commitSession, getSession } from "~/sessions";
 import { calcMaxGuesses, getTotalVotes, THRESHOLD } from "~/util/gameplay";
@@ -111,15 +105,10 @@ export const loader: LoaderFunction = async ({ params, request }) => {
     });
   }
 
-  // Tomorrow's survey
-  const midnight = dayjs().tz("America/Toronto").endOf("day");
-  const tomorrowSc = midnight.toDate();
-
   // Get surveys
-  let [survey, answers, tomorrow] = await Promise.all([
+  let [survey, answers] = await Promise.all([
     surveyById(client, surveyId),
     surveyAnswers(client, surveyId),
-    surveyByClose(client, tomorrowSc),
   ]);
   if (!survey) {
     throw new Response("Survey has not been drafted yet.", {
@@ -174,7 +163,9 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   }
 
   // Set initial message for player
-  const message = gameOver ? "No more guesses." : "";
+  const message = gameOver
+    ? "No more guesses."
+    : "Try to guess the most popular survey responses!";
 
   const data = {
     totalVotes,
@@ -283,15 +274,20 @@ export default () => {
   // Data from server
   const loaderData = useLoaderData<LoaderData>();
   const actionData = useActionData<ActionData>();
-  const { totalVotes, maxGuesses, survey, tomorrow, game } = loaderData;
+  const {
+    totalVotes,
+    maxGuesses,
+    survey,
+    tomorrow,
+    game,
+    message: loaderMessage,
+  } = loaderData;
 
   // Initial states are from loader data
   const [guesses, setGuesses] = useState(game.guesses);
   const [guess, setGuess] = useState("");
   const [gameOver, setGameOver] = useState(loaderData.gameOver);
-  const [msg, setMsg] = useState(
-    "Try to guess the most popular survey responses!"
-  );
+  const [msg, setMsg] = useState(loaderMessage);
   const [win, setWin] = useState(game.win || false);
   const [displayPercent, setDisplayPercent] = useState(false);
   const [guessesToWin, setGuessesToWin] = useState(
@@ -363,7 +359,7 @@ export default () => {
       setMsg(actionData?.message);
       setMsgColour("inherit");
     } else {
-      setMsg("Try to guess the most popular survey responses!");
+      setMsg(loaderMessage);
       setMsgColour("inherit");
     }
   }, [actionData]);
@@ -392,6 +388,7 @@ export default () => {
     score,
     guesses,
     win,
+    gameOver,
     surveyId: loaderData.survey._id,
     guessesToWin,
     maxGuesses,

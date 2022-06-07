@@ -123,6 +123,47 @@ describe("Guess page test", () => {
       });
     });
   });
+
+  it("Redirects to Respond page if the survey is in the future", () => {
+    cy.fixture("auth").then((authFixture) => {
+      cy.fixture("answers").then(({ survey1 }) => {
+        // Authenticate
+        cy.visit("http://localhost:3000");
+        cy.getCookie("user").should("not.exist");
+        cy.loginByForm(authFixture.loginEmail, authFixture.loginPassword);
+        cy.getCookie("user").should("exist");
+
+        cy.visit("http://localhost:3000/surveys/tomorrow");
+        cy.url().should("contain", "respond");
+      });
+    });
+  });
+
+  it("Fails a survey", () => {
+    cy.fixture("auth").then(({ email, password }) => {
+      cy.fixture("answers").then(({ survey13 }) => {
+        // Authenticate
+        cy.visit("http://localhost:3000");
+        cy.getCookie("user").should("not.exist");
+        cy.signupByForm(email, password);
+        cy.getCookie("user").should("exist");
+
+        cy.visit("http://localhost:3000/surveys/13/guess");
+        cy.url().should("contain", "/13/guess");
+
+        survey13.guesses.forEach((guess: string) => {
+          cy.get("[data-cy=guess-input]").type(`${guess}{enter}`);
+          cy.wait(100);
+        });
+
+        cy.get("[data-cy=message]").should("contain.text", "No more guesses.");
+
+        cy.deleteAccountForm();
+        cy.visit("/user");
+        cy.url().should("contain", "signup");
+      });
+    });
+  });
 });
 
 export {};

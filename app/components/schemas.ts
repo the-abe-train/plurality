@@ -5,6 +5,7 @@ export type ScorebarProps = {
   score: number;
   guesses: VoteAggregation[];
   win: boolean;
+  gameOver: boolean;
   surveyId: number;
   guessesToWin: number;
   maxGuesses: number;

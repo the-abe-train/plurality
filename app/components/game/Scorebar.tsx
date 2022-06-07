@@ -11,6 +11,7 @@ export default function Scorebar({
   score,
   guesses,
   win,
+  gameOver,
   instructions,
   surveyId,
   guessesToWin,
@@ -46,6 +47,7 @@ export default function Scorebar({
     surveyId,
     guesses: guesses.length,
     guessesToWin,
+    win,
   };
 
   const containerVariants = {
@@ -97,6 +99,8 @@ export default function Scorebar({
     });
   }
 
+  const showShareBtn = win || gameOver;
+
   return (
     <div className="flex flex-col space-y-4">
       <div className="w-3/4 mx-auto bg-gray-100 border border-outline rounded-full h-2.5 relative">
@@ -125,7 +129,7 @@ export default function Scorebar({
             </div>
           );
         })}
-        {win && <ShareButton {...shareButtonProps} />}
+        {showShareBtn && <ShareButton {...shareButtonProps} />}
       </div>
       <AnimatePresence initial={false}>
         {showPopup && (

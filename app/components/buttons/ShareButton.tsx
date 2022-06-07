@@ -8,6 +8,7 @@ type Props = {
   surveyId: number;
   guesses: number;
   guessesToWin: number;
+  win: boolean;
 };
 
 export default function ShareButton({
@@ -15,27 +16,28 @@ export default function ShareButton({
   surveyId,
   guesses,
   guessesToWin,
+  win,
 }: Props) {
   // Sharing your score
   const [msg, setMsg] = useState("Share");
   const [copied, setCopied] = useState(false);
 
   async function shareScore() {
-    const purples = [...new Array(guessesToWin)].map(() => "🟪").join("");
-    const oranges = [...new Array(guesses - guessesToWin)]
+    const winnerSquares = win && guesses >= guessesToWin ? guessesToWin : 0;
+    const purples = [...new Array(winnerSquares)].map(() => "🟪").join("");
+    const oranges = [...new Array(guesses - winnerSquares)]
       .map(() => "🟧")
       .join("");
-    const colours = guesses >= guessesToWin ? purples + oranges : "";
     let shareString = `#Plurality Survey ${surveyId}
 Score: ${percentFormat(score)}
-Guesses to win: ${guessesToWin}
+Guesses to win: ${win ? guessesToWin : "N/A"}
 Guesses total: ${guesses}
-${colours}
+${purples}${oranges}
 
 https://plurality.fun/surveys/${surveyId}/sample`;
 
     if (guessesToWin >= 999) {
-      shareString = "Error sharing score.";
+      return setMsg("Error sharing score.");
     }
 
     setCopied(true);
