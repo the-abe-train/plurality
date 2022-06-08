@@ -38,8 +38,6 @@ To verify your account's email address, click on the link below.
 
 ${emailLink}
 
-If you have any questions, you can reply to this email.
-
 Thank you for playing!
 
  - The Plurality Team`;
