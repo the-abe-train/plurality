@@ -65,25 +65,12 @@ export const loader: LoaderFunction = async ({ params, request }) => {
 
   // Redirect not signed-in users to home page
   if (!userId) {
-    // User can play exactly one game if they're not signed in.
-    // Check if the player already has a game in the session
-    if (session.has("game") && session.get("game") !== surveyId) {
-      session.flash(
-        "message",
-        "You need to be logged-in to view Survey results."
-      );
-      return redirect("/user/signup", {
-        headers: {
-          "Set-Cookie": await commitSession(session),
-        },
-      });
-    }
-
-    // Set the sample game for this not-logged-in user
-    session.set("game", surveyId);
-
-    // Send user to sample page
-    return redirect(`/surveys/${surveyId}/sample`, {
+    // User cannot view results if they are not signed in
+    session.flash(
+      "message",
+      "You need to be logged-in to view Survey results."
+    );
+    return redirect("/user/signup", {
       headers: {
         "Set-Cookie": await commitSession(session),
       },
