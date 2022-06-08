@@ -1,7 +1,5 @@
 /// <reference types="cypress" />
 
-// TODO make sure the right surveys show up in the previews?
-
 describe("Respond page test", () => {
   it("responds to test Survey -1 (text)", () => {
     cy.fixture("auth").then(({ loginEmail, loginPassword }) => {
@@ -29,6 +27,7 @@ describe("Respond page test", () => {
       cy.get("[data-cy=respond-input]").type("batmobile{enter}");
       cy.contains("Your response is Batmobile.").should("exist");
       cy.contains("Respond to another survey!").should("exist");
+      cy.contains("#-2").should("not.exist");
 
       cy.url().then((url) => cy.deleteGame(url));
     });
@@ -60,6 +59,7 @@ describe("Respond page test", () => {
       cy.get("[data-cy=respond-input]").type("80085{enter}");
       cy.contains("Your response is 80085.").should("exist");
       cy.contains("Respond to another survey!").should("exist");
+      cy.contains("#-1").should("not.exist");
 
       cy.url().then((url) => cy.deleteGame(url));
     });
