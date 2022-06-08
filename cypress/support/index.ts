@@ -9,6 +9,7 @@ declare global {
       loginByForm(email: string, password: string): Chainable<Response<any>>;
       signupByForm(email: string, password: string): Chainable<Response<any>>;
       deleteAccountForm(): Chainable<Response<any>>;
+      deleteGame(url: string): Chainable<Response<any>>;
     }
   }
 }

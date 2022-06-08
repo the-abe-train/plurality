@@ -427,6 +427,16 @@ export async function surveyScores(client: MongoClient, surveyId: number) {
   return scoreDocuments.map((doc) => doc.score);
 }
 
+export async function deleteGame(
+  client: MongoClient,
+  user: string,
+  survey: number
+) {
+  const db = await connectDb(client);
+  const gamesCollection = db.collection<UserSchema>("games");
+  return await gamesCollection.deleteOne({ user, survey });
+}
+
 // Session queries
 export async function createSession(
   client: MongoClient,

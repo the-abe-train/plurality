@@ -38,6 +38,7 @@ describe("Gameplay walkthrough", () => {
       cy.get("[data-cy=guess-enter]").click();
       cy.wait(1000);
       cy.contains("1. Jewelry").should("exist");
+      cy.url().then((url) => cy.deleteGame(url));
 
       // Guess survey 8
       cy.visit("/surveys/8/guess");
@@ -45,10 +46,12 @@ describe("Gameplay walkthrough", () => {
       cy.get("[data-cy=guess-enter]").click();
       cy.wait(1000);
       cy.contains("B. 7").should("exist");
+      cy.url().then((url) => cy.deleteGame(url));
 
       // Respond to tomorrow's survey
       cy.visit("/surveys/tomorrow");
       cy.url().should("not.include", "tomorrow");
+      cy.url().then((url) => cy.deleteGame(url));
 
       // Draft page
       cy.visit("/draft");

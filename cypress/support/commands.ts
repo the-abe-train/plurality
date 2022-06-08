@@ -3,7 +3,6 @@ Cypress.Commands.add("loginByForm", (email: string, password: string) => {
     name: "loginByForm",
     message: `${email} | ${password}`,
   });
-
   return cy.request({
     method: "POST",
     url: "/user/login?_data=routes%2Fuser%2Flogin",
@@ -21,7 +20,6 @@ Cypress.Commands.add("signupByForm", (email: string, password: string) => {
     name: "signupByForm",
     message: `${email} | ${password}`,
   });
-
   return cy.request({
     method: "POST",
     url: "/user/signup?_data=routes%2Fuser%signup",
@@ -40,7 +38,6 @@ Cypress.Commands.add("deleteAccountForm", () => {
     name: "deleteAccountForm",
     message: "Account deleted",
   });
-
   return cy.request({
     method: "POST",
     url: "/user?index=&_data=routes%2Fuser%2Findex",
@@ -50,6 +47,23 @@ Cypress.Commands.add("deleteAccountForm", () => {
     },
     followRedirect: true,
   });
+});
+
+Cypress.Commands.add("deleteGame", (url: string) => {
+  Cypress.log({
+    name: "deleteAccountForm",
+    message: "Account deleted",
+  });
+  const survey = (url.match(/\/-*\d+/) || [""])[0];
+  return cy
+    .request({
+      method: "GET",
+      url: `/surveys${survey}/delete`,
+      followRedirect: true,
+    })
+    .then((resp) => {
+      expect(resp.statusText).to.contain("OK");
+    });
 });
 
 export {};

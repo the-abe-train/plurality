@@ -1,16 +1,16 @@
 /// <reference types="cypress" />
 
 describe("Respond page test", () => {
-  it("responds to Survey 30 (text)", () => {
-    cy.fixture("auth").then((authFixture) => {
+  it("responds to test Survey -1 (text)", () => {
+    cy.fixture("auth").then(({ loginEmail, loginPassword }) => {
       // Authenticate
       cy.visit("http://localhost:3000");
       cy.getCookie("user").should("not.exist");
-      cy.signupByForm(authFixture.email, authFixture.password);
+      cy.loginByForm(loginEmail, loginPassword);
       cy.getCookie("user").should("exist");
 
-      cy.visit("http://localhost:3000/surveys/30/respond");
-      cy.contains("#30").should("exist");
+      cy.visit("http://localhost:3000/surveys/-1/respond");
+      cy.contains("#-1").should("exist");
 
       cy.get("[data-cy=respond-input]").type("Bat mobile");
       cy.contains("Response cannot contain a space.").should("exist");
@@ -28,23 +28,20 @@ describe("Respond page test", () => {
       cy.contains("Your response is Batmobile.").should("exist");
       cy.contains("Respond to another survey!").should("exist");
 
-      // Delete account
-      cy.deleteAccountForm();
-      cy.visit("/user");
-      cy.url().should("contain", "signup");
+      cy.url().then((url) => cy.deleteGame(url));
     });
   });
 
-  it("responds to Survey 35 (number)", () => {
-    cy.fixture("auth").then((authFixture) => {
+  it("responds to Survey -2 (number)", () => {
+    cy.fixture("auth").then(({ loginEmail, loginPassword }) => {
       // Authenticate
       cy.visit("http://localhost:3000");
       cy.getCookie("user").should("not.exist");
-      cy.signupByForm(authFixture.email, authFixture.password);
+      cy.loginByForm(loginEmail, loginPassword);
       cy.getCookie("user").should("exist");
 
-      cy.visit("http://localhost:3000/surveys/35/respond");
-      cy.contains("#35").should("exist");
+      cy.visit("http://localhost:3000/surveys/-2/respond");
+      cy.contains("#-2").should("exist");
 
       cy.get("[data-cy=respond-input]").type("Bat mobile");
       cy.contains("Response cannot contain a space.").should("exist");
@@ -62,10 +59,7 @@ describe("Respond page test", () => {
       cy.contains("Your response is 80085.").should("exist");
       cy.contains("Respond to another survey!").should("exist");
 
-      // Delete account
-      cy.deleteAccountForm();
-      cy.visit("/user");
-      cy.url().should("contain", "signup");
+      cy.url().then((url) => cy.deleteGame(url));
     });
   });
 });
