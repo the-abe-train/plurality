@@ -9,3 +9,5 @@ app/styles/app.css
 
 cypress/fixtures/auth.json
 cypress/fixtures/answers.json
+cypress/screenshots/
+cypress/videos/
