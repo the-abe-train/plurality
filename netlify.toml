@@ -1,6 +1,10 @@
 [build]
-command = "npm run build"
+command = "npm i && npm run build"
 publish = "public"
+
+[build.environment]
+CYPRESS_CACHE_FOLDER = "./node_modules/CypressBinary"
+TERM = "xterm"
 
 [dev]
 command = "remix watch"
@@ -15,3 +19,8 @@ status = 200
 for = "/build/*"
 [headers.values]
 "Cache-Control" = "public, max-age=31536000, s-maxage=31536000"
+
+[[plugins]]
+package = "netlify-plugin-cypress"
+[plugins.inputs]
+record = true
