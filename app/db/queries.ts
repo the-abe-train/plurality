@@ -207,7 +207,7 @@ export async function getFutureSurveys(client: MongoClient, userId: ObjectId) {
   const collection = await surveysCollection
     .find({
       surveyClose: { $gt: dayjs().toDate() },
-      _id: { $not: { $in: omitSurveys } },
+      $and: [{ _id: { $not: { $in: omitSurveys } } }, { _id: { $gt: 0 } }],
     })
     // .limit(amount)
     .toArray();
