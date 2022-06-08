@@ -69,6 +69,7 @@ export default ({ text, icon, size }: Props) => {
               src={icon}
               alt={text}
               width={size || 34}
+              height={size || 34}
               className="inline-block"
               style={{ imageRendering: "crisp-edges" }}
             />

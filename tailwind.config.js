@@ -13,7 +13,8 @@ module.exports = {
         primary2: '#FFEAE0',   // Champagne Pink
         secondary: '#2B1628',  // Dark Purple
         outline: '#808080',    // Gray Web
-        accent: '#C43661'      // Rose Red
+        accent: '#C43661',      // Rose Red
+        accent2: "#7E3793"     // Maximum Purple
       },
       dropShadow: {
         'block': "0px 3px 3px rgba(0, 0, 0, 0.25)",

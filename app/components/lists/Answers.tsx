@@ -4,43 +4,52 @@ import { useRef } from "react";
 import { RankedVote } from "~/db/schemas";
 
 type Props = {
-  guesses: RankedVote[];
+  responses: RankedVote[];
   totalVotes: number;
   score: number;
   displayPercent: boolean;
   category: "word" | "number";
+  highlights?: string[];
 };
 
 export default ({
-  guesses,
+  responses,
   totalVotes,
   score,
   displayPercent,
   category,
+  highlights,
 }: Props) => {
   const nodeRef = useRef<HTMLDivElement>(null!);
-  const sortedGuesses = guesses.sort((a, z) => a.ranking - z.ranking);
-  const guessedVotes = guesses.reduce((total, guess) => {
+  const sortedGuesses = responses.sort((a, z) => a.ranking - z.ranking);
+  const guessedVotes = responses.reduce((total, guess) => {
     return total + guess.votes;
   }, 0);
   const showRemainingStat = displayPercent
     ? percentFormat(1 - score)
     : totalVotes - guessedVotes;
+  // const highlightNames = highlights ||
 
   return (
-    <section>
+    // <section className="md:overflow-y-auto md:max-h-96">
+    <section
+      style={{
+        overflowY: responses.length > 20 ? "auto" : "inherit",
+        maxHeight: responses.length > 20 ? "22rem" : "inherit",
+      }}
+    >
       <motion.div
         variants={{
           hidden: {
             height: 0,
             transition: {
-              staggerChildren: 0.5,
+              staggerChildren: 0.1,
             },
           },
           visible: {
             height: "auto",
             transition: {
-              staggerChildren: 0.5,
+              staggerChildren: 0.1,
             },
           },
         }}
@@ -55,6 +64,7 @@ export default ({
           const showStat = displayPercent ? score : statFormat(answer.votes);
           const rank =
             category === "word" ? answer.ranking : rankToLetter(answer.ranking);
+          const highlight = !(highlights || []).includes(answer._id);
           const variants = {
             hidden: {
               y: 90,
@@ -80,10 +90,20 @@ export default ({
               <span
                 className="text-sm font-bold flex-grow overflow-hidden 
             overflow-ellipsis"
+                style={{
+                  color: highlight && highlights ? "#6D2F80" : "#2B1628",
+                }}
               >
                 {rank + ". " + answer._id}
               </span>
-              <span className="mx-2 text-sm">{showStat}</span>
+              <span
+                className="mx-2 text-sm"
+                style={{
+                  color: highlight && highlights ? "#6D2F80" : "#2B1628",
+                }}
+              >
+                {showStat}
+              </span>
             </motion.div>
           );
         })}

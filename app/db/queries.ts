@@ -336,6 +336,7 @@ export async function addGuess(
   score: number,
   guessesToWin: number
 ) {
+  // TODO add set gameOver?
   const db = await connectDb(client);
   const gamesCollection = db.collection<GameSchema>("games");
   const newData: UpdateFilter<GameSchema> = {
@@ -390,6 +391,40 @@ export async function surveyVotes(client: MongoClient, surveyId: number) {
     .find({ survey: surveyId, vote: { $exists: true } })
     .toArray();
   return games.length;
+}
+
+type ScoreDoc = {
+  _id: ObjectId;
+  score: number;
+};
+
+export async function surveyScores(client: MongoClient, surveyId: number) {
+  const db = await connectDb(client);
+  const gamesCollection = db.collection<GameSchema>("games");
+  const scoreDocuments = await gamesCollection
+    .aggregate<ScoreDoc>([
+      {
+        $match: {
+          score: {
+            $gt: 0,
+          },
+          survey: surveyId,
+        },
+      },
+      {
+        $project: {
+          score: "$score",
+        },
+      },
+      {
+        $sort: {
+          score: 1,
+        },
+      },
+    ])
+    .toArray();
+
+  return scoreDocuments.map((doc) => doc.score);
 }
 
 // Session queries
