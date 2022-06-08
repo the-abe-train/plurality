@@ -1,7 +1,12 @@
 import { genSalt, hash, compare } from "bcryptjs";
 import { ObjectId } from "mongodb";
 import { client } from "~/db/connect.server";
-import { createUser, userByEmail, userByWallet } from "../db/queries";
+import {
+  createUser,
+  userByEmail,
+  userByWallet,
+  userUpdatePassword,
+} from "../db/queries";
 // const { genSalt, hash, compare } = bcrypt;
 
 export async function registerUser(email: string, password: string) {
@@ -20,6 +25,39 @@ export async function registerUser(email: string, password: string) {
 
   // Return user from database
   return { isAuthorized: true, userId: user.insertedId };
+}
+
+export async function changePassword(email: string, password: string) {
+  // Make sure that user already exists
+  const existingUser = await userByEmail(client, email);
+  if (!existingUser) {
+    return {
+      message: "No user with this email address exists in the database",
+      error: true,
+    };
+  }
+
+  // Generate salt
+  const salt = await genSalt(10);
+
+  // Hash with salt
+  const hashedPassword = await hash(password, salt);
+
+  // Change password in database
+  const updatedUser = await userUpdatePassword(
+    client,
+    existingUser._id,
+    hashedPassword
+  );
+  if (!updatedUser) {
+    return {
+      message: "Password change failed. Please try again.",
+      error: true,
+    };
+  }
+
+  // Return user from database
+  return { message: "Password changed successfully.", error: false };
 }
 
 export async function authorizeUser(email: string, password: string) {

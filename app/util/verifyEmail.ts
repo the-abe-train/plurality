@@ -1,21 +1,21 @@
 import crypto from "crypto";
-import { ROOT_DOMAIN, JWT_SIGNATURE } from "./env";
+import { ROOT_DOMAIN } from "./env";
 
-export async function createVerifyEmailToken(email: string) {
+export async function createUserVerificationToken(email: string, key: string) {
   try {
     // Auth string, JWT signature, email
-    const authString = `${JWT_SIGNATURE}:${email}`;
+    const authString = `${key}:${encodeURIComponent(email)}`;
     return crypto.createHash("sha256").update(authString).digest("hex");
   } catch (e) {
-    console.log("Failed to send email verification link.");
+    console.log("Failed to create user verification token.");
     console.error(e);
   }
 }
 
-export async function createVerifyEmailLink(email: string) {
+async function createVerifyEmailLink(email: string, key: string) {
   try {
     // Create token
-    const emailToken = await createVerifyEmailToken(email);
+    const emailToken = await createUserVerificationToken(email, key);
 
     // Encode url string
     const URIencodedEmail = encodeURIComponent(email);
@@ -28,8 +28,8 @@ export async function createVerifyEmailLink(email: string) {
   }
 }
 
-export async function verifyEmailBody(email: string) {
-  const emailLink = await createVerifyEmailLink(email);
+export async function verifyEmailBody(email: string, key: string) {
+  const emailLink = await createVerifyEmailLink(email, key);
   return `Hello!
 
 You received this email because you clicked the "Verify" button on the Plurality user page.

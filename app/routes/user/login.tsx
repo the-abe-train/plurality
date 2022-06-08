@@ -138,10 +138,10 @@ export default () => {
   }, []);
 
   return (
-    <main className="container flex-grow px-4 sm:px-0 mx-auto w-full max-w-4xl">
+    <main className="container flex-grow px-4 md:px-0 mx-auto w-full max-w-4xl">
       <AnimatedBanner text="Log in" icon={userIcon} />
       <section className="flex justify-around flex-col md:flex-row my-4 md:my-8">
-        <article className="max-w-sm ">
+        <article className="max-w-sm mx-auto md:mx-0">
           <h2 className="md:text-center text-2xl font-header">
             Option 1: Email & Password
           </h2>
@@ -183,8 +183,8 @@ export default () => {
             </p>
           </Form>
         </article>
-        <article className="max-w-sm">
-          <h2 className="md:text-center text-2xl font-header">
+        <article className="max-w-sm mx-auto md:mx-0">
+          <h2 className="text-center text-2xl font-header">
             Option 2: Ethereum wallet
           </h2>
           <div className="my-4 space-y-4">
@@ -201,11 +201,17 @@ export default () => {
           </div>
         </article>
       </section>
-      <section className="md:mt-8 my-4 md:px-4">
+      <section className="md:mt-8 my-4 md:px-4 space-y-4">
         <p>
           Don't have an account?{" "}
           <Link to="/user/signup" className="underline">
             Sign-up
+          </Link>
+        </p>
+        <p>
+          Forgot your password?{" "}
+          <Link to="/user/password-reset" className="underline">
+            Click here.
           </Link>
         </p>
       </section>

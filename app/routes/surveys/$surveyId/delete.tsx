@@ -73,6 +73,5 @@ export const loader: LoaderFunction = async ({ params, request }) => {
     headers: {
       "Set-Cookie": await commitSession(session),
     },
-    statusText: "Game deleted",
   });
 };

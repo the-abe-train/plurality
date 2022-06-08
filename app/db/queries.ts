@@ -7,7 +7,7 @@ import {
   RankedVote,
 } from "./schemas";
 import { DATABASE_NAME } from "../util/env";
-import { MongoClient, ObjectId, UpdateFilter } from "mongodb";
+import { Filter, MongoClient, ObjectId, UpdateFilter } from "mongodb";
 import { capitalizeFirstLetter, truncateEthAddress } from "~/util/text";
 import { randomPassword } from "../util/authorize";
 import dayjs from "dayjs";
@@ -105,6 +105,21 @@ export async function userUpdateEmail(
   const modifiedUser = await usersCollection.findOneAndUpdate(
     { _id: id },
     { $set: { email: newData } },
+    { upsert: false, returnDocument: "after" }
+  );
+  return modifiedUser.value;
+}
+
+export async function userUpdatePassword(
+  client: MongoClient,
+  id: ObjectId,
+  newPassword: string
+) {
+  const db = await connectDb(client);
+  const usersCollection = db.collection<UserSchema>("users");
+  const modifiedUser = await usersCollection.findOneAndUpdate(
+    { _id: id },
+    { $set: { password: newPassword } },
     { upsert: false, returnDocument: "after" }
   );
   return modifiedUser.value;
@@ -337,7 +352,6 @@ export async function addGuess(
   score: number,
   guessesToWin: number
 ) {
-  // TODO add set gameOver?
   const db = await connectDb(client);
   const gamesCollection = db.collection<GameSchema>("games");
   const newData: UpdateFilter<GameSchema> = {
@@ -430,12 +444,18 @@ export async function surveyScores(client: MongoClient, surveyId: number) {
 
 export async function deleteGame(
   client: MongoClient,
-  user: string,
+  user: ObjectId,
   survey: number
 ) {
   const db = await connectDb(client);
   const gamesCollection = db.collection<UserSchema>("games");
-  return await gamesCollection.deleteOne({ user, survey });
+  const filter: UpdateFilter<GameSchema> = {
+    user,
+    survey,
+    vote: { $exists: false },
+  };
+  if (survey < 1) delete filter["vote"];
+  return await gamesCollection.deleteOne(filter);
 }
 
 // Session queries

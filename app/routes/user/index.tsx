@@ -13,10 +13,10 @@ import { sendEmail } from "~/api/nodemailer";
 
 import { getSession, destroySession } from "../../sessions";
 import useAttachWallet from "~/hooks/useAttachWallet";
-import { verifyEmailBody } from "~/util/verify";
+import { verifyEmailBody } from "~/util/verifyEmail";
 import { percentFormat, truncateEthAddress, truncateName } from "~/util/text";
 import { authorizeWallet } from "~/util/authorize";
-import { NAME_LENGTH } from "~/util/constants";
+
 import { UserSchema } from "~/db/schemas";
 import { client } from "~/db/connect.server";
 import {
@@ -43,6 +43,8 @@ import {
   userIcon,
   openSeaLogo,
 } from "~/images/icons";
+import { NAME_LENGTH } from "~/util/gameplay";
+import { JWT_SIGNATURE } from "~/util/env";
 
 type LoaderData = {
   user: UserSchema;
@@ -134,7 +136,7 @@ export const action: ActionFunction = async ({ request }) => {
     const user = await userById(client, userId);
     if (user) {
       const emailTo = user.email.address;
-      const emailBody = await verifyEmailBody(emailTo);
+      const emailBody = await verifyEmailBody(emailTo, JWT_SIGNATURE);
       const subject = "Verify Email for Plurality";
       const response = await sendEmail({ emailBody, emailTo, subject });
       if (response === 200) {
