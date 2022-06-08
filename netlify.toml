@@ -1,10 +1,6 @@
 [build]
-command = "npm i && npm run build"
+command = "npm run build"
 publish = "public"
-
-[build.environment]
-CYPRESS_CACHE_FOLDER = "./node_modules/CypressBinary"
-TERM = "xterm"
 
 [dev]
 command = "remix watch"
