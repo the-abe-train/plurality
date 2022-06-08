@@ -60,7 +60,7 @@ https://plurality.fun/surveys/${surveyId}/sample`;
   return (
     <div className="flex flex-col items-center">
       <button
-        className="silver px-3 py-2"
+        className="silver px-3 py-2 my-[1px]"
         onClick={shareScore}
         disabled={copied}
         data-cy="share-btn"

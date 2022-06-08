@@ -77,12 +77,12 @@ describe("Guess page test", () => {
   });
 
   it("Plays Survey 1 (guess page)", () => {
-    cy.fixture("auth").then((authFixture) => {
+    cy.fixture("auth").then(({ loginEmail, loginPassword }) => {
       cy.fixture("answers").then(({ survey1 }) => {
         // Authenticate
         cy.visit("http://localhost:3000");
         cy.getCookie("user").should("not.exist");
-        cy.signupByForm(authFixture.email, authFixture.password);
+        cy.loginByForm(loginEmail, loginPassword);
         cy.getCookie("user").should("exist");
         cy.visit("http://localhost:3000/surveys/1/guess");
         cy.url().should("contain", "/1/guess");
@@ -117,35 +117,31 @@ describe("Guess page test", () => {
         cy.get("[data-cy=share-btn]").click();
         cy.contains("Copied!").should("exist");
 
-        cy.deleteAccountForm();
-        cy.visit("/user");
-        cy.url().should("contain", "signup");
+        cy.url().then((url) => cy.deleteGame(url));
       });
     });
   });
 
   it("Redirects to Respond page if the survey is in the future", () => {
     cy.fixture("auth").then((authFixture) => {
-      cy.fixture("answers").then(({ survey1 }) => {
-        // Authenticate
-        cy.visit("http://localhost:3000");
-        cy.getCookie("user").should("not.exist");
-        cy.loginByForm(authFixture.loginEmail, authFixture.loginPassword);
-        cy.getCookie("user").should("exist");
+      // Authenticate
+      cy.visit("http://localhost:3000");
+      cy.getCookie("user").should("not.exist");
+      cy.loginByForm(authFixture.loginEmail, authFixture.loginPassword);
+      cy.getCookie("user").should("exist");
 
-        cy.visit("http://localhost:3000/surveys/tomorrow");
-        cy.url().should("contain", "respond");
-      });
+      cy.visit("http://localhost:3000/surveys/tomorrow");
+      cy.url().should("contain", "respond");
     });
   });
 
   it("Fails a survey", () => {
-    cy.fixture("auth").then(({ email, password }) => {
+    cy.fixture("auth").then(({ loginEmail, loginPassword }) => {
       cy.fixture("answers").then(({ survey13 }) => {
         // Authenticate
         cy.visit("http://localhost:3000");
         cy.getCookie("user").should("not.exist");
-        cy.signupByForm(email, password);
+        cy.loginByForm(loginEmail, loginPassword);
         cy.getCookie("user").should("exist");
 
         cy.visit("http://localhost:3000/surveys/13/guess");
@@ -153,14 +149,13 @@ describe("Guess page test", () => {
 
         survey13.guesses.forEach((guess: string) => {
           cy.get("[data-cy=guess-input]").type(`${guess}{enter}`);
-          cy.wait(100);
+          cy.wait(500);
         });
+        cy.wait(2000);
 
         cy.get("[data-cy=message]").should("contain.text", "No more guesses.");
 
-        cy.deleteAccountForm();
-        cy.visit("/user");
-        cy.url().should("contain", "signup");
+        cy.url().then((url) => cy.deleteGame(url));
       });
     });
   });

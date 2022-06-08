@@ -15,6 +15,7 @@ describe("Search Surveys test", () => {
       cy.get('a[href*="/surveys/1/guess"]').click();
       cy.url().should("contain", "surveys/1/guess");
       cy.wait(500);
+      cy.url().then((url) => cy.deleteGame(url));
 
       // Search for Survey with the word "best"
       cy.visit("http://localhost:3000/surveys");

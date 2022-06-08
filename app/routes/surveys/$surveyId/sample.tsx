@@ -140,7 +140,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   const form = await request.formData();
   const guess = form.get("guess") as string;
   const guesses = form.get("guesses") as string;
-  const totalVotes = form.get("totalVotes") as string;
+  const totalVotes = Number(form.get("totalVotes") as string);
 
   // Reject empty form submissions
   if (!guess) {
@@ -171,17 +171,22 @@ export const action: ActionFunction = async ({ request, params }) => {
     return json<ActionData>({ message });
   }
 
+  // Calculated values
+  const points = getTotalVotes(guessesArray);
+  const score = points / totalVotes;
+
   // Update guesses and win status
   const updatedGuesses = [...guessesArray, correctGuess];
-  const win = checkWin(updatedGuesses, Number(totalVotes));
+  const win = checkWin(updatedGuesses, totalVotes);
 
   // Pick message to send to player
-  const gameOver = updatedGuesses.length >= maxGuesses;
+  const gameOver = updatedGuesses.length >= maxGuesses || score === 1;
   let message: string;
   if (win && !gameOver) {
-    message = "You win! Keep guessing to improve your score.";
+    message =
+      "You win! Use your remaining guesses to reveal the top responses.";
   } else if (win && gameOver) {
-    message = "You win! No more guesses.";
+    message = "You win!";
   } else if (!win && gameOver) {
     message = "No more guesses.";
   } else {
@@ -210,6 +215,10 @@ export default () => {
 
   // Unsplash photo attributions
   const unsplashLink = "https://unsplash.com/photos/" + loaderData.survey.photo;
+
+  // Calculated values
+  const points = getTotalVotes(guesses);
+  const score = points / totalVotes;
 
   // Guess validation
   const [enabled, setEnabled] = useState(true);
@@ -305,9 +314,6 @@ export default () => {
     }
   }, [openModal]);
 
-  // Calculated values
-  const points = getTotalVotes(guesses);
-  const score = points / totalVotes;
   const scorebarProps = {
     points,
     score,
@@ -345,11 +351,20 @@ export default () => {
         >
           <Survey survey={survey} />
           <p
-            className="md:max-w-survey"
+            className="w-full md:max-w-survey"
             data-cy="message"
             style={{ color: msgColour }}
           >
-            {msg}
+            {msg}{" "}
+            {gameOver && (
+              <Link
+                to={`/surveys/${survey._id}/results`}
+                className="underline"
+                data-cy="message"
+              >
+                Click to see top responses.
+              </Link>
+            )}
           </p>
           <Form
             className="md:w-survey mx-auto flex space-x-2"
@@ -402,7 +417,7 @@ export default () => {
           </div>
           <Answers
             totalVotes={totalVotes}
-            guesses={guesses}
+            responses={guesses}
             score={score}
             displayPercent={displayPercent}
             category={survey.category}

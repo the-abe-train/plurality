@@ -15,6 +15,7 @@ import walletIcon from "~/images/icons/wallet.svg";
 import exclamationIcon from "~/images/icons/exclamation.svg";
 import infoIcon from "~/images/icons/info.svg";
 import shareIcon from "~/images/icons/share.svg";
+import resultsIcon from "~/images/icons/results.svg";
 
 export {
   guessIcon,
@@ -34,4 +35,5 @@ export {
   exclamationIcon,
   infoIcon,
   shareIcon,
+  resultsIcon,
 };
