@@ -68,7 +68,7 @@ export const loader: LoaderFunction = async ({ params, request }) => {
     // User cannot view results if they are not signed in
     session.flash(
       "message",
-      "You need to be logged-in to view Survey results."
+      "You need to be logged-in to view top Survey responses."
     );
     return redirect("/user/signup", {
       headers: {
