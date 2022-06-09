@@ -342,6 +342,17 @@ export default () => {
 
   const unsplashLink = "https://unsplash.com/photos/" + survey.photo;
 
+  // Updates from action data
+  useEffect(() => {
+    if (actionData?.message) {
+      setMsg(actionData?.message);
+      setMsgColour("inherit");
+    } else {
+      setMsg(loaderMessage);
+      setMsgColour("inherit");
+    }
+  }, [actionData]);
+
   // The modal
   const [openModal, setOpenModal] = useState(game.win || win);
   const mainRef = useRef<HTMLDivElement>(null!);
@@ -353,17 +364,6 @@ export default () => {
     }
     return () => clearAllBodyScrollLocks();
   }, [mainRef, openModal]);
-
-  // Updates from action data
-  useEffect(() => {
-    if (actionData?.message) {
-      setMsg(actionData?.message);
-      setMsgColour("inherit");
-    } else {
-      setMsg(loaderMessage);
-      setMsgColour("inherit");
-    }
-  }, [actionData]);
 
   // Upon winning
   useEffect(() => {
