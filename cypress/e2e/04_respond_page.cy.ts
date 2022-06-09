@@ -24,8 +24,12 @@ describe("Respond page test", () => {
       cy.contains("Response cannot contain a symbol.").should("exist");
       cy.get("[data-cy=respond-input]").clear();
 
-      cy.get("[data-cy=respond-input]").type("batmobile{enter}");
-      cy.contains("Your response is Batmobile.").should("exist");
+      cy.get("[data-cy=respond-input]").type("orrange{enter}");
+      cy.contains("Are you sure you didn't mean orange?").should("exist");
+      cy.get("[data-cy=respond-input]").clear();
+
+      cy.get("[data-cy=respond-input]").type("orange{enter}");
+      cy.contains("Responses can be guessed").should("exist");
       cy.contains("Respond to another survey!").should("exist");
       cy.contains("#-2").should("not.exist");
 
@@ -57,7 +61,7 @@ describe("Respond page test", () => {
       cy.get("[data-cy=respond-input]").clear();
 
       cy.get("[data-cy=respond-input]").type("80085{enter}");
-      cy.contains("Your response is 80085.").should("exist");
+      cy.contains("Responses can be guessed").should("exist");
       cy.contains("Respond to another survey!").should("exist");
       cy.contains("#-1").should("not.exist");
 

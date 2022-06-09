@@ -3,6 +3,13 @@ import lemmatize from "wink-lemmatizer";
 import { votesBySurvey } from "~/db/queries";
 import { RankedVote, VoteAggregation } from "~/db/schemas";
 import { capitalizeFirstLetter } from "./text";
+import Typo from "typo-js";
+
+export function getTypo(response: string) {
+  // @ts-ignore
+  const dictionary = new Typo("en_US");
+  return dictionary.suggest(response);
+}
 
 export function getLemma(word: string | number): string {
   if (typeof word === "number") return getLemma(String(word));

@@ -17,7 +17,9 @@ export default function useValidation({
 }: ValidationProps) {
   const containsLetter = !!voteText.match(/[a-zA-Z]/);
   const containsNumber = !!voteText.match(/\d/);
-  const containsSymbol = !!voteText.match(/[-!$%^&*()_+|~=`{}\[\]:";'<>?,.\/]/);
+  const containsSymbol = !!voteText.match(
+    /[-!$%^&*()_+|~=`{}\[\]:";'<>?,.\/\\]/
+  );
 
   return useEffect(() => {
     if (voteText.length < 1 || voteText.length >= 20) {
@@ -40,6 +42,7 @@ export default function useValidation({
       setMsgColour("red");
     } else {
       setEnabled(true);
+      setMsgColour("inherit");
     }
   }, [voteText]);
 }

@@ -8,5 +8,6 @@ declare module "typo-js" {
   class Typo {
     constructor(lang_code: string);
     check(word: string): boolean;
+    suggest(word: string): string[];
   }
 }

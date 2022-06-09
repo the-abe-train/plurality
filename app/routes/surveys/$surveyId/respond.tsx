@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Form, Link, useLoaderData } from "@remix-run/react";
+import { Form, Link, useActionData, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
 import { GameSchema, SurveySchema } from "~/db/schemas";
@@ -31,6 +31,7 @@ import { surveyMeta } from "~/routeApis/surveyMeta";
 import useValidation from "~/hooks/useValidation";
 
 import { surveyCatch } from "~/routeApis/surveyCatch";
+import { getTypo } from "~/util/nlp";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -114,7 +115,8 @@ export const loader: LoaderFunction = async ({ params, request }) => {
 };
 
 type ActionData = {
-  message: string;
+  message?: string;
+  suggestion?: string;
 };
 
 export const action: ActionFunction = async ({ request, params }) => {
@@ -127,6 +129,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   // Parse form
   const newVote = Number(form.get("vote")) || (form.get("vote") as string);
   const newDate = form.get("date") as string;
+  const confirm = form.get("confirm") === "on";
   const { _action } = Object.fromEntries(form);
 
   // Submitting a vote
@@ -137,13 +140,26 @@ export const action: ActionFunction = async ({ request, params }) => {
       return json<ActionData>({ message });
     }
 
+    // Check for typos
+    if (typeof newVote === "string" && !confirm) {
+      const suggestions = getTypo(newVote);
+      console.log("Suggestions", suggestions);
+      if (suggestions.length > 0) {
+        const suggestion = suggestions[0];
+        const message = `Wait! There may be a typo in your answer. Are you sure you didn't mean `;
+        return json<ActionData>({ message, suggestion });
+      }
+    }
+
     // Update game with new guess
     const userId = session.get("user");
     const surveyId = Number(params.surveyId);
     const updatedGame = await addVote(client, surveyId, userId, newVote);
     invariant(updatedGame, "Game update failed");
-    const message = `Response "${newVote}" successfully submitted for Survey #${surveyId}`;
-    return json<ActionData>({ message });
+    console.log(
+      `Response "${newVote}" successfully submitted for Survey #${surveyId}`
+    );
+    return {};
   }
 
   if (_action === "changeSurvey") {
@@ -161,10 +177,11 @@ export const action: ActionFunction = async ({ request, params }) => {
 
 export default () => {
   const loaderData = useLoaderData<LoaderData>();
+  const actionData = useActionData<ActionData>();
   const { surveyClose } = loaderData.survey;
   const [yourVote, setYourVote] = useState(loaderData.game.vote?.text);
   const [enabled, setEnabled] = useState(false);
-  const [voteText, setVoteText] = useState("");
+  const [voteText, setVoteText] = useState(actionData?.suggestion || "");
   const [datePicker, setDatePicker] = useState(
     dayjs(surveyClose).format("YYYY-MM-DD")
   );
@@ -187,10 +204,22 @@ export default () => {
 
   // Making sure "your vote" is correct
   useEffect(() => {
-    setYourVote(loaderData.game.vote?.text);
+    const vote = loaderData.game.vote?.text;
+    setYourVote(vote);
     setDatePicker(dayjs(surveyClose).format("YYYY-MM-DD"));
-    setVoteText("");
-  }, [loaderData.game]);
+    if (vote) {
+      setMsg("");
+      setVoteText(String(vote));
+    } else if (actionData?.message) {
+      setMsg(actionData.message);
+    } else {
+      setVoteText("");
+    }
+  }, [loaderData.game, actionData?.message]);
+
+  // Action data
+  // useEffect(() => {
+  // }, [actionData]);
 
   // Updates from action data
   useEffect(() => {
@@ -226,7 +255,7 @@ export default () => {
     my-6 flex-wrap"
       >
         <div className="flex flex-col md:flex-row">
-          <section className="md:px-4 py-2 space-y-4">
+          <section className="md:px-4 py-2 space-y-4 max-w-survey">
             <Survey survey={loaderData.survey} />
             <Form method="post" className="w-full flex space-x-2 my-4">
               <input
@@ -242,6 +271,13 @@ export default () => {
                 data-cy="respond-input"
                 spellCheck
               />
+              <input
+                type="checkbox"
+                name="confirm"
+                readOnly
+                className="hidden"
+                checked={!!actionData?.suggestion}
+              />
               <button
                 className="silver px-3 py-1"
                 type="submit"
@@ -249,20 +285,22 @@ export default () => {
                 value="submitResponse"
                 disabled={!enabled}
               >
-                Enter
+                {actionData?.suggestion ? "Confirm" : "Enter"}
               </button>
             </Form>
             {yourVote && (
               <div className="min-h-[2rem] max-w-survey">
                 <p>
-                  Your response is <b>{yourVote}</b>.
-                </p>
-                <p>
-                  Survey responses can be guessed in <b>{nextSurvey}</b>.
+                  Responses can be guessed in <b>{nextSurvey}</b>.
                 </p>
               </div>
             )}
-            {msg && <p style={{ color: msgColour }}>{msg}</p>}
+            {msg && (
+              <p style={{ color: msgColour }}>
+                {msg}{" "}
+                {actionData?.suggestion && <b>{actionData.suggestion}?</b>}
+              </p>
+            )}
           </section>
           <section className={`md:px-4 w-fit ${yourVote && "hidden md:block"}`}>
             <h2 className="font-header mb-2 text-2xl">Instructions</h2>
