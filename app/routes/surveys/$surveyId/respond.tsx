@@ -39,7 +39,7 @@ dayjs.extend(timezone);
 type LoaderData = {
   game: GameSchema;
   survey: SurveySchema;
-  previews?: SurveySchema[];
+  previews: SurveySchema[];
   lastSurveyDate?: string;
 };
 
@@ -48,6 +48,9 @@ export const CatchBoundary = surveyCatch;
 
 async function getPreviews(userId: ObjectId, surveyId: number) {
   const futureSurveys = await getFutureSurveys(client, userId);
+  if (futureSurveys.length === 0) {
+    return { previews: [], lastSurveyDate: "" };
+  }
   const lastSurvey = futureSurveys[futureSurveys.length - 1];
   const lastSurveyDate = dayjs(lastSurvey.surveyClose).format("YYYY-MM-DD");
   const previews = futureSurveys
@@ -98,7 +101,7 @@ export const loader: LoaderFunction = async ({ params, request }) => {
 
   // If the player has already voted
   if (!game.vote) {
-    const data = { game, survey };
+    const data = { game, survey, previews: [] };
     return json<LoaderData>(data);
   }
 
@@ -188,7 +191,7 @@ export default () => {
   const [msg, setMsg] = useState("");
   const [msgColour, setMsgColour] = useState("auto");
   const [previewSurveys, setPreviewSurveys] = useState<SurveySchema[]>(
-    loaderData.previews || []
+    loaderData.previews
   );
   const [lastSurveyDate, setLastSurveyDate] = useState(
     loaderData.lastSurveyDate
@@ -216,10 +219,6 @@ export default () => {
       setVoteText("");
     }
   }, [loaderData.game, actionData?.message]);
-
-  // Action data
-  // useEffect(() => {
-  // }, [actionData]);
 
   // Updates from action data
   useEffect(() => {
@@ -283,7 +282,7 @@ export default () => {
                 type="submit"
                 name="_action"
                 value="submitResponse"
-                disabled={!enabled}
+                disabled={!enabled || !!yourVote}
               >
                 {actionData?.suggestion ? "Confirm" : "Enter"}
               </button>
@@ -361,6 +360,12 @@ export default () => {
               {previewSurveys.map((survey, idx) => {
                 return <Survey survey={survey} key={idx} />;
               })}
+              {previewSurveys.length === 0 && (
+                <p>
+                  You've responded to all open Surveys! More Surveys will be
+                  availble in {dayjs().add(1, "M").format("MMMM")}.
+                </p>
+              )}
             </div>
             <p className="text-sm my-4 italic">
               Survey photos from{" "}
