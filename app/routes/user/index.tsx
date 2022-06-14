@@ -115,6 +115,7 @@ type ActionData = {
 };
 
 export const action: ActionFunction = async ({ request }) => {
+  console.log("Running profile page form, aka", action.name); // action9
   // Async parse form and session data
   const [form, session] = await Promise.all([
     request.formData(),

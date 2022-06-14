@@ -29,7 +29,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   ]);
 
   // Get surveys from db
-  invariant(survey, "Today's Survey not fetched from database");
+  invariant(survey, "Tomorrow's Survey not fetched from database");
   const surveyId = survey._id;
 
   // Redirect not signed-in users to home page
