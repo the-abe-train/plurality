@@ -487,7 +487,10 @@ export default () => {
           <div className="flex flex-wrap space-x-3 my-3">
             <NavButton name="Respond" />
             <NavButton name="Draft" />
-            <Link to="/surveys" className="underline inline-block self-end">
+            <Link
+              to="/surveys?community=on&standard=on"
+              className="underline inline-block self-end"
+            >
               More Surveys
             </Link>
           </div>

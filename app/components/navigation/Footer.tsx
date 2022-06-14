@@ -69,7 +69,7 @@ export default () => {
               <Link to="/draft">Draft</Link>
             </li>
             <li>
-              <Link to="/surveys">Search</Link>
+              <Link to="/surveys?community=on&standard=on">Search</Link>
             </li>
             <li>
               <Link to="/help/what-is-plurality">Help</Link>

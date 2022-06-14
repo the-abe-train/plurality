@@ -106,7 +106,10 @@ export default ({ name }: Props) => {
                   />
                   <span>Draft</span>
                 </Link>
-                <Link to="/surveys" className="flex items-center">
+                <Link
+                  to="/surveys?community=on&standard=on"
+                  className="flex items-center"
+                >
                   <img
                     src={emptyLogo}
                     alt="Logo"

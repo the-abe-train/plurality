@@ -52,7 +52,7 @@ export default ({ name }: { name: Name }) => {
       );
     case "Surveys":
       return (
-        <Link to="/surveys">
+        <Link to="/surveys?community=on&standard=on">
           <button className="flex items-center silver rounded-md px-3 py-1 w-max">
             <img
               src={emptyLogo}

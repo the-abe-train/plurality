@@ -268,7 +268,7 @@ export default () => {
               <NavButton name="Respond" />
               <NavButton name="Draft" />
             </div>
-            <Link to="/surveys" className="underline">
+            <Link to="/surveys?community=on&standard=on" className="underline">
               Play more Surveys
             </Link>
           </section>

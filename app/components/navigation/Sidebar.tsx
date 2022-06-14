@@ -79,7 +79,10 @@ export default ({ name }: Props) => {
                 />
                 <span>{name || "Connect"}</span>
               </Link>
-              <Link to="/surveys" className="text-2xl mx-5 flex items-center">
+              <Link
+                to="/surveys?community=on&standard=on"
+                className="text-2xl mx-5 flex items-center"
+              >
                 <img
                   src={emptyLogo}
                   alt="Instruction symbol"

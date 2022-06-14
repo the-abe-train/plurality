@@ -321,7 +321,10 @@ export default () => {
                 <NavButton name="Guess" />
                 <NavButton name="Draft" />
               </div>
-              <Link to="/surveys" className="underline text-right w-full">
+              <Link
+                to="/surveys?community=on&standard=on"
+                className="underline text-right w-full"
+              >
                 Play more Surveys
               </Link>
             </div>
