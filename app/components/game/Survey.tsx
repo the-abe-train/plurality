@@ -13,7 +13,7 @@ export default function Survey({ survey }: Props) {
     <Link to={`/surveys/${survey._id}/${action}`} className="w-full md:w-fit">
       <div
         className={`border border-outline rounded-lg 
-     z-20 md:max-w-survey min-w-[260px] w-full mx-auto ${
+     z-20 md:w-survey min-w-[260px] w-full mx-auto ${
        survey.community ? "gold" : "silver"
      }`}
       >
