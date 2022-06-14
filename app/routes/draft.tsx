@@ -12,7 +12,6 @@ import Header from "~/components/navigation/Header";
 import Tooltip from "~/components/information/Tooltip";
 import AnimatedBanner from "~/components/text/AnimatedBanner";
 import NavButton from "~/components/buttons/NavButton";
-import NFTList from "~/components/lists/NFTList";
 
 import { UserSchema } from "~/db/schemas";
 import { client } from "~/db/connect.server";
@@ -27,7 +26,7 @@ import { commitSession, getSession } from "~/sessions";
 import styles from "~/styles/app.css";
 import backgrounds from "~/styles/backgrounds.css";
 
-import { draftIcon, openSeaLogo } from "~/images/icons";
+import { draftIcon } from "~/images/icons";
 
 export const links: LinksFunction = () => {
   return [
@@ -166,7 +165,6 @@ export default () => {
   const [showForm, setShowForm] = useState(true);
   const [enabled, setEnabled] = useState(loaderData.enabled);
   const [msg, setMsg] = useState(loaderData.message || actionData?.message);
-  const [token, setToken] = useState("");
 
   const nfts = loaderData.nfts ? [...loaderData.nfts] : [];
 
@@ -189,14 +187,9 @@ export default () => {
           className="max-w-4xl flex flex-col md:grid grid-cols-2
         gap-4 my-6 justify-center md:mx-auto mx-4"
         >
-          <section className="md:px-4">
-            <h2 className="font-header text-2xl">Select your Survey Token</h2>
-            <NFTList nfts={nfts} token={token} setToken={setToken} />
-            <a href="https://opensea.io/PluralityGame">
-              <button className="gold px-3 py-2 my-6 flex space-x-1 items-center mx-auto">
-                <span>Buy a Token</span>
-                <img src={openSeaLogo} alt="OpenSea" className="inline" />
-              </button>
+          <section>
+            <a href="https://buy.stripe.com/test_14k9Blgva1ic2EUaEE">
+              Stripe link
             </a>
           </section>
           <section className="md:px-4">
