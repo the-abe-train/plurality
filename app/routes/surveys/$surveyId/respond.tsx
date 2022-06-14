@@ -123,6 +123,8 @@ type ActionData = {
 };
 
 export const action: ActionFunction = async ({ request, params }) => {
+  console.log("Running respond page form, aka", action.name); // action
+  console.log("Request body", await request.clone().text());
   // Async parse form and session data
   const [form, session] = await Promise.all([
     request.formData(),
@@ -345,6 +347,7 @@ export default () => {
                 onChange={(e) => setDatePicker(e.target.value)}
                 min={dayjs().tz("America/Toronto").format("YYYY-MM-DD")}
                 max={lastSurveyDate}
+                disabled={previewSurveys.length === 0}
                 className="border border-black px-2"
               />
               <button
@@ -352,6 +355,7 @@ export default () => {
                 className="silver px-3 py-1"
                 name="_action"
                 value="changeSurvey"
+                disabled={previewSurveys.length === 0}
               >
                 Select date
               </button>
