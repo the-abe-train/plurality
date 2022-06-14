@@ -1,17 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import type {
-  ActionFunction,
-  LinksFunction,
-  LoaderFunction,
-} from "@remix-run/node";
+import type { LinksFunction, LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import {
-  Form,
-  useActionData,
-  useLoaderData,
-  useSubmit,
-  useTransition,
-} from "@remix-run/react";
+import { Form, useLoaderData, useTransition } from "@remix-run/react";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
@@ -43,69 +33,104 @@ export const links: LinksFunction = () => {
 type LoaderData = {
   firstSurvey: string;
   lastSurvey: string;
-};
-
-export const loader: LoaderFunction = async () => {
-  const surveys = await getAllSurveyIds(client);
-  const formatDate = (date: Date) =>
-    dayjs(date).tz("America/Toronto").format("YYYY-MM-DD");
-  const firstSurvey = formatDate(surveys[0]);
-  const lastSurvey = formatDate(surveys[surveys.length - 1]);
-  const data = { firstSurvey, lastSurvey };
-  return json<LoaderData>(data);
-};
-
-type ActionData = {
   pageSurveys: SurveySchema[];
   metadata: {
     pageStart: number;
     pageEnd: number;
     totalSurveysNum: number;
     pageSurveysNum: number;
+    newPage: number;
   };
   votes: VoteAggregation[][];
+  message: string;
 };
 
-export const action: ActionFunction = async ({ request }) => {
+export const loader: LoaderFunction = async ({ request }) => {
+  const surveys = await getAllSurveyIds(client);
+  const formatDate = (date: Date) =>
+    dayjs(date).tz("America/Toronto").format("YYYY-MM-DD");
+  const firstSurvey = formatDate(surveys[0]);
+  const lastSurvey = formatDate(surveys[surveys.length - 1]);
+  const firstAndLast = { firstSurvey, lastSurvey };
+
   // Parse form
-  const body = await request.formData();
-  const textParam = body.get("text");
-  const dateParam = body.get("date") as string;
-  const pageParam = body.get("page");
+  const url = new URL(request.url);
+  const search = new URLSearchParams(url.search);
+  console.log(search);
+  const textParam = search.get("text");
+  const dateParam = search.get("date");
+  const pageParam = search.get("page");
 
   // Values show up as "on" or null
-  const communityParam = body.get("community");
-  const standardParam = body.get("standard");
+  const communityParam = search.get("community");
+  const standardParam = search.get("standard");
 
-  const [year, month, day] = dateParam.split("-").map((str) => Number(str));
-  const midnight = new Date(Date.UTC(year, month - 1, day + 1, 3, 59, 59, 999));
+  let dateSearch = new Date();
+  if (dateParam) {
+    const [year, month, day] = dateParam.split("-").map((str) => Number(str));
+    dateSearch = new Date(Date.UTC(year, month - 1, day + 1, 3, 59, 59, 999));
+  }
+
+  // // Create regex from text search input
+  let textSearch = /.+/;
+  let idSearch = NaN;
+  if (Number(textParam)) {
+    textSearch = /^\S+$/;
+    idSearch = Number(textParam);
+  } else if (textParam) {
+    try {
+      textSearch = new RegExp(String.raw`${textParam}`, "gi");
+    } catch (e) {
+      const metadata = {
+        pageStart: 0,
+        pageEnd: 0,
+        totalSurveysNum: 0,
+        pageSurveysNum: 0,
+        newPage: 1,
+      };
+      const message = "Text input cannot contain symbols.";
+      const data = {
+        pageSurveys: [],
+        metadata,
+        votes: [],
+        message,
+        ...firstAndLast,
+      };
+      return json<LoaderData>(data);
+    }
+  }
 
   // Parse query parameters
   const searchParams = {
-    dateSearch: midnight,
-    idSearch: Number(textParam),
-    textSearch: textParam
-      ? new RegExp(String.raw`${textParam}`, "gi")
-      : /^\S+$/,
+    dateSearch,
+    idSearch,
+    textSearch,
     communitySearch: communityParam === "on",
     standardSearch: standardParam === "on",
   };
 
-  // Out of all the Surveys returned, page start and page end are the indeces
-  // of the first and last Surveys that wil appear on the page
-  const pageStart = pageParam ? (Number(pageParam) - 1) * PER_PAGE : 0;
-  const pageEnd = pageParam ? Number(pageParam) * PER_PAGE : PER_PAGE;
-
   // Surveys from database
   const matchingSurveys = await surveyBySearch({ client, ...searchParams });
+  console.log(searchParams);
 
-  const pageSurveys = matchingSurveys.slice(pageStart, pageEnd);
+  // Out of all the Surveys returned, page start and page end are the indeces
+  // of the first and last Surveys that wil appear on the page
+  const pageStartIdx = pageParam ? (Number(pageParam) - 1) * PER_PAGE : 0;
+  const pageEndIdx = pageParam ? Number(pageParam) * PER_PAGE : PER_PAGE;
 
+  const pageSurveys = matchingSurveys.slice(pageStartIdx, pageEndIdx);
+  const newPage = Number(pageParam) || 1;
+
+  const totalSurveysNum = matchingSurveys.length;
+  const pageSurveysNum = pageSurveys.length;
+  const pageStart = pageStartIdx + 1;
+  const pageEnd = Math.min(pageEndIdx, matchingSurveys.length);
   const metadata = {
-    totalSurveysNum: matchingSurveys.length,
-    pageSurveysNum: pageSurveys.length,
-    pageStart: Math.min(pageStart, matchingSurveys.length),
-    pageEnd: Math.min(pageEnd, matchingSurveys.length),
+    totalSurveysNum,
+    pageSurveysNum,
+    pageStart,
+    pageEnd,
+    newPage,
   };
 
   // Get votes from database
@@ -117,66 +142,35 @@ export const action: ActionFunction = async ({ request }) => {
     );
 
     // Return data
-    const data = { pageSurveys, metadata, votes };
-    return json<ActionData>(data);
+    let message =
+      matchingSurveys.length === 0
+        ? "No results returned."
+        : `Showing ${pageStart} - ${pageEnd} out of ${matchingSurveys.length}`;
+    const data = { pageSurveys, metadata, votes, message, ...firstAndLast };
+    return json<LoaderData>(data);
   }
   return "";
 };
 
 export default () => {
-  const submit = useSubmit();
-  const [page, setPage] = useState(1);
-  const formRef = useRef<HTMLFormElement>(null!);
   const transition = useTransition();
-
   const loaderData = useLoaderData<LoaderData>();
-  const actionData = useActionData<ActionData>();
-  const showData = (actionData?.metadata.totalSurveysNum || 0) > 0;
+  const { metadata } = loaderData;
+
+  const [page, setPage] = useState(metadata.newPage);
+  const [inputText, setInputText] = useState("");
+  const formRef = useRef<HTMLFormElement>(null!);
 
   useEffect(() => {
-    if (actionData?.metadata) {
-      const maxPages = Math.max(
-        Math.ceil(actionData.metadata.totalSurveysNum / 5),
-        1
-      );
-      setPage(Math.min(page || 1, maxPages));
-    }
-  }, [actionData]);
-
-  async function turnPage(change: number) {
-    if (actionData?.metadata) {
-      const { pageSurveysNum, totalSurveysNum } = actionData?.metadata;
-
-      const newFormData = new FormData(formRef.current);
-      const currentPage = Number(newFormData.get("page"));
-
-      // If there are fewer than 6 survyes on the page, don't increase
-      if (pageSurveysNum < 6 && change > 0) return;
-
-      // If the current page is 1, don't decrease
-      if (currentPage === 1 && change < 0) return;
-
-      // If the current page is the final page, don't increase
-      const seenSurveys = pageSurveysNum + currentPage * 6;
-      if (seenSurveys === totalSurveysNum && change > 1) return;
-
-      const newPage = currentPage + change;
-      setPage(newPage);
-      newFormData.set("page", String(newPage));
-      submit(newFormData, {
-        method: "post",
-        action: "/surveys?index",
-        replace: true,
-      });
-    }
-  }
+    setPage(metadata.newPage);
+  }, [metadata]);
 
   return (
     <>
       <AnimatedBanner icon={emptyLogo} text="Search" />
       <main className="flex-grow mx-4 md:mx-auto max-w-6xl">
         <Form
-          method="post"
+          method="get"
           className="m-6 flex flex-col space-y-4 max-w-xl mx-auto px-4"
           ref={formRef}
         >
@@ -185,6 +179,8 @@ export default () => {
             name="text"
             placeholder="Search by keyword or Survey ID"
             className="border border-outline px-2"
+            value={inputText}
+            onChange={(e) => setInputText(e.target.value)}
             data-cy="text-search"
           />
           <div
@@ -224,33 +220,18 @@ export default () => {
           </div>
           <div className="flex justify-between border-outline ">
             <div className="flex items-center">
-              <button
-                className="px-2 border border-outline rounded-full bg-white h-min"
-                onClick={() => turnPage(-1)}
-                type="button"
-              >
-                -
-              </button>
-              <label className="flex mx-2 items-center">
+              <label className="flex mr-2 items-center">
                 Page:{"  "}
                 <input
-                  type="text"
+                  type="number"
                   name="page"
-                  id="page"
-                  placeholder="Page"
-                  className="text-center w-5"
-                  onChange={(e) => e.target.value}
+                  className="text-center w-20 mx-2 border border-outline px-2"
+                  onChange={(e) => setPage(Number(e.target.value))}
+                  max={metadata.totalSurveysNum / PER_PAGE || 1}
+                  min={1}
                   value={page}
                 />
               </label>
-              <button
-                className="px-2 border border-outline rounded-full bg-white h-min"
-                onClick={() => turnPage(1)}
-                type="button"
-                disabled={transition.state !== "idle"}
-              >
-                +
-              </button>
             </div>
             <div className="space-x-4">
               <button
@@ -272,26 +253,19 @@ export default () => {
           </div>
         </Form>
         <div className="md:px-4">
-          {showData && actionData?.metadata && (
-            <section className="my-4">
-              <div className="m-4 flex justify-between">
-                <span>
-                  Showing {actionData.metadata.pageStart + 1} -{" "}
-                  {actionData.metadata.pageEnd} out of{" "}
-                  {actionData.metadata.totalSurveysNum}
-                </span>
-              </div>
-              <div
-                className="flex flex-col md:flex-row flex-wrap gap-3"
-                data-cy="search-results"
-              >
-                {actionData.pageSurveys.map((q) => {
-                  return <Survey survey={q} key={q._id} />;
-                })}
-              </div>
-            </section>
-          )}
-          {!showData && actionData?.metadata && <p>No results returned.</p>}
+          <section className="my-4">
+            <span className="m-4" data-cy="message">
+              {loaderData.message}
+            </span>
+            <div
+              className="flex flex-col md:flex-row flex-wrap gap-3"
+              data-cy="search-results"
+            >
+              {loaderData.pageSurveys.map((q) => {
+                return <Survey survey={q} key={q._id} />;
+              })}
+            </div>
+          </section>
         </div>
       </main>
     </>
