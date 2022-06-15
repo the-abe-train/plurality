@@ -8,3 +8,5 @@ export const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? "";
 export const OPENSEA_API_KEY = process.env.OPENSEA_API_KEY ?? "";
 export const ROOT_DOMAIN = process.env.ROOT_DOMAIN ?? "";
 export const JWT_SIGNATURE = process.env.JWT_SIGNATURE ?? "";
+export const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY ?? "";
+export const STRIPE_ENDPOINT_SECRET = process.env.STRIPE_ENDPOINT_SECRET ?? "";
