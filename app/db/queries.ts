@@ -502,6 +502,6 @@ export async function deleteSession(client: MongoClient, id: string) {
 // Draft queries
 export async function getDrafts(client: MongoClient, user: string) {
   const db = await connectDb(client);
-  const draftsCollection = db.collection<DraftSchema>("sessions");
-  await draftsCollection.find({ user: new ObjectId(user) }).toArray();
+  const draftsCollection = db.collection<DraftSchema>("drafts");
+  return await draftsCollection.find({ user: new ObjectId(user) }).toArray();
 }

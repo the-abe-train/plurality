@@ -55,6 +55,7 @@ export type DraftSchema = {
   category: "number" | "word";
   user: ObjectId;
   status: "Under review" | "Approved" | "Scheduled" | "Open" | "Closed";
+  submitted: Date;
 };
 
 export type VoteAggregation = {
