@@ -5,6 +5,7 @@ import {
   GameSchema,
   SessionSchema,
   RankedVote,
+  DraftSchema,
 } from "./schemas";
 import { DATABASE_NAME } from "../util/env";
 import { Filter, MongoClient, ObjectId, UpdateFilter } from "mongodb";
@@ -496,4 +497,11 @@ export async function deleteSession(client: MongoClient, id: string) {
   const db = await connectDb(client);
   const sessionsCollection = db.collection<SessionSchema>("sessions");
   await sessionsCollection.findOneAndDelete({ _id: new ObjectId(id) });
+}
+
+// Draft queries
+export async function getDrafts(client: MongoClient, user: string) {
+  const db = await connectDb(client);
+  const draftsCollection = db.collection<DraftSchema>("sessions");
+  await draftsCollection.find({ user: new ObjectId(user) }).toArray();
 }

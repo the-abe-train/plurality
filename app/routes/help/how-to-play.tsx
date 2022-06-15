@@ -1,7 +1,7 @@
 import { Link } from "@remix-run/react";
 import AnimatedBanner from "~/components/text/AnimatedBanner";
 import InfoMenu from "~/components/navigation/InfoMenu";
-import { THRESHOLD } from "~/util/constants";
+import { THRESHOLD } from "~/util/gameplay";
 
 export default () => {
   return (

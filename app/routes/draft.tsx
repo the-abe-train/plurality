@@ -15,10 +15,8 @@ import NavButton from "~/components/buttons/NavButton";
 
 import { UserSchema } from "~/db/schemas";
 import { client } from "~/db/connect.server";
-import { userById } from "~/db/queries";
-import { NFT } from "~/api/schemas";
+import { getDrafts, userById } from "~/db/queries";
 import { sendEmail } from "~/api/nodemailer";
-import { getNfts } from "~/api/opensea";
 import { ADMIN_EMAIL } from "~/util/env";
 
 import { commitSession, getSession } from "~/sessions";
@@ -37,7 +35,6 @@ export const links: LinksFunction = () => {
 
 type LoaderData = {
   user: UserSchema;
-  nfts: NFT[];
   enabled: boolean;
   message?: string;
 };
@@ -46,7 +43,12 @@ export const loader: LoaderFunction = async ({ request }) => {
   // Get user info
   const session = await getSession(request.headers.get("Cookie"));
   const userId = session.get("user");
-  const user = (await userById(client, userId)) || undefined;
+
+  // Get data from db
+  const [user, drafts] = await Promise.all([
+    userById(client, userId),
+    getDrafts(client, userId),
+  ]);
 
   // Redirect not signed-in users to home page
   if (!user) {
@@ -58,30 +60,21 @@ export const loader: LoaderFunction = async ({ request }) => {
     });
   }
 
-  // Get list of NFTs on account using OpenSea API
-  const { wallet } = user;
-  if (wallet) {
-    try {
-      const nfts = await getNfts(wallet);
-      // Don't let them submit form if user email address isn't verified
-      if (!user.email.verified) {
-        const message =
-          "Your email address must be verified to submit a Draft.";
-        return json<LoaderData>({ user, nfts, message, enabled: false });
-      }
-
-      // Return data
-      const data = { user, nfts, enabled: true };
-      return json<LoaderData>(data);
-    } catch (e) {
-      console.log(e);
-      const message = "An error occurred. Please try again later.";
-      return json<LoaderData>({ user, nfts: [], message, enabled: false });
+  try {
+    // Don't let them submit form if user email address isn't verified
+    if (!user.email.verified) {
+      const message = "Your email address must be verified to submit a Draft.";
+      return json<LoaderData>({ user, message, enabled: false });
     }
+
+    // Return data
+    const data = { user, enabled: true };
+    return json<LoaderData>(data);
+  } catch (e) {
+    console.log(e);
+    const message = "An error occurred. Please try again later.";
+    return json<LoaderData>({ user, message, enabled: false });
   }
-  const message =
-    "Your Ethereum wallet must be connected in order to submit a Draft.";
-  return json<LoaderData>({ user, nfts: [], message, enabled: false });
 };
 
 type ActionData = {
@@ -166,8 +159,6 @@ export default () => {
   const [enabled, setEnabled] = useState(loaderData.enabled);
   const [msg, setMsg] = useState(loaderData.message || actionData?.message);
 
-  const nfts = loaderData.nfts ? [...loaderData.nfts] : [];
-
   useEffect(() => {
     if (actionData?.success) {
       setShowForm(false);
@@ -188,7 +179,13 @@ export default () => {
         gap-4 my-6 justify-center md:mx-auto mx-4"
         >
           <section>
-            <a href="https://buy.stripe.com/test_14k9Blgva1ic2EUaEE">
+            <h2 className="font-header text-2xl" data-cy="draft-header">
+              Your Drafts
+            </h2>
+            <a
+              href="https://buy.stripe.com/test_14k9Blgva1ic2EUaEE"
+              className="underline"
+            >
               Stripe link
             </a>
           </section>
