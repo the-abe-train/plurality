@@ -270,6 +270,7 @@ export default () => {
                 value={voteText}
                 onChange={(e) => setVoteText(e.target.value)}
                 data-cy="respond-input"
+                required
                 spellCheck
               />
               <input
