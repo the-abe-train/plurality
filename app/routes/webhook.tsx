@@ -1,8 +1,8 @@
-import { LoaderFunction } from "@remix-run/node";
+import { ActionFunction } from "@remix-run/node";
 import Stripe from "stripe";
 import { STRIPE_ENDPOINT_SECRET, STRIPE_SECRET_KEY } from "~/util/env";
 
-export const loader: LoaderFunction = async ({ request }) => {
+export const action: ActionFunction = async ({ request }) => {
   console.log("Webhook test");
   console.log(request.headers);
 
@@ -11,13 +11,13 @@ export const loader: LoaderFunction = async ({ request }) => {
   });
 
   const sig = request.headers.get("stripe-signature") || "";
-  const text = await request.text();
+  const buf = Buffer.from(await request.arrayBuffer());
 
   let event: Stripe.Event;
-
   try {
-    event = stripe.webhooks.constructEvent(text, sig, STRIPE_ENDPOINT_SECRET);
-  } catch (err) {
+    event = stripe.webhooks.constructEvent(buf, sig, STRIPE_ENDPOINT_SECRET);
+  } catch (err: any) {
+    console.log(err.message);
     throw new Response(`Webhook Error: ${err}`, {
       status: 400,
     });
