@@ -15,6 +15,7 @@ export const action: ActionFunction = async ({ request }) => {
 
   console.log("sig", sig);
   console.log("buf", buf);
+  console.log("endpoint secret", STRIPE_ENDPOINT_SECRET);
 
   let event: Stripe.Event;
   try {
