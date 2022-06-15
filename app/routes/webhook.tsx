@@ -13,6 +13,9 @@ export const action: ActionFunction = async ({ request }) => {
   const sig = request.headers.get("stripe-signature") || "";
   const buf = Buffer.from(await request.arrayBuffer());
 
+  console.log("sig", sig);
+  console.log("buf", buf);
+
   let event: Stripe.Event;
   try {
     event = stripe.webhooks.constructEvent(buf, sig, STRIPE_ENDPOINT_SECRET);
