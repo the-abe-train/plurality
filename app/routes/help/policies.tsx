@@ -1,4 +1,3 @@
-import { Link } from "@remix-run/react";
 import AnimatedBanner from "~/components/text/AnimatedBanner";
 import InfoMenu from "~/components/navigation/InfoMenu";
 
