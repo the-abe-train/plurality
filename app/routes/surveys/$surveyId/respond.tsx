@@ -253,10 +253,10 @@ export default () => {
       <AnimatedBanner text="Respond" icon={respondIcon} />
       <main
         className="max-w-4xl flex-grow mx-4 md:mx-auto flex flex-col md:flex-row
-    my-6 flex-wrap"
+    my-6 flex-wrap gap-3"
       >
         <div className="flex flex-col md:flex-row">
-          <section className="md:px-4 py-2 space-y-4 max-w-survey">
+          <section className="md:mx-4 py-2 space-y-4 max-w-survey">
             <Survey survey={loaderData.survey} />
             <Form method="post" className="w-full flex space-x-2 my-4">
               <input
