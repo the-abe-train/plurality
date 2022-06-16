@@ -73,10 +73,6 @@ export const loader: LoaderFunction = async ({ request }) => {
   return json<LoaderData>(data);
 };
 
-type ActionData = {
-  message: string;
-};
-
 export const action: ActionFunction = async ({ request }) => {
   // Async parse form and session data
   const [form, session] = await Promise.all([
@@ -97,10 +93,7 @@ export const action: ActionFunction = async ({ request }) => {
   });
   const product = await stripe.products.create({
     name: "Plurality Draft",
-    images: [
-      "https://plurality.fun/preview.png",
-      `https://source.unsplash.com/${photo}`,
-    ],
+    images: ["https://plurality.fun/preview.png"],
     metadata,
     default_price_data: { currency: "cad", unit_amount: 1000 },
     description: `Thank you for purchasing a Plurality Draft! 
