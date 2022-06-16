@@ -1,5 +1,4 @@
 import { ObjectId } from "mongodb";
-import Stripe from "stripe";
 
 type Email = {
   address: string;
