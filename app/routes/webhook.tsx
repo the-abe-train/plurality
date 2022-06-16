@@ -1,21 +1,16 @@
 import { ActionFunction } from "@remix-run/node";
 import Stripe from "stripe";
+import { client } from "~/db/connect.server";
+import { createDraft } from "~/db/queries";
 import { STRIPE_ENDPOINT_SECRET, STRIPE_SECRET_KEY } from "~/util/env";
 
 export const action: ActionFunction = async ({ request }) => {
-  console.log("Webhook test");
-  console.log(request.headers);
-
   const stripe = new Stripe(STRIPE_SECRET_KEY, {
     apiVersion: "2020-08-27",
   });
 
   const sig = request.headers.get("stripe-signature") || "";
   const buf = Buffer.from(await request.arrayBuffer());
-
-  console.log("sig", sig);
-  console.log("buf", buf);
-  console.log("endpoint secret", STRIPE_ENDPOINT_SECRET);
 
   let event: Stripe.Event;
   try {
@@ -29,13 +24,28 @@ export const action: ActionFunction = async ({ request }) => {
 
   // Handle the event
   switch (event.type) {
-    case "payment_intent.succeeded":
-      const paymentIntent = event.data.object;
-      console.log("Payment intent succeeded!");
-      console.log(paymentIntent);
-      // Then define and call a function to handle the event payment_intent.succeeded
+    case "checkout.session.completed":
+      const checkoutSession = event.data.object as Stripe.Checkout.Session;
+      await createDraft(client, checkoutSession);
       break;
-    // ... handle other event types
+    case "payment_intent.succeeded":
+      console.log("Payment intent succeeded!");
+      break;
+    case "payment_intent.created":
+      console.log("Payment intent created!");
+      break;
+    case "price.created":
+      console.log("Price created!");
+      break;
+    case "product.created":
+      console.log("Product created!");
+      break;
+    case "payment_link.created":
+      console.log("Payment link created!");
+      break;
+    case "charge.succeeded":
+      console.log("Charge succeeded!");
+      break;
     default:
       console.log(`Unhandled event type ${event.type}`);
   }

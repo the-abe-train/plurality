@@ -189,7 +189,7 @@ export default () => {
           </h2>
           <div className="my-4 space-y-4">
             <button
-              className="gold px-3 py-2 block mx-auto"
+              className="silver px-3 py-2 block mx-auto"
               onClick={clickWalletConnect}
             >
               Connect wallet

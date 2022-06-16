@@ -1,4 +1,5 @@
 import { ObjectId } from "mongodb";
+import Stripe from "stripe";
 
 type Email = {
   address: string;
@@ -54,8 +55,18 @@ export type DraftSchema = {
   photo: string;
   category: "number" | "word";
   user: ObjectId;
-  status: "Under review" | "Approved" | "Scheduled" | "Open" | "Closed";
+  status:
+    | "Under review"
+    | "Approved"
+    | "Scheduled"
+    | "Open"
+    | "Closed"
+    | "Purchase incomplete";
   submitted: Date;
+  cost: {
+    amount: number;
+    currency: string;
+  };
 };
 
 export type VoteAggregation = {

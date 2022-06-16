@@ -35,7 +35,7 @@ export const loader: LoaderFunction = async ({ request }) => {
     if (session.has("game") && session.get("game") !== surveyId) {
       session.flash(
         "message",
-        `You need to be logged-in to play more games.
+        `You need to be logged-in to play more Surveys.
         (You have already played Survey ${session.get("game")})`
       );
       return redirect("/user/signup", {
