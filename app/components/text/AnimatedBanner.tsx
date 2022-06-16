@@ -36,7 +36,7 @@ type Props = {
 
 export default ({ text, icon, size }: Props) => {
   return (
-    <AnimatePresence exitBeforeEnter>
+    <AnimatePresence>
       <motion.h1
         className="text-4xl font-header text-center my-6 flex items-center 
         w-full justify-center space-x-3 font-bold"
@@ -54,7 +54,7 @@ export default ({ text, icon, size }: Props) => {
       >
         <div className="inline-flex items-center">
           {Array.from(text).map((letter, index) => (
-            <AnimatePresence exitBeforeEnter key={`${index}-${letter}`}>
+            <AnimatePresence key={`${index}-${letter}`}>
               <motion.span
                 className="relative inline-block w-auto"
                 variants={letterVariants}
