@@ -4,14 +4,7 @@ import type {
   LoaderFunction,
 } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import {
-  Form,
-  Link,
-  useActionData,
-  useLoaderData,
-  useTransition,
-} from "@remix-run/react";
-import { useState } from "react";
+import { Form, Link, useLoaderData, useTransition } from "@remix-run/react";
 
 import Footer from "~/components/navigation/Footer";
 import Header from "~/components/navigation/Header";
@@ -160,6 +153,7 @@ export default () => {
                 placeholder="Enter question text here."
                 minLength={10}
                 maxLength={100}
+                data-cy="text-input"
                 required
               />
               <div>
@@ -177,6 +171,7 @@ export default () => {
                   type="text"
                   className="w-full px-4 py-2 text-sm border border-outline"
                   name="photo"
+                  data-cy="photo-input"
                   required
                 />
               </div>
@@ -185,6 +180,7 @@ export default () => {
                 <select
                   name="category"
                   className="bg-white border border-outline px-1"
+                  data-cy="select-category"
                 >
                   <option value="word">Word</option>
                   <option value="number">Number</option>
