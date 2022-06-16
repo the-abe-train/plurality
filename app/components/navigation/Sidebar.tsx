@@ -127,7 +127,7 @@ export default ({ name }: Props) => {
                 </Link>
               </div>
               <Link
-                to="/help/what-is-plurality"
+                to="/help/how-to-play"
                 className="text-2xl mx-5 flex items-center"
               >
                 <img

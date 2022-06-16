@@ -122,7 +122,7 @@ export default ({ name }: Props) => {
               </motion.div>
             </motion.li>
             <li>
-              <Link to="/help/what-is-plurality">Help</Link>
+              <Link to="/help/how-to-play">Help</Link>
             </li>
             <Link to="/user">
               <button className="silver px-3 py-2" data-cy="connect-btn">

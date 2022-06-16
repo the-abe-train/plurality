@@ -62,40 +62,10 @@
   box-shadow: none;
 }
 
-.gold-text {
-  background: linear-gradient(
-      135deg,
-      rgba(255, 250, 194, 0.5) 0.01%,
-      rgba(255, 208, 79, 0.5) 70%,
-      rgba(255, 251, 204, 0.5) 100%
-    ),
-    #ffffff;
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-stroke: 0.5px black;
-  -webkit-text-stroke: 0.5px black;
-}
-
 .gold:disabled {
   background-color: #f8e7b7;
   box-shadow: none;
   background-position: 240%;
-}
-
-.silver-text {
-  background: linear-gradient(
-      135deg,
-      rgba(237, 253, 252, 0.8) 0.01%,
-      rgba(213, 238, 246, 0.8) 70%,
-      rgba(246, 254, 254, 0.8) 100%
-    ),
-    #ffffff;
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-stroke: 0.5px black;
-  -webkit-text-stroke: 0.5px black;
 }
 
 .cancel {
