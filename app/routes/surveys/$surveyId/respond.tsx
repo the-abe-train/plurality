@@ -124,6 +124,8 @@ type ActionData = {
 };
 
 export const action: ActionFunction = async ({ request, params }) => {
+  console.log("Running respond page form, aka", action.name); // action
+  console.log("Request body", await request.clone().text());
   // Async parse form and session data
   const [form, session] = await Promise.all([
     request.formData(),
@@ -260,10 +262,10 @@ export default () => {
       <AnimatedBanner text="Respond" icon={respondIcon} />
       <main
         className="max-w-4xl flex-grow mx-4 md:mx-auto flex flex-col md:flex-row
-    my-6 flex-wrap"
+    my-6 flex-wrap gap-3"
       >
         <div className="flex flex-col md:flex-row">
-          <section className="md:px-4 py-2 space-y-4 max-w-survey">
+          <section className="md:mx-4 py-2 space-y-4 max-w-survey">
             <Survey survey={loaderData.survey} />
             <Form method="post" className="w-full flex space-x-2 my-4">
               <input
@@ -277,6 +279,7 @@ export default () => {
                 value={voteText}
                 onChange={(e) => setVoteText(e.target.value)}
                 data-cy="respond-input"
+                required
                 spellCheck
               />
               <input
@@ -357,6 +360,7 @@ export default () => {
                 onChange={(e) => setDatePicker(e.target.value)}
                 min={dayjs().tz("America/Toronto").format("YYYY-MM-DD")}
                 max={lastSurveyDate}
+                disabled={previewSurveys.length === 0}
                 className="border border-black px-2"
               />
               <button
@@ -364,6 +368,7 @@ export default () => {
                 className="silver px-3 py-1"
                 name="_action"
                 value="changeSurvey"
+                disabled={previewSurveys.length === 0}
               >
                 Select date
               </button>
