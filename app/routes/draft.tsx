@@ -144,7 +144,7 @@ export default () => {
 
   return (
     <div className="light w-full top-0 bottom-0 flex flex-col min-h-screen">
-      <Header name={user ? user.name : "Connect"} />
+      <Header name={user.name} />
       <div className="flex-grow">
         <AnimatedBanner text="Draft" icon={draftIcon} />
         <main
@@ -156,7 +156,7 @@ export default () => {
             <h2 className="font-header text-2xl" data-cy="draft-header">
               Draft your Survey question
             </h2>
-            <Form method="post" className="my-4 space-y-4">
+            <Form method="post" className="my-4 space-y-6">
               <textarea
                 className="w-full px-4 py-2 text-sm border border-outline"
                 name="question"
@@ -169,9 +169,14 @@ export default () => {
               <div>
                 <label
                   htmlFor="photo"
-                  className="flex items-center space-x-2 my-1"
+                  className="flex items-center space-x-2 mb-1"
                 >
-                  <p>Unsplash photo ID</p>
+                  <p>
+                    Choose a cover photo from{" "}
+                    <a href="https://unsplash.com" className="underline">
+                      Unsplash
+                    </a>
+                  </p>
                   <Tooltip
                     text="The string of characters at the end of the URL for 
               any photo on unsplash.com"
@@ -182,29 +187,45 @@ export default () => {
                   className="w-full px-4 py-2 text-sm border border-outline"
                   name="photo"
                   data-cy="photo-input"
+                  placeholder="Unsplash photo ID"
                   required
                 />
               </div>
-              <label htmlFor="category" className="flex items-center space-x-2">
-                <p>Select Survey category:</p>
-                <select
-                  name="category"
-                  className="bg-white border border-outline px-1"
-                  data-cy="select-category"
-                >
-                  <option value="word">Word</option>
-                  <option value="number">Number</option>
-                </select>
-              </label>
               <div>
-                <button
-                  className="gold px-6 py-2 block mx-auto my-6"
-                  type="submit"
-                  disabled={transition.state !== "idle" || !enabled}
-                >
-                  Submit
-                </button>
+                <p className="my-1">
+                  Will the responses to your Survey be words or numbers?
+                </p>
+                <div className="flex space-x-8">
+                  <div className="inline-flex justify-around items-center space-x-1 w-fit">
+                    <input
+                      type="radio"
+                      id="word"
+                      name="category"
+                      value="word"
+                      className="accent-accent"
+                      defaultChecked
+                    />
+                    <label htmlFor="word">Words</label>
+                  </div>
+                  <div className="inline-flex justify-around items-center space-x-1 w-fit">
+                    <input
+                      type="radio"
+                      id="number"
+                      name="category"
+                      className="accent-accent"
+                      value="number"
+                    />
+                    <label htmlFor="number">Numbers</label>
+                  </div>
+                </div>
               </div>
+              <button
+                className="gold px-6 py-2 block mx-auto my-6"
+                type="submit"
+                disabled={transition.state !== "idle" || !enabled}
+              >
+                Submit
+              </button>
               <p className="text-red-700">{message}</p>
             </Form>
           </section>
