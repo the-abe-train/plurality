@@ -3,6 +3,7 @@ import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, Link, useActionData, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
+import Filter from "bad-words";
 
 import { GameSchema, SurveySchema } from "~/db/schemas";
 import { client } from "~/db/connect.server";
@@ -152,6 +153,14 @@ export const action: ActionFunction = async ({ request, params }) => {
         const message = `Wait! There may be a typo in your answer. Are you sure you didn't mean `;
         return json<ActionData>({ message, suggestion });
       }
+    }
+
+    // Check for bad words
+    const filter = new Filter();
+    if (filter.isProfane(String(newVote))) {
+      console.log(`Prevented response ${newVote} due to profanity`);
+      const message = "Sorry, that word is not allowed as Survey response.";
+      return json<ActionData>({ message });
     }
 
     // Update game with new guess

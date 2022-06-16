@@ -19,6 +19,7 @@
     "@remix-run/netlify": "^1.4.3",
     "@remix-run/node": "^1.4.3",
     "@remix-run/react": "^1.4.3",
+    "bad-words": "^3.0.4",
     "bcryptjs": "^2.4.3",
     "body-scroll-lock": "^4.0.0-beta.0",
     "chart.js": "^3.8.0",
@@ -39,6 +40,7 @@
   "devDependencies": {
     "@remix-run/dev": "^1.4.3",
     "@remix-run/eslint-config": "^1.4.3",
+    "@types/bad-words": "^3.0.1",
     "@types/bcryptjs": "^2.4.2",
     "@types/body-scroll-lock": "^3.1.0",
     "@types/nodemailer": "^6.4.4",
