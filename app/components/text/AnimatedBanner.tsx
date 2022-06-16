@@ -54,13 +54,14 @@ export default ({ text, icon, size }: Props) => {
       >
         <div className="inline-flex items-center">
           {Array.from(text).map((letter, index) => (
-            <motion.span
-              key={`${index}-${letter}`}
-              className="relative inline-block w-auto"
-              variants={letterVariants}
-            >
-              {letter === " " ? "\u00A0" : letter}
-            </motion.span>
+            <AnimatePresence exitBeforeEnter key={`${index}-${letter}`}>
+              <motion.span
+                className="relative inline-block w-auto"
+                variants={letterVariants}
+              >
+                {letter === " " ? "\u00A0" : letter}
+              </motion.span>
+            </AnimatePresence>
           ))}
           {"\u00A0"}
           {icon && (
