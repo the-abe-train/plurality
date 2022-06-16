@@ -55,8 +55,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   }
 
   // Get user stats
-  const [surveysList, games, drafts] = await Promise.all([
-    surveysByAuthor(client, userId),
+  const [games, drafts] = await Promise.all([
     gamesByUser(client, userId),
     getDrafts(client, userId),
   ]);
@@ -85,7 +84,7 @@ export const loader: LoaderFunction = async ({ request }) => {
       survey: fewestGuessesGame ? fewestGuessesGame.survey : 0,
       guesses: fewestGuessesGame ? fewestGuessesGame.guessesToWin : 0,
     },
-    surveysDrafted: surveysList.length,
+    surveysDrafted: drafts.length,
   };
 
   const data = { user, userStats, drafts };

@@ -4,7 +4,13 @@ import type {
   LoaderFunction,
 } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Form, Link, useLoaderData, useTransition } from "@remix-run/react";
+import {
+  Form,
+  Link,
+  useActionData,
+  useLoaderData,
+  useTransition,
+} from "@remix-run/react";
 
 import Footer from "~/components/navigation/Footer";
 import Header from "~/components/navigation/Header";
@@ -73,6 +79,8 @@ export const loader: LoaderFunction = async ({ request }) => {
   return json<LoaderData>(data);
 };
 
+type ActionData = { message: string };
+
 export const action: ActionFunction = async ({ request }) => {
   // Async parse form and session data
   const [form, session] = await Promise.all([
@@ -87,48 +95,57 @@ export const action: ActionFunction = async ({ request }) => {
   const user = session.get("user") as ObjectId;
 
   // Create Stripe payment link
-  const metadata = { user: user.toString(), text, photo, category };
-  const stripe = new Stripe(STRIPE_SECRET_KEY, {
-    apiVersion: "2020-08-27",
-  });
-  const product = await stripe.products.create({
-    name: "Plurality Draft",
-    images: ["https://plurality.fun/preview.png"],
-    metadata,
-    default_price_data: { currency: "cad", unit_amount: 1000 },
-    description: `Thank you for purchasing a Plurality Draft! 
-        Once your draft has been approved, your Survey question 
-        "${text}" will show up in the queue of the Surveys.
-        Return to the Draft page for an update on your draft's status!
-        Feel free to contact me if you have any concerns (@theAbeTrain on 
-        Twitter).`,
-  });
-  const price = await stripe.prices.create({
-    currency: "cad",
-    unit_amount: 1000,
-    product: product.id,
-    metadata,
-  });
-  const paymentLink = await stripe.paymentLinks.create({
-    line_items: [{ price: price.id, quantity: 1 }],
-    metadata,
-    after_completion: {
-      type: "redirect",
-      redirect: { url: ROOT_DOMAIN },
-    },
-  });
+  try {
+    const metadata = { user: user.toString(), text, photo, category };
+    const stripe = new Stripe(STRIPE_SECRET_KEY, {
+      apiVersion: "2020-08-27",
+    });
+    const product = await stripe.products.create({
+      name: "Plurality Draft",
+      images: ["https://plurality.fun/preview.png"],
+      metadata,
+      default_price_data: { currency: "cad", unit_amount: 1000 },
+      description: `Thank you for purchasing a Plurality Draft! 
+          Once your draft has been approved, your Survey question 
+          "${text}" will show up in the queue of the Surveys.
+          Return to the Draft page for an update on your draft's status!
+          Feel free to contact me if you have any concerns (@theAbeTrain on 
+          Twitter).`,
+    });
+    const price = await stripe.prices.create({
+      currency: "cad",
+      unit_amount: 1000,
+      product: product.id,
+      metadata,
+    });
+    const paymentLink = await stripe.paymentLinks.create({
+      line_items: [{ price: price.id, quantity: 1 }],
+      metadata,
+      after_completion: {
+        type: "redirect",
+        redirect: { url: ROOT_DOMAIN },
+      },
+    });
 
-  return redirect(paymentLink.url);
+    return redirect(paymentLink.url);
+  } catch (e) {
+    const message = "Failed to create payment link. Please try again later.";
+    console.log(message);
+    return json<ActionData>({ message });
+  }
 };
 
 export default () => {
-  const { user, message, drafts, enabled } = useLoaderData<LoaderData>();
+  const loaderData = useLoaderData<LoaderData>();
+  const actionData = useActionData<ActionData>();
+  const { user, drafts, enabled } = loaderData;
+  const message = actionData?.message || loaderData.message;
   const transition = useTransition();
 
   return (
     <div className="light w-full top-0 bottom-0 flex flex-col min-h-screen">
+      <Header name={user ? user.name : "Connect"} />
       <div className="flex-grow">
-        <Header name={user ? user.name : "Connect"} />
         <AnimatedBanner text="Draft" icon={draftIcon} />
         <main
           className="max-w-4xl flex flex-col md:grid grid-cols-2

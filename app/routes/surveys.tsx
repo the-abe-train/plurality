@@ -9,7 +9,6 @@ import styles from "~/styles/app.css";
 import backgrounds from "~/styles/backgrounds.css";
 import switchStyles from "~/styles/switch.css";
 
-import { UserSchema } from "~/db/schemas";
 import { userById } from "~/db/queries";
 import { getSession } from "~/sessions";
 import { client } from "~/db/connect.server";
