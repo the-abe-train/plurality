@@ -14,65 +14,61 @@ export default () => {
               metallic gradient.
             </p>
             <p>
-              <b className="gold-text">Gold</b> indicates that it's related to
-              Web3, including community drafted questions, signing in with your
-              Ethereum wallet, or buying an NFT.
+              <b className="text-[#9B7306]">Gold</b> indicates a Community
+              Survey, i.e. a Survey question that was submitted by Plurality
+              users. The buttons related to drafting Survey questions will be
+              Gold as well.
             </p>
             <p>
-              <b className="silver-text">Silver</b> indicates everything else.
+              <b className="text-[#426262]">Silver</b> indicates Standard
+              Surveys, as well as all other buttons.
             </p>
           </article>
           <article>
             <h2 className="mt-3 mb-2 text-2xl font-header">Gameplay</h2>
-            <table className="table-auto">
+            <table className="table-auto bg-primary2">
               <colgroup>
-                <col className="border" />
-                <col className="border" />
+                <col className="border border-outline" />
+                <col className="border border-outline" />
               </colgroup>
               <tbody>
-                <tr className="border">
+                <tr className="border border-outline">
                   <td className="px-2 py-2 font-bold">Survey</td>
                   <td className="px-2 py-2">
-                    A Survey is a question and its accompanying responses.
+                    A Survey is a question on Plurality that players can draft,
+                    respond to, and play by guessing the top responses.
                   </td>
                 </tr>
-                <tr className="border">
+                <tr className="border border-outline">
                   <td className="px-2 py-2 font-bold">Response</td>
                   <td className="px-2 py-2">
                     A player's answer to a Survey that other players will try to
                     guess as part of gameplay.
                   </td>
                 </tr>
-                <tr className="border">
+                <tr className="border border-outline">
                   <td className="px-2 py-2 font-bold">Guessing</td>
                   <td className="px-2 py-2">
-                    Playing a Survey is trying to guess the most common answers.
+                    Playing a Survey by trying to guess the most common
+                    responses.
                   </td>
                 </tr>
-                <tr className="border">
+                <tr className="border border-outline">
                   <td className="px-2 py-2 font-bold">Drafting</td>
                   <td className="px-2 py-2">
-                    The process of creating a custom Survey question. Can only
-                    be done by users that are holding Survey Tokens.
+                    Writing and submitting a Community Survey question.
                   </td>
                 </tr>
-                <tr className="border">
-                  <td className="px-2 py-2 font-bold">Survey Token</td>
-                  <td className="px-2 py-2">
-                    The NFT that represents the opportunity to choose a Survey
-                    question for a particular day.
-                  </td>
-                </tr>
-                <tr className="border">
+                <tr className="border border-outline">
                   <td className="px-2 py-2 font-bold">Community</td>
                   <td className="px-2 py-2">
-                    Surveys that were chosen by players via Drafting.
+                    Surveys that were written by players via Drafting.
                   </td>
                 </tr>
-                <tr className="border">
+                <tr className="border border-outline">
                   <td className="px-2 py-2 font-bold">Standard</td>
                   <td className="px-2 py-2">
-                    Surveys chosen by the Plurality team.
+                    Surveys that were written by the Plurality team.
                   </td>
                 </tr>
               </tbody>

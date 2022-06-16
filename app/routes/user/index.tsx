@@ -2,7 +2,6 @@ import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import {
   Form,
-  Link,
   useActionData,
   useLoaderData,
   useSubmit,
@@ -14,10 +13,10 @@ import { sendEmail } from "~/api/nodemailer";
 import { getSession, destroySession } from "../../sessions";
 import useAttachWallet from "~/hooks/useAttachWallet";
 import { verifyEmailBody } from "~/util/verifyEmail";
-import { percentFormat, truncateEthAddress, truncateName } from "~/util/text";
+import { truncateEthAddress, truncateName } from "~/util/text";
 import { authorizeWallet } from "~/util/authorize";
 
-import { UserSchema } from "~/db/schemas";
+import { DraftSchema, UserSchema } from "~/db/schemas";
 import { client } from "~/db/connect.server";
 import {
   deleteUser,
@@ -28,35 +27,22 @@ import {
   userUpdateEmail,
   userUpdateName,
   userUpdateWallet,
+  getDrafts,
 } from "~/db/queries";
-import { NFT } from "~/api/schemas";
-import { getNfts } from "~/api/opensea";
 
 import AnimatedBanner from "~/components/text/AnimatedBanner";
-import Counter from "~/components/text/Counter";
-import NFTList from "~/components/lists/NFTList";
+import DraftList from "~/components/lists/DraftList";
 
-import {
-  guessIcon,
-  respondIcon,
-  draftIcon,
-  userIcon,
-  openSeaLogo,
-} from "~/images/icons";
+import { userIcon } from "~/images/icons";
 import { NAME_LENGTH } from "~/util/gameplay";
 import { JWT_SIGNATURE } from "~/util/env";
+import { UserStats } from "~/components/schemas";
+import StatsTable from "~/components/lists/StatsTable";
 
 type LoaderData = {
   user: UserSchema;
-  nfts: NFT[];
-  userStats: {
-    gamesWon: number;
-    responsesSubmitted: number;
-    gamesPlayed: number;
-    surveysDrafted: number;
-    highestScore: { survey: number; score: number };
-    fewestGuesses: { survey: number; guesses: number };
-  };
+  drafts: DraftSchema[];
+  userStats: UserStats;
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -68,14 +54,10 @@ export const loader: LoaderFunction = async ({ request }) => {
     return redirect("/user/signup");
   }
 
-  // Get list of NFTs on account using OpenSea API
-  const { wallet } = user;
-  const nfts = wallet ? await getNfts(wallet) : [];
-
   // Get user stats
-  const [surveysList, games] = await Promise.all([
-    surveysByAuthor(client, userId),
+  const [games, drafts] = await Promise.all([
     gamesByUser(client, userId),
+    getDrafts(client, userId),
   ]);
 
   const highScoreGame = games
@@ -102,10 +84,10 @@ export const loader: LoaderFunction = async ({ request }) => {
       survey: fewestGuessesGame ? fewestGuessesGame.survey : 0,
       guesses: fewestGuessesGame ? fewestGuessesGame.guessesToWin : 0,
     },
-    surveysDrafted: surveysList.length,
+    surveysDrafted: drafts.length,
   };
 
-  const data = { user, userStats, nfts };
+  const data = { user, userStats, drafts };
   return json(data);
 };
 
@@ -209,7 +191,7 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default () => {
-  const { user, userStats, nfts } = useLoaderData<LoaderData>();
+  const { user, userStats, drafts } = useLoaderData<LoaderData>();
   const actionData = useActionData<ActionData>();
 
   const transition = useTransition();
@@ -246,8 +228,6 @@ export default () => {
     }
     return;
   }
-
-  const wonAnyGames = !!userStats.fewestGuesses.guesses;
 
   const [name, setName] = useState(user.name || "");
   const [email, setEmail] = useState(user.email.address || "");
@@ -329,7 +309,10 @@ export default () => {
                 {truncateEthAddress(user.wallet || "") || "Not connected"}
               </p>
               {!user.wallet ? (
-                <button className="gold px-3 py-1" onClick={clickAttachWallet}>
+                <button
+                  className="silver px-3 py-1"
+                  onClick={clickAttachWallet}
+                >
                   Connect
                 </button>
               ) : (
@@ -350,65 +333,7 @@ export default () => {
             </p>
           )}
         </section>
-        <section className="space-y-5">
-          <h2 className="text-2xl my-2 font-header">Statistics</h2>
-          <div className="flex w-full justify-around">
-            <div className="flex space-x-3 items-center">
-              <img src={guessIcon} width={32} alt="Guess icon" />
-              <Counter value={userStats.gamesWon} />
-            </div>
-            <div className="flex space-x-3 items-center">
-              <img src={respondIcon} width={32} alt="Respond icon" />
-              <Counter value={userStats.responsesSubmitted} />
-            </div>
-            <div className="flex space-x-3 items-center">
-              <img src={draftIcon} width={32} alt="Draft icon" />
-              <Counter value={userStats.surveysDrafted} />
-            </div>
-          </div>
-          <table className="table-auto">
-            <colgroup>
-              <col />
-              <col className="bg-yellow-50 border min-w-[3rem]" />
-              <col />
-              <col className="bg-yellow-50 border min-w-[3rem]" />
-            </colgroup>
-            <tbody>
-              <tr className="border">
-                <td className="px-2 py-2">Games won</td>
-                <td className="px-2 py-2 text-center">{userStats.gamesWon}</td>
-                <td className="px-2 py-2">Games played</td>
-                <td className="px-2 py-2 text-center">
-                  {userStats.gamesPlayed}
-                </td>
-              </tr>
-              <tr className="border">
-                <td className="px-2 py-2">Responses submitted</td>
-                <td className="px-2 py-2 text-center">
-                  {userStats.responsesSubmitted}
-                </td>
-                <td className="px-2 py-2">Highest score</td>
-                <td className="px-2 py-2 text-center">
-                  {wonAnyGames &&
-                    `${percentFormat(userStats.highestScore.score)} (#${
-                      userStats.highestScore.survey
-                    })`}
-                </td>
-              </tr>
-              <tr className="border">
-                <td className="px-2 py-2">Surveys drafted</td>
-                <td className="px-2 py-2 text-center">
-                  {userStats.surveysDrafted}
-                </td>
-                <td className="px-2 py-2">Fewest guesses to win</td>
-                <td className="px-2 py-2 text-center">
-                  {wonAnyGames &&
-                    `${userStats.fewestGuesses.guesses} (#${userStats.fewestGuesses.survey})`}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </section>
+        <StatsTable userStats={userStats} />
         <section className="">
           <h2 className="text-2xl my-2 font-header">Account</h2>
           <div className="flex space-x-3">
@@ -434,25 +359,7 @@ export default () => {
             </Form>
           </div>
         </section>
-        <section className="mb-6">
-          <h2 className="text-2xl my-2 font-header">Survey tokens</h2>
-          <NFTList nfts={nfts} />
-          <div className="flex space-x-3">
-            <a href="https://opensea.io/PluralityGame">
-              <button className="gold px-3 py-1 flex items-center space-x-1">
-                <span> Buy a Survey Token </span>
-                <img
-                  className="inline-block"
-                  src={openSeaLogo}
-                  alt="Open Sea"
-                />
-              </button>
-            </a>
-            <Link to="/draft">
-              <button className="gold px-3 py-1">Submit a draft</button>
-            </Link>
-          </div>
-        </section>
+        <DraftList drafts={drafts} showButton />
       </div>
     </main>
   );

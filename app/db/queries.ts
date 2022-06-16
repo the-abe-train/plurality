@@ -5,13 +5,15 @@ import {
   GameSchema,
   SessionSchema,
   RankedVote,
+  DraftSchema,
 } from "./schemas";
 import { DATABASE_NAME } from "../util/env";
-import { Filter, MongoClient, ObjectId, UpdateFilter } from "mongodb";
+import { MongoClient, ObjectId, UpdateFilter } from "mongodb";
 import { capitalizeFirstLetter, truncateEthAddress } from "~/util/text";
 import { randomPassword } from "../util/authorize";
 import dayjs from "dayjs";
 import { SessionData } from "@remix-run/node";
+import Stripe from "stripe";
 
 // Connect database
 async function connectDb(client: MongoClient) {
@@ -496,4 +498,31 @@ export async function deleteSession(client: MongoClient, id: string) {
   const db = await connectDb(client);
   const sessionsCollection = db.collection<SessionSchema>("sessions");
   await sessionsCollection.findOneAndDelete({ _id: new ObjectId(id) });
+}
+
+// Draft queries
+export async function getDrafts(client: MongoClient, user: string) {
+  const db = await connectDb(client);
+  const draftsCollection = db.collection<DraftSchema>("drafts");
+  return await draftsCollection.find({ user: new ObjectId(user) }).toArray();
+}
+
+export async function createDraft(
+  client: MongoClient,
+  session: Stripe.Checkout.Session
+) {
+  const db = await connectDb(client);
+  const draftsCollection = db.collection<DraftSchema>("drafts");
+  const { amount_total, currency, metadata } = session;
+  const { text, user, photo, category } = metadata || {};
+  return draftsCollection.insertOne({
+    _id: new ObjectId(),
+    cost: { amount: amount_total || 0, currency: currency || "" },
+    submitted: new Date(),
+    status: "Under review",
+    text,
+    photo,
+    category: category as "word" | "number",
+    user: new ObjectId(user),
+  });
 }

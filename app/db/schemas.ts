@@ -48,6 +48,26 @@ export type GameSchema = {
   guessesToWin: number;
 };
 
+export type DraftSchema = {
+  _id: ObjectId;
+  text: string;
+  photo: string;
+  category: "number" | "word";
+  user: ObjectId;
+  status:
+    | "Under review"
+    | "Approved"
+    | "Scheduled"
+    | "Open"
+    | "Closed"
+    | "Purchase incomplete";
+  submitted: Date;
+  cost: {
+    amount: number;
+    currency: string;
+  };
+};
+
 export type VoteAggregation = {
   _id: string;
   votes: number;

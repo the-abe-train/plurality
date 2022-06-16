@@ -2,18 +2,16 @@ import { Link } from "@remix-run/react";
 import { emptyLogo } from "~/images/icons";
 
 const data = [
-  { name: "What is Plurality?", path: "what-is-plurality" },
   { name: "How to play", path: "how-to-play" },
   { name: "FAQ", path: "faq" },
   { name: "Terminology", path: "terminology" },
-  { name: "Policies", path: "policies" },
 ];
 
 export default ({ page }: { page: string }) => {
   return (
     <nav
-      className="grid grid-rows-2 grid-cols-2 gap-y-4 gap-x-10 mx-auto my-4
-md:my-0 md:flex flex-col md:space-y-4 w-max p-2 md:p-4 h-min md:mr-8 card"
+      className="grid grid-rows-2 grid-cols-2 gap-y-4 gap-x-5 mx-auto my-4 w-full
+md:my-0 md:flex flex-col md:space-y-4 md:w-max p-2 md:p-4 h-min md:mr-8 card"
     >
       {data.map(({ name, path }) => {
         return (

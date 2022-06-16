@@ -11,3 +11,12 @@ export type ScorebarProps = {
   maxGuesses: number;
   instructions?: boolean;
 };
+
+export type UserStats = {
+  gamesWon: number;
+  responsesSubmitted: number;
+  gamesPlayed: number;
+  surveysDrafted: number;
+  highestScore: { survey: number; score: number };
+  fewestGuesses: { survey: number; guesses: number };
+};

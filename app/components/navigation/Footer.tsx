@@ -72,7 +72,7 @@ export default () => {
               <Link to="/surveys?community=on&standard=on">Search</Link>
             </li>
             <li>
-              <Link to="/help/what-is-plurality">Help</Link>
+              <Link to="/help/how-to-play">Help</Link>
             </li>
             <li>
               <Link to="/help/policies">Policies</Link>

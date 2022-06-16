@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-describe("Gameplay walkthrough", () => {
+describe("Site walkthrough", () => {
   it("plays the entire game", () => {
     cy.fixture("auth").then((authFixture) => {
       // Sign user up
