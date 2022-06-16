@@ -6,7 +6,6 @@ const data = [
   { name: "How to play", path: "how-to-play" },
   { name: "FAQ", path: "faq" },
   { name: "Terminology", path: "terminology" },
-  { name: "Policies", path: "policies" },
 ];
 
 export default ({ page }: { page: string }) => {

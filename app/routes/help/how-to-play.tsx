@@ -1,4 +1,3 @@
-import { Link } from "@remix-run/react";
 import AnimatedBanner from "~/components/text/AnimatedBanner";
 import InfoMenu from "~/components/navigation/InfoMenu";
 import { THRESHOLD } from "~/util/gameplay";
@@ -10,33 +9,27 @@ export default () => {
       <div className="flex flex-col md:flex-row-reverse my-4 ">
         <section className="space-y-6">
           <article className="space-y-2">
-            <h2 className="text-2xl font-header">Connecting to Plurality</h2>
-            <p>
-              The first thing you need to do to interact with Plurality is
-              connect, either with an email and password or via your Crypto
-              wallet. Parts of Plurality rely on your Crypto wallet's
-              authentication protocol. If you already have an Ethereum wallet
-              associated with your browser, click the “Connect” button in the
-              header to log-in. If you don't, you can make one using the
-              Metamask browser extension or mobile app.
-            </p>
-            <p className="italic">
-              What can I do now that I'm conected? Start playing a Survey!
-            </p>
-          </article>
-          <article className="space-y-2">
-            <h2 className="mt-3 text-2xl font-header">Playing a Survey</h2>
+            <h2 className="mt-3 text-2xl font-header">Guessing</h2>
             <p>
               Every day there is a new Survey. To play a Survey, you must try to
               guess the most common responses to the Survey question. To win,
               you must guess how over {THRESHOLD}% of players responded to that
-              Survey. You are only allowed 20 guesses to pass the {THRESHOLD}%
-              threshold. A guess is only valid if it was the response of at
-              least 1 person.
+              Survey. You are only allowed a limited number guesses to pass the{" "}
+              {THRESHOLD}% threshold. A guess is only valid if it was the
+              response of at least 1 person.
             </p>
             <p>
-              Hint: If you guess a response nobody gave, don't worry, it doesn't
-              count. The danger is in guessing responses that <b>very few</b>{" "}
+              The more diverse the Survey responses, the harder it will be to
+              guess {THRESHOLD}% of responses. Thus the number of guesses
+              allowed for each Survey depends on the variety of answers
+              submitted to the Survey. Every Survey is winnable using the
+              allowed number of guesses, but some will be more difficult than
+              others!
+            </p>
+            <p>
+              Hint: If you guess a response that nobody submitted while the
+              Survey was open, don't worry, it doesn't count towards your
+              guesses. The danger is in guessing responses that <b>very few</b>{" "}
               people gave, because you will run out of guesses before you hit
               the threshold.
             </p>
@@ -60,21 +53,8 @@ export default () => {
             <p>
               The first part of the Plurality process is the drafting of Survey
               questions. In order to draft a question, you must purchase the
-              right do so in the form of an NFT, or “Survey Token”. There is one
-              Survey per day, and one NFT per survey. The right to the daily
-              Survey Token can purchased via auction on{" "}
-              <a href="https://opensea.io">OpenSea.io</a>.
-            </p>
-            <p>
-              Once you have the right to make the question for a given day,
-              submit it{" "}
-              <Link to="/draft" className="underline">
-                here
-              </Link>{" "}
-              here and the Plurality team will review it before it goes live.
-              Make sure to submit your question early to give us time to review!
-              If no viable question is submitted by the time the survey opens, a
-              fallback question will be used.
+              right do so. The Plurality team reviews all Survey questions
+              before they go live.
             </p>
           </article>
         </section>

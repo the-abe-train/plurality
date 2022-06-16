@@ -23,13 +23,12 @@ export default () => {
               opinions with the rest of the world.
             </li>
             <li className="list-outside">
-              Plurality is a <b>decentralized</b> Web3 application that uses
-              blockchain technologies to explore the role of Crypto in gaming.
+              Plurality is a <b>decentralized</b> application that uses that
+              allows users to have a say in what the game looks like.
             </li>
           </ul>
           <p>
-            Read the instructions to get started, or connect your Crypto wallet
-            and dive right in!
+            Read the instructions to get started, or sign-up and dive right in!
           </p>
         </section>
         <InfoMenu page="what-is-plurality" />

@@ -4,16 +4,15 @@ describe("Visit all the help pages", () => {
     cy.contains("But seriously, what IS Plurality?").should("exist");
 
     cy.get('[data-cy="how-to-play"]').click();
-    cy.contains("Connecting to Plurality").should("exist");
+    cy.contains("Guessing").should("exist");
 
     cy.get('[data-cy="faq"]').click();
-    cy.contains("What is a DApp?").should("exist");
+    cy.contains("Is there any way to see all the Survey responses?").should(
+      "exist"
+    );
 
     cy.get('[data-cy="terminology"]').click();
     cy.contains("The Shiny Colours").should("exist");
-
-    cy.get('[data-cy="policies"]').click();
-    cy.contains("Privacy Policy").should("exist");
   });
 });
 

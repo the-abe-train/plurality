@@ -84,7 +84,7 @@ export default () => {
         max-w-survey md:max-w-4xl mx-auto md:pb-8"
       >
         <AnimatedBanner text="Plurality" icon={logo} size={50} />
-        <p className="text-center text-lg">A Web3 guessing game.</p>
+        <p className="text-center text-lg">A decentralized guessing game.</p>
         <div className="md:grid grid-cols-2 gap-y-3 gap-x-8 my-6">
           <h2 className="block text-2xl font-header row-start-1 col-start-2 mt-6 mb-2 md:my-0">
             Click on today's Survey to begin!
