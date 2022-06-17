@@ -97,6 +97,7 @@ export const action: ActionFunction = async ({ request }) => {
   // Create Stripe payment link
   try {
     const metadata = { user: user.toString(), text, photo, category };
+    console.log("New draft:", metadata);
     const stripe = new Stripe(STRIPE_SECRET_KEY, {
       apiVersion: "2020-08-27",
     });
