@@ -41,7 +41,7 @@ export default () => {
               The Enrique Olivo
             </a>
           </div>
-          <a href="https://twitter.com/pluralitygame">
+          <a href="https://twitter.com/theAbeTrain">
             <img src={twitterIcon} width={20} height={20} alt="Twitter" />
           </a>
           <a href="https://github.com/the-abe-train/plurality">
