@@ -431,7 +431,7 @@ export default () => {
               <Link
                 to={`/surveys/${survey._id}/results`}
                 className="underline"
-                data-cy="message"
+                data-cy="results-link"
               >
                 Click to see top responses.
               </Link>

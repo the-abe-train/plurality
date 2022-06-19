@@ -21,7 +21,6 @@ async function connectDb(client: MongoClient) {
     await client.db(DATABASE_NAME).command({ ping: 1 });
   } catch {
     await client.connect();
-    // console.log("Connected to DB success 🗃");
   }
   const db = client.db(DATABASE_NAME);
   return db;
@@ -450,7 +449,7 @@ export async function deleteGame(
   survey: number
 ) {
   const db = await connectDb(client);
-  const gamesCollection = db.collection<UserSchema>("games");
+  const gamesCollection = db.collection<GameSchema>("games");
   const filter: UpdateFilter<GameSchema> = {
     user,
     survey,
@@ -458,6 +457,27 @@ export async function deleteGame(
   };
   if (survey < 1) delete filter["vote"];
   return await gamesCollection.deleteOne(filter);
+}
+
+export async function resetGuesses(
+  client: MongoClient,
+  user: ObjectId,
+  survey: number
+) {
+  const db = await connectDb(client);
+  const gamesCollection = db.collection<GameSchema>("games");
+  return gamesCollection.updateOne(
+    { user, survey },
+    {
+      $set: {
+        score: 0,
+        guesses: [],
+        guessesToWin: 999,
+        win: false,
+        lastUpdated: new Date(),
+      },
+    }
+  );
 }
 
 // Session queries

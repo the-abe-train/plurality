@@ -21,7 +21,6 @@ import { client } from "~/db/connect.server";
 import {
   deleteUser,
   removeWallet,
-  surveysByAuthor,
   userById,
   gamesByUser,
   userUpdateEmail,

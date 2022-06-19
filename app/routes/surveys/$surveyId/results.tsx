@@ -1,8 +1,18 @@
-import type { LinksFunction, LoaderFunction } from "@remix-run/node";
+import type {
+  ActionFunction,
+  LinksFunction,
+  LoaderFunction,
+} from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
+import {
+  Form,
+  Link,
+  useActionData,
+  useLoaderData,
+  useSubmit,
+} from "@remix-run/react";
 import invariant from "tiny-invariant";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
@@ -11,7 +21,12 @@ import styles from "~/styles/app.css";
 import backgrounds from "~/styles/backgrounds.css";
 
 import { client } from "~/db/connect.server";
-import { gameBySurveyUser, surveyById, surveyScores } from "~/db/queries";
+import {
+  gameBySurveyUser,
+  resetGuesses,
+  surveyById,
+  surveyScores,
+} from "~/db/queries";
 
 import { GameSchema, RankedVote, SurveySchema } from "~/db/schemas";
 
@@ -129,6 +144,22 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   });
 };
 
+type ActionData = { message: string };
+
+export const action: ActionFunction = async ({ params, request }) => {
+  try {
+    const session = await getSession(request.headers.get("Cookie"));
+    const userId = session.get("user");
+    const surveyId = Number(params.surveyId);
+    await resetGuesses(client, userId, surveyId);
+    return redirect(`/surveys/${surveyId}/guess`);
+  } catch (e) {
+    return json<ActionData>({
+      message: "Reset failed. Please try again later.",
+    });
+  }
+};
+
 export default () => {
   // Data from server
   const loaderData = useLoaderData<LoaderData>();
@@ -149,6 +180,7 @@ export default () => {
   const [guessesToWin, setGuessesToWin] = useState(
     game.guessesToWin || game.guesses.length
   );
+  const actionData = useActionData<ActionData>();
 
   // Displaying to the user what they voted
   const userVote = useMemo(() => {
@@ -175,6 +207,25 @@ export default () => {
       </p>
     );
   }, [game, survey]);
+
+  // Reset game
+  const formRef = useRef<HTMLFormElement>(null!);
+  const submit = useSubmit();
+  function resetGame() {
+    const confirmed = confirm(
+      "Are you sure you want to reset your guesses and score?"
+    );
+    if (confirmed) {
+      const newFormData = new FormData(formRef.current);
+      newFormData.set("_action", "reset");
+      submit(newFormData, {
+        method: "post",
+        action: `/surveys/${game.survey}/results`,
+        replace: true,
+      });
+    }
+    return;
+  }
 
   // Ensure state changes when the Survey number changes
   useEffect(() => {
@@ -225,22 +276,32 @@ export default () => {
             category={loaderData.survey.category}
             highlights={highlights}
           />
+          <p className="text-red">{actionData?.message}</p>
         </section>
         <section className="space-y-4 md:px-4 md:col-start-1 md:row-start-1">
           <h2 className="font-header text-2xl">Survey Statistics</h2>
           <p>You scored better than {percentFormat(userRank)} of players!</p>
           <Histogram data={scoreData} userData={userScore} />
           <Scorebar {...scorebarProps} instructions={false} />
-          <div className="flex flex-wrap space-x-3 my-3">
+          <div className="flex space-x-3 my-4">
             <NavButton name="Respond" />
             <NavButton name="Draft" />
-            <Link
-              to="/surveys?community=on&standard=on"
-              className="underline inline-block self-end"
-            >
-              More Surveys
-            </Link>
+            <Form className="space-x-4" ref={formRef}>
+              <button
+                className="cancel px-3 py-1"
+                onClick={resetGame}
+                data-cy="reset-game"
+              >
+                Reset game
+              </button>
+            </Form>
           </div>
+          <Link
+            to="/surveys?community=on&standard=on"
+            className="underline inline-block self-end"
+          >
+            More Surveys
+          </Link>
         </section>
       </main>
     </>

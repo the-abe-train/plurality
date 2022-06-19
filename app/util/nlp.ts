@@ -12,8 +12,17 @@ export function getTypo(response: string) {
 }
 
 export function getLemma(word: string | number): string {
-  if (typeof word === "number") return getLemma(String(word));
-  return capitalizeFirstLetter(lemmatize.noun(word.trim().toLowerCase()));
+  if (typeof word === "number") return String(word);
+  const trimmed = word.trim().toLowerCase();
+  // console.log({ trimmed, noun, verb, adjective });
+
+  const noun = lemmatize.noun(trimmed);
+  if (noun !== trimmed) return capitalizeFirstLetter(noun);
+  const verb = lemmatize.verb(trimmed);
+  if (verb !== trimmed) return capitalizeFirstLetter(verb);
+  const adjective = lemmatize.adjective(trimmed);
+  if (adjective !== trimmed) return capitalizeFirstLetter(adjective);
+  return capitalizeFirstLetter(trimmed);
 }
 
 export async function surveyAnswers(client: MongoClient, surveyId: number) {
