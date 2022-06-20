@@ -312,7 +312,8 @@ export default () => {
             {yourVote && (
               <div className="min-h-[2rem] max-w-survey">
                 <p>
-                  Responses can be guessed in <b>{nextSurvey}</b>.
+                  Thank you for responding! Top responses can be guessed in{" "}
+                  <b>{nextSurvey}</b>.
                 </p>
               </div>
             )}
