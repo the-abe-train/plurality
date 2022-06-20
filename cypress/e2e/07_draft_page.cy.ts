@@ -35,7 +35,7 @@ describe("Draft page test", () => {
       // Fill out and submit the form
       cy.get("[data-cy=text-input]").type("Is this a sample survey question?");
       cy.get("[data-cy=photo-input]").type("oXV3bzR7jxI");
-      cy.get("[data-cy=select-category]").select("number");
+      cy.get("#number").click();
       cy.get(".gold").click();
     });
   });
