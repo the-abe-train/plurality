@@ -9,6 +9,7 @@ describe("Respond page test", () => {
       cy.loginByForm(loginEmail, loginPassword);
       cy.getCookie("user").should("exist");
 
+      cy.visit("http://localhost:3000/surveys/-1/delete");
       cy.visit("http://localhost:3000/surveys/-1/respond");
       cy.contains("#-1").should("exist");
 
@@ -29,7 +30,7 @@ describe("Respond page test", () => {
       cy.get("[data-cy=respond-input]").clear();
 
       cy.get("[data-cy=respond-input]").type("orange{enter}");
-      cy.contains("Responses can be guessed").should("exist");
+      cy.contains("Top responses can be guessed").should("exist");
       cy.contains("Respond to another survey!").should("exist");
       cy.contains("#-2").should("not.exist");
 
@@ -45,6 +46,7 @@ describe("Respond page test", () => {
       cy.loginByForm(loginEmail, loginPassword);
       cy.getCookie("user").should("exist");
 
+      cy.visit("http://localhost:3000/surveys/-2/delete");
       cy.visit("http://localhost:3000/surveys/-2/respond");
       cy.contains("#-2").should("exist");
 
@@ -61,7 +63,7 @@ describe("Respond page test", () => {
       cy.get("[data-cy=respond-input]").clear();
 
       cy.get("[data-cy=respond-input]").type("80085{enter}");
-      cy.contains("Responses can be guessed").should("exist");
+      cy.contains("Top responses can be guessed").should("exist");
       cy.contains("Respond to another survey!").should("exist");
       cy.contains("#-1").should("not.exist");
 
