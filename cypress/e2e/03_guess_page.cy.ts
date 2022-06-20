@@ -111,9 +111,12 @@ describe("Guess page test", () => {
         cy.wait(2000);
         cy.contains("Share your score!").should("exist");
 
+        // Close overlay
         cy.get("[data-cy=backdrop]").click("left");
         cy.wait(1000);
         cy.contains("Share your score!").should("not.exist");
+
+        // Share score button
         cy.get("[data-cy=share-btn]").click();
         cy.contains("Copied!").should("exist");
 

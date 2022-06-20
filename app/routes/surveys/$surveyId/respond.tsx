@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { ActionFunction, LoaderFunction } from "@remix-run/node";
+import type { ActionFunction, LoaderFunction, Session } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, Link, useActionData, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
@@ -126,11 +126,21 @@ type ActionData = {
 export const action: ActionFunction = async ({ request, params }) => {
   console.log("Running respond page form, aka", action.name); // action
   console.log("Request body", await request.clone().text());
+
   // Async parse form and session data
-  const [form, session] = await Promise.all([
-    request.formData(),
-    getSession(request.headers.get("Cookie")),
-  ]);
+  let form: FormData, session: Session;
+  try {
+    [form, session] = await Promise.all([
+      request.formData(),
+      getSession(request.headers.get("Cookie")),
+    ]);
+  } catch (e) {
+    console.log("Form parse failed");
+    console.error(e);
+    const message =
+      "The server has experienced an error. Please reach out to @theAbeTrain for support.";
+    return json<ActionData>({ message });
+  }
 
   // Parse form
   const newVote = Number(form.get("vote")) || (form.get("vote") as string);
@@ -302,7 +312,8 @@ export default () => {
             {yourVote && (
               <div className="min-h-[2rem] max-w-survey">
                 <p>
-                  Responses can be guessed in <b>{nextSurvey}</b>.
+                  Thank you for responding! Top responses can be guessed in{" "}
+                  <b>{nextSurvey}</b>.
                 </p>
               </div>
             )}

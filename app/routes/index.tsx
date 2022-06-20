@@ -97,7 +97,7 @@ export default () => {
           </h2>
           <div
             className="col-start-1 row-start-2 flex justify-around card 
-            flex-col max-w-survey min-w-[260px] p-2 h-full"
+            flex-col max-w-survey min-w-[260px] p-2 h-full min-h-[14rem]"
           >
             {instructions.map((instr) => {
               return (

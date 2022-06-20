@@ -228,6 +228,11 @@ export default () => {
                 Submit
               </button>
               <p className="text-red-700">{message}</p>
+              {!user.email.verified && (
+                <Link to="/user" className="text-red-700 underline">
+                  Head to the profile page to verify your email.
+                </Link>
+              )}
             </Form>
           </section>
           <section className="md:self-end">
