@@ -110,8 +110,8 @@ export const action: ActionFunction = async ({ request }) => {
           Once your draft has been approved, your Survey question 
           "${text}" will show up in the queue of the Surveys.
           Return to the Draft page for an update on your draft's status!
-          Feel free to contact me if you have any concerns (@theAbeTrain on 
-          Twitter).`,
+          If you have any questions or concerns, feel free to contact me 
+          through my website (the-abe-train.com) or Twitter (@theAbeTrain).`,
     });
     const price = await stripe.prices.create({
       currency: "cad",
