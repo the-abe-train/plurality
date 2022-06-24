@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import type { LinksFunction, LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 
@@ -11,7 +11,7 @@ import timezone from "dayjs/plugin/timezone";
 import styles from "~/styles/app.css";
 import backgrounds from "~/styles/backgrounds.css";
 
-import { SurveySchema, VoteAggregation } from "~/db/schemas";
+import { SurveySchema } from "~/db/schemas";
 import { getAllSurveyIds, surveyBySearch, votesBySurvey } from "~/db/queries";
 import { client } from "~/db/connect.server";
 
@@ -43,7 +43,6 @@ type LoaderData = {
     pageSurveysNum: number;
     newPage: number;
   };
-  votes: VoteAggregation[][];
   message: string;
 };
 
@@ -58,7 +57,6 @@ export const loader: LoaderFunction = async ({ request }) => {
   // Parse form
   const url = new URL(request.url);
   const search = new URLSearchParams(url.search);
-  console.log(search);
   const textParam = search.get("text");
   const dateParam = search.get("date");
   const pageParam = search.get("page");
@@ -94,7 +92,6 @@ export const loader: LoaderFunction = async ({ request }) => {
       const data = {
         pageSurveys: [],
         metadata,
-        votes: [],
         message,
         ...firstAndLast,
       };
@@ -156,16 +153,11 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 export default () => {
   const transition = useTransition();
-  const loaderData = useLoaderData<LoaderData>();
-  const { metadata } = loaderData;
-
-  const [page, setPage] = useState(metadata.newPage);
-  const [inputText, setInputText] = useState("");
+  const { metadata, firstSurvey, lastSurvey, message, pageSurveys } =
+    useLoaderData<LoaderData>();
   const formRef = useRef<HTMLFormElement>(null!);
 
-  useEffect(() => {
-    setPage(metadata.newPage);
-  }, [metadata]);
+  const maxPage = Math.ceil(metadata.totalSurveysNum / PER_PAGE) || 1;
 
   return (
     <>
@@ -181,8 +173,6 @@ export default () => {
             name="text"
             placeholder="Search by keyword or Survey ID"
             className="border border-outline px-2"
-            value={inputText}
-            onChange={(e) => setInputText(e.target.value)}
             data-cy="text-search"
           />
           <div
@@ -193,8 +183,8 @@ export default () => {
               type="date"
               name="date"
               id="date"
-              min={loaderData.firstSurvey}
-              max={loaderData.lastSurvey}
+              min={firstSurvey}
+              max={lastSurvey}
               className="border border-outline px-2 min-w-[300px]"
             />
             <div className="flex space-x-3 items-center">
@@ -228,10 +218,8 @@ export default () => {
                   type="number"
                   name="page"
                   className="text-center w-20 mx-2 border border-outline px-2"
-                  onChange={(e) => setPage(Number(e.target.value))}
-                  max={metadata.totalSurveysNum / PER_PAGE || 1}
+                  max={maxPage}
                   min={1}
-                  value={page}
                 />
               </label>
             </div>
@@ -239,7 +227,6 @@ export default () => {
               <button
                 type="reset"
                 className="cancel px-3 py-1"
-                onClick={() => setPage(1)}
                 disabled={transition.state !== "idle"}
               >
                 Reset
@@ -257,13 +244,13 @@ export default () => {
         <div className="md:px-4">
           <section className="my-4">
             <span className="m-4" data-cy="message">
-              {loaderData.message}
+              {message}
             </span>
             <div
               className="flex flex-col md:flex-row flex-wrap gap-3"
               data-cy="search-results"
             >
-              {loaderData.pageSurveys.map((q) => {
+              {pageSurveys.map((q) => {
                 return <Survey survey={q} key={q._id} />;
               })}
             </div>
