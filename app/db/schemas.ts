@@ -30,7 +30,10 @@ export type SurveySchema = {
   drafted: Date;
   community: boolean;
   category: "number" | "word";
-  author?: ObjectId;
+  author?: {
+    user: ObjectId;
+    name: string;
+  };
 };
 
 export type GameSchema = {

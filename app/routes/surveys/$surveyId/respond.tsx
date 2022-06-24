@@ -336,7 +336,17 @@ export default () => {
               <li>Not have any profanity or obscenity</li>
               <li>Only have unaccented letters or numbers</li>
             </ul>
-
+            <div>
+              {loaderData.survey.author && (
+                <p className="my-2">
+                  Survey submitted by <b> {loaderData.survey.author.name}</b>.
+                  To draft your own Survey,{" "}
+                  <Link to="/draft" className="underline">
+                    click here.
+                  </Link>
+                </p>
+              )}
+            </div>
             <div className="my-4 md:mt-12">
               <div className="flex flex-wrap gap-3 my-3">
                 <NavButton name="Guess" />
