@@ -32,7 +32,7 @@ describe("Results page test", () => {
 
         survey26.guesses.forEach((guess: string) => {
           cy.get("[data-cy=guess-input]").type(`${guess}{enter}`);
-          cy.wait(500);
+          cy.wait(600);
         });
         cy.wait(2000);
 
