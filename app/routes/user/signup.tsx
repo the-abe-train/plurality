@@ -210,10 +210,6 @@ export default function signup() {
             >
               Connect wallet
             </button>
-            <p>
-              If you have an Ethereum wallet connected to your account, you can
-              draft your own survey questions!
-            </p>
           </div>
         </article>
       </section>
