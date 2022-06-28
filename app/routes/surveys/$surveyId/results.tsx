@@ -121,7 +121,12 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   const userRank = percentRank(scores, game.score);
 
   // Redirect to guess if game isn't over yet
-  if (!gameOver) {
+  if (!gameOver && survey._id > 8) {
+    return redirect(`/surveys/${surveyId}/guess`);
+  }
+
+  // Redirect if practice game but not won
+  if (!game.win && survey._id <= 8) {
     return redirect(`/surveys/${surveyId}/guess`);
   }
 
@@ -152,6 +157,7 @@ export const action: ActionFunction = async ({ params, request }) => {
     const userId = session.get("user");
     const surveyId = Number(params.surveyId);
     await resetGuesses(client, userId, surveyId);
+    console.log("Guesses have been reset \n");
     return redirect(`/surveys/${surveyId}/guess`);
   } catch (e) {
     return json<ActionData>({
@@ -271,7 +277,6 @@ export default () => {
           <Answers
             totalVotes={totalVotes}
             responses={topAnswers}
-            score={score}
             displayPercent={displayPercent}
             category={loaderData.survey.category}
             highlights={highlights}
@@ -301,6 +306,14 @@ export default () => {
             className="underline inline-block self-end"
           >
             More Surveys
+          </Link>
+          <span> | </span>
+          <Link
+            to={`/surveys/${survey._id}/guess`}
+            className="underline"
+            data-cy="guess-link"
+          >
+            Return to Guess page.
           </Link>
         </section>
       </main>

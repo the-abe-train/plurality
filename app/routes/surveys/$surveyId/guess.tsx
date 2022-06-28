@@ -143,9 +143,10 @@ export const loader: LoaderFunction = async ({ params, request }) => {
     const tomorrowSc = midnight.toDate();
     const tomorrow = await surveyByClose(client, tomorrowSc);
     invariant(tomorrow, "Tomorrow's survey not found.");
-    const message = gameOver
-      ? "You win!"
-      : "You win! Use your remaining guesses to reveal the top responses.";
+    const message =
+      gameOver || surveyId <= 8
+        ? "You win!"
+        : "You win! Use your remaining guesses to reveal the top responses.";
     const data = {
       totalVotes,
       game,
@@ -396,6 +397,9 @@ export default () => {
     maxGuesses,
   };
 
+  // When to reveal answers
+  const revealResults = gameOver || (survey._id <= 8 && game.win);
+
   // Clearing the form after submission
   const formRef = useRef<HTMLFormElement>(null!);
   const inputRef = useRef<HTMLInputElement>(null!);
@@ -427,7 +431,7 @@ export default () => {
             style={{ color: msgColour }}
           >
             {msg}{" "}
-            {gameOver && (
+            {revealResults && (
               <Link
                 to={`/surveys/${survey._id}/results`}
                 className="underline"
@@ -475,7 +479,6 @@ export default () => {
           <Answers
             totalVotes={totalVotes}
             responses={guesses}
-            score={score}
             displayPercent={displayPercent}
             category={loaderData.survey.category}
           />
@@ -484,6 +487,18 @@ export default () => {
           <Scorebar {...scorebarProps} instructions={false} />
         </section>
         <section className="md:self-end md:px-4">
+          {survey._id <= 8 && (
+            <p className="my-2 ">
+              Survey #{survey._id} is a{" "}
+              <Link
+                to="/help/terminology"
+                className="underline"
+                data-cy="help-link"
+              >
+                practice Survey.
+              </Link>
+            </p>
+          )}
           <div className="flex flex-wrap space-x-3 my-3">
             <NavButton name="Respond" />
             <NavButton name="Draft" />

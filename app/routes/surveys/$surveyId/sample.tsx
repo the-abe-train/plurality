@@ -182,11 +182,13 @@ export const action: ActionFunction = async ({ request, params }) => {
   // Pick message to send to player
   const gameOver = updatedGuesses.length >= maxGuesses || score === 1;
   let message: string;
-  if (win && !gameOver) {
-    message =
-      "You win! Use your remaining guesses to reveal the top responses.";
-  } else if (win && gameOver) {
-    message = "You win!";
+  if (win) {
+    if (gameOver || surveyId <= 8) {
+      message = "You win!";
+    } else {
+      message =
+        "You win! Use your remaining guesses to reveal the top responses.";
+    }
   } else if (!win && gameOver) {
     message = "No more guesses.";
   } else {
@@ -307,6 +309,9 @@ export default () => {
     }
   }, [win]);
 
+  // When to reveal answers
+  const revealResults = gameOver || (survey._id <= 8 && win);
+
   // Always scroll to the top when opening modal
   useEffect(() => {
     if (openModal) {
@@ -356,11 +361,11 @@ export default () => {
             style={{ color: msgColour }}
           >
             {msg}{" "}
-            {gameOver && (
+            {revealResults && (
               <Link
                 to={`/surveys/${survey._id}/results`}
                 className="underline"
-                data-cy="message"
+                data-cy="results-link"
               >
                 Click to see top responses.
               </Link>
@@ -418,7 +423,6 @@ export default () => {
           <Answers
             totalVotes={totalVotes}
             responses={guesses}
-            score={score}
             displayPercent={displayPercent}
             category={survey.category}
           />
@@ -427,6 +431,18 @@ export default () => {
           <Scorebar {...scorebarProps} instructions />
         </section>
         <section className="md:self-end md:px-4">
+          {survey._id <= 8 && (
+            <p className="my-2 ">
+              Survey #{survey._id} is a{" "}
+              <Link
+                to="/help/terminology"
+                className="underline"
+                data-cy="help-link"
+              >
+                practice Survey.
+              </Link>
+            </p>
+          )}
           <div className="flex flex-wrap space-x-3 my-3">
             <NavButton name="Respond" />
             <NavButton name="Draft" />
