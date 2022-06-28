@@ -105,7 +105,7 @@ export const action: ActionFunction = async ({ request }) => {
       name: "Plurality Draft",
       images: ["https://plurality.fun/preview.png"],
       metadata,
-      default_price_data: { currency: "cad", unit_amount: 1000 },
+      default_price_data: { currency: "cad", unit_amount: 500 },
       description: `Thank you for purchasing a Plurality Draft! 
           Once your draft has been approved, your Survey question 
           "${text}" will show up in the queue of the Surveys.
@@ -115,7 +115,7 @@ export const action: ActionFunction = async ({ request }) => {
     });
     const price = await stripe.prices.create({
       currency: "cad",
-      unit_amount: 1000,
+      unit_amount: 500,
       product: product.id,
       metadata,
     });
@@ -150,7 +150,7 @@ export default () => {
         <AnimatedBanner text="Draft" icon={draftIcon} />
         <main
           className="max-w-4xl flex flex-col md:grid grid-cols-2
-        gap-4 my-6 justify-center md:mx-auto mx-4"
+        gap-4 my-6 justify-center mx-auto px-4"
         >
           <DraftList drafts={drafts} />
           <section className="md:pl-4">
@@ -173,7 +173,7 @@ export default () => {
                   className="flex items-center space-x-2 mb-1"
                 >
                   <p>
-                    Choose a cover photo from{" "}
+                    Optional: Choose a cover photo from{" "}
                     <a href="https://unsplash.com" className="underline">
                       Unsplash
                     </a>
@@ -189,7 +189,6 @@ export default () => {
                   name="photo"
                   data-cy="photo-input"
                   placeholder="Unsplash photo ID"
-                  required
                 />
               </div>
               <div>
