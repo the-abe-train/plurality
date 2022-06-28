@@ -3,7 +3,7 @@ import InfoMenu from "~/components/navigation/InfoMenu";
 
 export default () => {
   return (
-    <main className="flex-grow mx-4 md:mx-auto mb-4 max-w-4xl my-4">
+    <main className="flex-grow px-4 mx-auto mb-4 max-w-4xl my-4">
       <AnimatedBanner text="Terminology" />
       <div className="flex flex-col md:flex-row-reverse my-4">
         <section className="space-y-6">
@@ -36,7 +36,16 @@ export default () => {
                   <td className="px-2 py-2 font-bold">Survey</td>
                   <td className="px-2 py-2">
                     A Survey is a question on Plurality that players can draft,
-                    respond to, and play by guessing the top responses.
+                    respond to, and play by trying to guess the most common
+                    responses.
+                  </td>
+                </tr>
+                <tr className="border border-outline">
+                  <td className="px-2 py-2 font-bold">Practice Survey</td>
+                  <td className="px-2 py-2">
+                    The first 8 Surveys in Plurality did not received very few
+                    responses. For these "Practice" Surveys, you can reveal the
+                    top responses by passing the win threshold.
                   </td>
                 </tr>
                 <tr className="border border-outline">

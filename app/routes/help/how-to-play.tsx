@@ -4,7 +4,7 @@ import { THRESHOLD } from "~/util/gameplay";
 
 export default () => {
   return (
-    <main className="flex-grow mx-4 md:mx-auto mb-4 max-w-4xl my-4">
+    <main className="flex-grow px-4 mx-auto mb-4 max-w-4xl my-4">
       <AnimatedBanner text="How to Play" />
       <div className="flex flex-col md:flex-row-reverse my-4 ">
         <section className="space-y-6">
@@ -75,12 +75,12 @@ export default () => {
           <article className="space-y-2">
             <h2 className="mt-3 text-2xl font-header">Drafting</h2>
             <p>
-              Survey questions are chosen either by me, the game's creator, or
-              by you, the player! When a player chooses a Survey question, it is
-              called Drafting. The right to draft a Survey costs $10 CAD. After
-              being bought, Survey drafts are placed "Under Review". After they
-              have been reviewed and approved, they will show up in the queue as
-              questions Surveys for players to respond to, and eventually play!
+              Survey questions are chosen either by the Plurality team, or by
+              you, the player! Writing your own Survey question is called
+              Drafting, and it costs 5 CAD. After the purchase, Survey drafts
+              are placed "Under Review". After they have been reviewed and
+              approved, they will show up in the queue as questions Surveys for
+              players to respond to, and eventually play!
             </p>
           </article>
         </section>

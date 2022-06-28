@@ -3,7 +3,7 @@ import InfoMenu from "~/components/navigation/InfoMenu";
 
 export default () => {
   return (
-    <main className="flex-grow mx-4 md:mx-auto mb-4 max-w-4xl my-4">
+    <main className="flex-grow px-4 mx-auto mb-4 max-w-4xl my-4">
       <AnimatedBanner text="FAQ" />
       <div className="flex flex-col md:flex-row-reverse my-4">
         <section className="space-y-6">
