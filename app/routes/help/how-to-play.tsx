@@ -77,7 +77,7 @@ export default () => {
             <p>
               Survey questions are chosen either by the Plurality team, or by
               you, the player! Writing your own Survey question is called
-              Drafting, and it costs 5 CAD. After the purchase, Survey drafts
+              Drafting, and it costs $5 CAD. After the purchase, Survey drafts
               are placed "Under Review". After they have been reviewed and
               approved, they will show up in the queue as questions Surveys for
               players to respond to, and eventually play!
