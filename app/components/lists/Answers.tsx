@@ -2,11 +2,11 @@ import { percentFormat, rankToLetter, statFormat } from "~/util/text";
 import { motion } from "framer-motion";
 import { useRef } from "react";
 import { RankedVote } from "~/db/schemas";
+import { getTotalVotes } from "~/util/gameplay";
 
 type Props = {
   responses: RankedVote[];
   totalVotes: number;
-  score: number;
   displayPercent: boolean;
   category: "word" | "number";
   highlights?: string[];
@@ -15,7 +15,6 @@ type Props = {
 export default ({
   responses,
   totalVotes,
-  score,
   displayPercent,
   category,
   highlights,
@@ -25,13 +24,12 @@ export default ({
   const guessedVotes = responses.reduce((total, guess) => {
     return total + guess.votes;
   }, 0);
+  const score2 = getTotalVotes(responses) / totalVotes;
   const showRemainingStat = displayPercent
-    ? percentFormat(1 - score)
+    ? percentFormat(1 - score2)
     : totalVotes - guessedVotes;
-  // const highlightNames = highlights ||
 
   return (
-    // <section className="md:overflow-y-auto md:max-h-96">
     <section
       style={{
         overflowY: responses.length > 20 ? "auto" : "inherit",
