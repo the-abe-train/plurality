@@ -401,7 +401,7 @@ export default () => {
               {previewSurveys.length === 0 && (
                 <p>
                   You've responded to all open Surveys! More Surveys will be
-                  availble in {dayjs().add(1, "M").format("MMMM")}.
+                  availble soon.
                 </p>
               )}
             </div>
