@@ -303,14 +303,14 @@ export default () => {
           </div>
           <Link
             to="/surveys?community=on&standard=on"
-            className="underline inline-block self-end"
+            className="underline inline-block self-end text-sm"
           >
             More Surveys
           </Link>
-          <span> | </span>
+          <span className="text-sm"> | </span>
           <Link
             to={`/surveys/${survey._id}/guess`}
-            className="underline"
+            className="underline text-sm"
             data-cy="guess-link"
           >
             Return to Guess page.

@@ -271,11 +271,11 @@ export default () => {
     <>
       <AnimatedBanner text="Respond" icon={respondIcon} />
       <main
-        className="max-w-4xl flex-grow mx-4 md:mx-auto flex flex-col md:flex-row
+        className="max-w-4xl flex-grow px-4 mx-auto flex flex-col md:flex-row
     my-6 flex-wrap gap-3"
       >
         <div className="flex flex-col md:flex-row">
-          <section className="md:mx-4 py-2 space-y-4 max-w-survey">
+          <section className="mx-auto py-2 space-y-4 md:max-w-survey">
             <Survey survey={loaderData.survey} />
             <Form method="post" className="w-full flex space-x-2 my-4">
               <input
@@ -324,7 +324,7 @@ export default () => {
               </p>
             )}
           </section>
-          <section className={`md:px-4 w-fit ${yourVote && "hidden md:block"}`}>
+          <section className={`md:ml-8 w-fit ${yourVote && "hidden md:block"}`}>
             <h2 className="font-header mb-2 text-2xl">Instructions</h2>
             <p>Use this page to respond to the survey for an upcoming game!</p>
             <p>Your response to the survey should:</p>
@@ -362,7 +362,7 @@ export default () => {
           </section>
         </div>
         {yourVote && (
-          <section className="md:px-4">
+          <section className="">
             <h2 className="font-header mb-2 text-2xl mt-2">
               Respond to another survey!
             </h2>
