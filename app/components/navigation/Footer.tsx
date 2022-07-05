@@ -1,11 +1,13 @@
 import type { LinksFunction } from "@remix-run/node";
 import { Link } from "@remix-run/react";
-import { emailIcon, githubIcon, twitterIcon, whiteLogo } from "~/images/icons";
+import { githubIcon, twitterIcon, whiteLogo } from "~/images/icons";
 import styles from "~/styles/app.css";
 
 export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: styles }];
 };
+
+// TODO add a note like "Want to support the game? Buy a draft!"
 
 export default () => {
   return (
@@ -32,7 +34,7 @@ export default () => {
         </section>
         <section className="flex justify-between w-full md:w-max md:space-x-3 items-center">
           <div>
-            <b>Plurality</b> is run by <br />
+            <b>Plurality</b> was created by <br />
             <a className="underline" href="https://the-abe-train.com">
               The Abe Train
             </a>{" "}
@@ -75,7 +77,7 @@ export default () => {
               <Link to="/help/how-to-play">Help</Link>
             </li>
             <li>
-              <Link to="/help/policies">Policies</Link>
+              <Link to="/help/privacy-policy">Policies</Link>
             </li>
           </ul>
         </section>

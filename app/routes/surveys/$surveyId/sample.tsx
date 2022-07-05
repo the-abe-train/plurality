@@ -310,7 +310,8 @@ export default () => {
   }, [win]);
 
   // When to reveal answers
-  const revealResults = gameOver || (survey._id <= 8 && win);
+  const revealResults =
+    gameOver || (survey._id <= 8 && (win || guesses.length >= 2));
 
   // Always scroll to the top when opening modal
   useEffect(() => {

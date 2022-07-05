@@ -136,6 +136,8 @@ export const action: ActionFunction = async ({ request }) => {
   }
 };
 
+// TODO survey should status "scheduled" should be determined automatically with db data
+
 export default () => {
   const loaderData = useLoaderData<LoaderData>();
   const actionData = useActionData<ActionData>();
@@ -152,7 +154,18 @@ export default () => {
           className="max-w-4xl flex flex-col md:grid grid-cols-2
         gap-4 my-6 justify-center mx-auto px-4"
         >
-          <DraftList drafts={drafts} />
+          <section className="space-y-5">
+            <div>
+              <h2 className="font-header text-2xl">Instructions</h2>
+              <p className="my-3">
+                If you enjoy playing Plurality, and would like to give the game
+                your own personal twist, buy a draft! Use this form to draft a
+                Survey question for an upcoming game. Drafting costs $5, and
+                it's the best way to support Plurality and its creator.
+              </p>
+            </div>
+            <DraftList drafts={drafts} />
+          </section>
           <section className="md:pl-4">
             <h2 className="font-header text-2xl" data-cy="draft-header">
               Draft your Survey question

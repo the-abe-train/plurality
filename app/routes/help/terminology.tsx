@@ -45,7 +45,7 @@ export default () => {
                   <td className="px-2 py-2">
                     The first 8 Surveys in Plurality did not received very few
                     responses. For these "Practice" Surveys, you can reveal the
-                    top responses by passing the win threshold.
+                    top responses by making just a few guesses.
                   </td>
                 </tr>
                 <tr className="border border-outline">

@@ -10,7 +10,7 @@ type Props = {
 export default ({ drafts, showButton }: Props) => {
   if (drafts.length === 0) {
     return (
-      <section>
+      <div>
         <h2 className="font-header text-2xl" data-cy="draft-header">
           Your Drafts
         </h2>
@@ -20,18 +20,18 @@ export default ({ drafts, showButton }: Props) => {
             <button className="gold px-3 py-1">Submit a draft</button>
           </Link>
         )}
-      </section>
+      </div>
     );
   }
 
   // TODO if status is "Online", should have a link to that Survey
 
   return (
-    <section>
+    <div className="my-1">
       <h2 className="font-header text-2xl" data-cy="draft-header">
         Your Drafts
       </h2>
-      <table className="table-auto my-4 border-outline font-bold bg-primary2">
+      <table className="table-auto my-3 border-outline font-bold bg-primary2">
         <colgroup className="border">
           <col className="border border-outline w-24" />
           <col className="border border-outline w-52" />
@@ -63,6 +63,6 @@ export default ({ drafts, showButton }: Props) => {
         </a>
         !
       </p>
-    </section>
+    </div>
   );
 };

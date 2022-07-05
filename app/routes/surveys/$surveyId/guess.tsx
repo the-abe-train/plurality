@@ -400,7 +400,8 @@ export default () => {
   };
 
   // When to reveal answers
-  const revealResults = gameOver || (survey._id <= 8 && game.win);
+  const revealResults =
+    gameOver || (survey._id <= 8 && (game.win || guesses.length >= 2));
 
   // Clearing the form after submission
   const formRef = useRef<HTMLFormElement>(null!);

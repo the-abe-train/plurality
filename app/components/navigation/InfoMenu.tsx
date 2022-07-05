@@ -2,9 +2,11 @@ import { Link } from "@remix-run/react";
 import { emptyLogo } from "~/images/icons";
 
 const data = [
-  { name: "How to play", path: "how-to-play" },
+  { name: "How to Play", path: "how-to-play" },
   { name: "FAQ", path: "faq" },
   { name: "Terminology", path: "terminology" },
+  { name: "Privacy Policy", path: "privacy-policy" },
+  { name: "About Me", path: "about-me" },
 ];
 
 export default ({ page }: { page: string }) => {
