@@ -144,9 +144,9 @@ export default ({ name }: Props) => {
       </AnimatePresence>
 
       <button
-        // @ts-ignore
         onClick={() => setOpen(!open)}
         className="w-10 h-9 relative"
+        name="hamburger-menu"
       >
         {open ? (
           <>

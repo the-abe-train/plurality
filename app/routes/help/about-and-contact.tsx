@@ -6,14 +6,14 @@ import brunch from "~/images/photos/brunch.jpg";
 export default () => {
   return (
     <main className="flex-grow px-4 mx-auto mb-4 max-w-4xl my-4">
-      <AnimatedBanner text="About Me" />
+      <AnimatedBanner text="About & Contact" />
       <div className="flex flex-col md:flex-row my-4">
         <div className=" order-last md:order-first">
-          <InfoMenu page="about-me" />
+          <InfoMenu page="about-and-contact" />
         </div>
         <section className="space-y-6">
           <article className="space-y-2">
-            <h2 className="text-2xl font-header">The Abe Train</h2>
+            <h2 className="text-2xl font-header">About Me</h2>
             <p>
               Hello! I'm Abe, a freelance web developer based in Toronto,
               Canada. I make games like Plurality and{" "}
@@ -28,6 +28,9 @@ export default () => {
               for $5. This helps me keep the lights on at home, and also saves
               me the trouble of coming up with all the Survey questions myself!
             </p>
+          </article>
+          <article className="space-y-2">
+            <h2 className="text-2xl font-header">Contact Me</h2>
             <p>
               If you are having any questions or concerns about the game, the
               best way to reach me is through a DM on{" "}

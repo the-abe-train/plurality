@@ -165,7 +165,7 @@ export default () => {
       <main className="flex-grow mx-4 md:mx-auto max-w-6xl">
         <Form
           method="get"
-          className="m-6 flex flex-col space-y-4 max-w-xl mx-auto px-4"
+          className="my-6 flex flex-col space-y-4 max-w-survey sm:max-w-xl mx-auto"
           ref={formRef}
         >
           <input
@@ -179,16 +179,19 @@ export default () => {
             className="flex-grow flex flex-col justify-between space-y-3
         md:flex-row md:space-y-0"
           >
-            <input
-              type="date"
-              name="date"
-              id="date"
-              min={firstSurvey}
-              max={lastSurvey}
-              className="border border-outline px-2 min-w-[300px]"
-            />
+            <label htmlFor="date" className="w-full">
+              Survey close date
+              <input
+                type="date"
+                name="date"
+                id="date"
+                min={firstSurvey}
+                max={lastSurvey}
+                className="border border-outline mt-1 w-full md:w-40 min-w-[300px]"
+              />
+            </label>
             <div className="flex space-x-3 items-center">
-              <label className="flex items-center">
+              <label className="flex items-center md:mt-5">
                 Community
                 <input
                   className="mx-2 accent-accent"
@@ -198,7 +201,7 @@ export default () => {
                   defaultChecked
                 />
               </label>
-              <label className="flex items-center">
+              <label className="flex items-center md:mt-5">
                 Standard
                 <input
                   className="mx-2 accent-accent"
@@ -223,7 +226,7 @@ export default () => {
                 />
               </label>
             </div>
-            <div className="space-x-4">
+            <div className="space-x-3">
               <button
                 type="reset"
                 className="cancel px-3 py-1"

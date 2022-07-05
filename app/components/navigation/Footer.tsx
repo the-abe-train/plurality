@@ -32,7 +32,7 @@ export default () => {
           </div>
           <p>© Plurality {new Date().getFullYear()}</p>
         </section>
-        <section className="flex justify-between w-full md:w-max md:space-x-3 items-center">
+        <section className="flex justify-center w-full md:w-max space-x-6 items-center">
           <div>
             <b>Plurality</b> was created by <br />
             <a className="underline" href="https://the-abe-train.com">
@@ -54,7 +54,7 @@ export default () => {
           </a> */}
         </section>
         <section>
-          <ul className="grid grid-cols-4 gap-x-4 justify-items-center">
+          <ul className="grid grid-cols-5 gap-x-4 justify-items-center">
             <li>
               <Link to="/">Home</Link>
             </li>
@@ -78,6 +78,12 @@ export default () => {
             </li>
             <li>
               <Link to="/help/privacy-policy">Policies</Link>
+            </li>
+            <li>
+              <Link to="/help/about-and-contact">About</Link>
+            </li>
+            <li>
+              <Link to="/help/about-and-contact">Contact</Link>
             </li>
           </ul>
         </section>

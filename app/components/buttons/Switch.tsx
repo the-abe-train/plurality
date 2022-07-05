@@ -7,8 +7,11 @@ export default function Switch({ mode, setMode }: Props) {
   return (
     <form action="" className="flex justify-between items-center space-x-4">
       <div className="switcher" onClick={() => setMode(!mode)}>
+        <label className="hidden" htmlFor="toggle">
+          Switch
+        </label>
         <input
-          name="hard-mode"
+          name="toggle"
           type="checkbox"
           checked={mode}
           className="w-full h-full"

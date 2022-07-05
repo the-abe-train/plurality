@@ -31,7 +31,7 @@ export default function () {
             </a>
             .
           </p>
-          <h2 className="text-2xl font-header">Snack Media Privacy Policy</h2>
+          <h2 className="text-2xl font-header">Policy</h2>
           <ol className="space-y-2 list-decimal list-inside">
             <li>
               <a href="#section1">Our Data Promise to you</a>
@@ -61,17 +61,14 @@ export default function () {
               <a href="#section9">Cookies and how we use them</a>
             </li>
             <li>
-              <a href="#section10">Our Audio, podcasts and Magazine Apps</a>
-            </li>
-            <li>
-              <a href="#section11">Online Behavioural Advertising</a>
+              <a href="#section10">Online Behavioural Advertising</a>
             </li>
           </ol>
           <h3 className="text-lg font-bold" id="section1">
             1. Our Data Promise to you
           </h3>
           <p>
-            SN&amp;CK MEDIA WILL process personal information only in strict
+            Plurality will process personal information only in strict
             compliance with the Data Protection Act 2018 (as amended), the
             Privacy and Electronic Communications (EC Directive) Regulations
             2003 and other associated data protection legislation. Your visiting
@@ -81,38 +78,21 @@ export default function () {
             this web site immediately.
           </p>
           <p>
-            SN&amp;CK MEDIA reserves the rights to change this Privacy Policy at
-            any time by posting an updated version on the web site. The date
-            that the web site was last updated is shown at the bottom of this
-            web page. Your continued use of this site after an updated version
-            is posted constitutes your acceptance of and consent to the
-            practices set out in this Privacy Policy as modified.
+            Plurality reserves the rights to change this Privacy Policy at any
+            time by posting an updated version on the web site. The date that
+            the web site was last updated is shown at the bottom of this web
+            page. Your continued use of this site after an updated version is
+            posted constitutes your acceptance of and consent to the practices
+            set out in this Privacy Policy as modified.
           </p>
           <h3 className="text-lg" id="section2">
             2. Who does this privacy notice apply to?
           </h3>
           <p>This notice applies to:</p>
           <ul className="list-disc list-inside">
-            <li>
-              our service users who access our services such as our website or
-              content anywhere on the web, such as, users who watch our content,
-              submit content to us, participate in our surveys and focus group
-              and other users;
-            </li>
-            <li>our clients, suppliers and business partners; and</li>
-            <li>
-              other persons who interact with us, when you call us or email us.
-              However, job applicants should read our{" "}
-              <a href="https://jobs.ladbiblegroup.com/privacy-policy">
-                recruitment privacy notice
-              </a>
-              .
-            </li>
+            <li>Players who visit the site without making an account.</li>
+            <li>Players who make an account on Plurality.</li>
           </ul>
-          <p>
-            This notice applies to you whether you act in your personal capacity
-            or as an employee or agent of an organisation.
-          </p>
           <h3 className="text-lg" id="section3">
             3. What data do we collect?
           </h3>
@@ -170,7 +150,7 @@ export default function () {
               permission, when you interact with your social media accounts
             </li>
             <li>
-              Personal data that we hold on your to perform our duties as a
+              Personal data that we hold on to to perform our duties as a
               processor like hosting of websites and our services.
             </li>
           </ul>
@@ -179,14 +159,6 @@ export default function () {
             simply as a result of your accessing this web site other than some
             information about your device or IP for identification to ensure
             correct tracking and analysis and to combat fraudulent activity.
-          </p>
-          <p>
-            If you choose to register, SN&amp;CK Media will request information
-            such as your name, email address, address, telephone number or other
-            contact details as required. This information will then be held by
-            us as it is necessary for us to carry out the services for which you
-            registered. We also use this information to improve the function of
-            the web site and to prevent any abuse to the web site.
           </p>
           <h3 className="text-lg" id="section6">
             6. How do we use your Personal Data?
@@ -198,14 +170,6 @@ export default function () {
             your personal data. The legal ground may be one of the following:
           </p>
           <ul className="list-disc list-inside">
-            <li>
-              <em>Consent</em>: For example, where you have provided your
-              consent to receive marketing emails from us. You can withdraw your
-              consent at any time. In the case of marketing emails you can
-              withdraw your consent by clicking on the “unsubscribe” link at the
-              bottom of the email or by emailing{" "}
-              <a href="mailto:gdpr@snack-media.com">gdpr@snack-media.com</a>
-            </li>
             <li>
               <em>
                 Performance of a contract with you (or in order to take steps
@@ -237,10 +201,16 @@ export default function () {
               interests and preferences so that we can make our marketing more
               relevant to your interests and preferences. This includes when we
               promote our own products and services. For example, we look at
-              what you have viewed on our sites or what products have bought.
-              You can opt out from having your personal data used for marketing
-              analyses by emailing{" "}
-              <a href="mailto:gdpr@snack-media.com">gdpr@snack-media.com</a>
+              what you have viewed on our sites or what products have bought You
+              can opt out from having your personal data used for marketing
+              analyses by sending me a DM on
+              <a className="underline" href="https://twitter.com/theAbeTrain">
+                Twitter
+              </a>
+              , or through the form on my{" "}
+              <a className="underline" href="https://the-abe-train.com">
+                personal website.
+              </a>
             </li>
             <li>
               To show you personalised advertising by identifying your interests
@@ -259,10 +229,6 @@ export default function () {
               To personalise our services (for example, so you can sign in) by
               remembering your settings, and recognising you when you sign in on
               different devices
-            </li>
-            <li>
-              Enabling you to share our content with others using social media
-              or email
             </li>
             <li>When responding to your queries and to resolve complaints</li>
             <li>
@@ -288,11 +254,11 @@ export default function () {
             </a>
           </p>
           <p>
-            All the information that SN&amp;CK MEDIA sites collect via the web
-            site or correspondence is used to help SN&amp;CK MEDIA understand
-            more about who uses the web site and to help improve the web site
-            and the services that it offers. It will also help SN&amp;CK MEDIA
-            to send communications to you that may be of interest.
+            All the information that Plurality sites collect via the web site or
+            correspondence is used to help Plurality understand more about who
+            uses the web site and to help improve the web site and the services
+            that it offers. It will also help Plurality to send communications
+            to you that may be of interest.
           </p>
           <p>
             We do share information about users with third parties order to
@@ -308,47 +274,46 @@ export default function () {
           </p>
           <ul className="list-disc list-inside">
             <li>
-              If SN&amp;CK Media Limited have a duty to do so or if the law
-              allows or requires SN&amp;CK Media Limited to do so;
+              If Plurality has a duty to do so or if the law allows or requires
+              Plurality to do so;
             </li>
             <li>
-              If SN&amp;CK Media Limited or its assets are sold to or purchased
-              by another company or person;
+              If Plurality or its assets are sold to or purchased by another
+              company or person;
             </li>
             <li>
               To affiliated businesses or subsidiary or parent companies of
-              SN&amp;CK Media Limited.
+              Plurality.
             </li>
             <li>
               <strong>
-                If SN&amp;CK Media Limited wishes to or is required to pass on
-                your information to a third party in these limited
-                circumstances, it will send an email notice and give you the
-                opportunity to opt-out.
+                If Plurality wishes to or is required to pass on your
+                information to a third party in these limited circumstances, it
+                will send an email notice and give you the opportunity to
+                opt-out.
               </strong>
             </li>
           </ul>
           <p>
-            SN&amp;CK Media Limited may use the personal information that you
-            have provided to contact you by any of the methods which you input.
-            If you have provided us with your email, you will be added to
-            SN&amp;CK Media newsletter database and you will receive content,
-            news and additional information about new services, features or
-            products from the site your signed up via in the SN&amp;CK Media
-            group and other sites within SN&amp;CK Media group. If you do not
-            want to be contacted in this way then please click where indicated
-            when you are completing any of the online forms where you initially
-            input your personal details, by changing your personal details on
-            the [“personal details”] page when you are logged on to the web
-            site, or by contacting SN&amp;CK Media Limited via the contact page
-            at any time after submitting your personal details.
+            Plurality may use the personal information that you have provided to
+            contact you by any of the methods which you input. If you have
+            provided us with your email, you will be added to Plurality
+            newsletter database and you will receive content, news and
+            additional information about new services, features or products from
+            the site your signed up via in the Plurality group and other sites
+            within Plurality group. If you do not want to be contacted in this
+            way then please click where indicated when you are completing any of
+            the online forms where you initially input your personal details, by
+            changing your personal details on the [“personal details”] page when
+            you are logged on to the web site, or by contacting Plurality via
+            the contact page at any time after submitting your personal details.
           </p>
           <p>
             As the Internet is a global network, there may be instances when
             your personal data travels across international borders. This may
             include transfers outside the EU and the EEA. If you do voluntarily
             input any personal information via this web site or send
-            correspondence, then in doing so you are authorising SN&amp;CK Media
+            correspondence, then in doing so you are authorising Plurality
             Limited to transfer your personal data in this way.
           </p>
           <h3 className="text-lg" id="section8">
@@ -484,7 +449,7 @@ export default function () {
             Some third party sites may drop cookies on your device with consent
             or with legitimate interest
           </p>
-          <p>Cookies set by SN&amp;CK Media and its partners</p>
+          <p>Cookies set by Plurality and its partners</p>
           <table className="max-w-full break-words">
             <tbody>
               <tr>
@@ -715,33 +680,9 @@ export default function () {
               </tr>
             </tbody>
           </table>
+
           <h3 className="text-lg" id="section10">
-            10. Our Audio, podcasts and Magazine Apps
-          </h3>
-          <p>
-            If you use any of our apps on your mobile device, we will process
-            the following information:
-          </p>
-          <ul className="list-disc list-inside">
-            <li>
-              Your location, you may decline this request, but this may mean
-              that we cannot offer relevant services and information that are
-              relevant to your area.
-            </li>
-            <li>Your device ID, this will be processed automatically.</li>
-            <li>
-              Your email address, if you create an account used to contact you
-              and to recognise you when you contact us.
-            </li>
-            <li>Your age and gender, if you provide it.</li>
-            <li>
-              You may edit your details, opt-out of advertising profiling or
-              de-activate your account at any time by selecting ‘Account
-              Preferences’ from the ‘More’ menu on your app.
-            </li>
-          </ul>
-          <h3 className="text-lg" id="section11">
-            11. Online Behavioural Advertising
+            10. Online Behavioural Advertising
           </h3>
           <p>
             <em>
@@ -759,7 +700,7 @@ export default function () {
             aggregated audiences around key attributes and behaviours.
           </p>
           <p>
-            – facilitate targeted advertising on sites owned by SN&amp;CK Media
+            – facilitate targeted advertising on sites owned by Plurality
             limited to provide relevant advertisements to you and to make
             effective use of advertising inventory.
           </p>

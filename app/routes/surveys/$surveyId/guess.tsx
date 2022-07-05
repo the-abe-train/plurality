@@ -507,7 +507,7 @@ export default () => {
             <NavButton name="Draft" />
             <Link
               to="/surveys?community=on&standard=on"
-              className="underline inline-block self-end"
+              className="underline inline-block self-end py-1"
             >
               More Surveys
             </Link>

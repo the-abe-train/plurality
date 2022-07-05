@@ -47,7 +47,7 @@ export const ErrorBoundary: ErrorBoundaryComponent = ({ error }) => {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body style={{ height: "100%" }}>
         <main className="light w-full top-0 bottom-0 flex flex-col min-h-screen p-12">
           <h1 className="font-header mb-2 text-2xl">{error.name}</h1>
           <pre>

@@ -17,6 +17,7 @@ import AnimatedBanner from "~/components/text/AnimatedBanner";
 import Survey from "~/components/game/Survey";
 
 import { draftIcon, guessIcon, logo, respondIcon } from "~/images/icons";
+import Footer from "~/components/navigation/Footer";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -77,12 +78,9 @@ const instructions = [
 export default () => {
   const data = useLoaderData<LoaderData>();
   return (
-    <div className="light w-full top-0 bottom-0 flex flex-col min-h-screen">
-      <div
-        className="md:absolute top-1/2 left-1/2 md:w-max
-        md:transform md:-translate-x-1/2 md:-translate-y-1/2
-        max-w-survey md:max-w-4xl mx-auto md:pb-8"
-      >
+    <div className="light w-full top-0 bottom-0 flex flex-col justify-between min-h-screen h-full">
+      <div className="h-1"></div>
+      <div className="md:w-max mx-auto md:pb-8 max-w-survey md:max-w-4xl">
         <AnimatedBanner text="Plurality" icon={logo} size={50} />
         <p className="text-center text-lg">A decentralized guessing game.</p>
         <div className="md:grid grid-cols-2 gap-y-3 gap-x-8 my-6">
@@ -120,6 +118,7 @@ export default () => {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };
