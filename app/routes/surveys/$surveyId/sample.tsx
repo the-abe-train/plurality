@@ -22,7 +22,7 @@ import backgrounds from "~/styles/backgrounds.css";
 
 import { client } from "~/db/connect.server";
 import { surveyByClose, surveyById } from "~/db/queries";
-import { RankedVote, SurveySchema } from "~/db/schemas";
+import { GameSchema, RankedVote, SurveySchema } from "~/db/schemas";
 import { commitSession, getSession } from "~/sessions";
 import { exclamationIcon, guessIcon } from "~/images/icons";
 import { surveyCatch } from "~/routeApis/surveyCatch";
@@ -32,10 +32,15 @@ import Survey from "~/components/game/Survey";
 import Scorebar from "~/components/game/Scorebar";
 import Switch from "~/components/buttons/Switch";
 import AnimatedBanner from "~/components/text/AnimatedBanner";
-import NavButton from "~/components/buttons/NavButton";
 import Modal from "~/components/modal/Modal";
+import MiniNav from "~/components/navigation/MiniNav";
 
-import { calcMaxGuesses, checkWin, getTotalVotes } from "~/util/gameplay";
+import {
+  calcMaxGuesses,
+  checkWin,
+  getTotalVotes,
+  revealResults,
+} from "~/util/gameplay";
 import { getLemma, surveyAnswers } from "~/util/nlp";
 import { surveyMeta } from "~/routeApis/surveyMeta";
 import useValidation from "~/hooks/useValidation";
@@ -310,8 +315,11 @@ export default () => {
   }, [win]);
 
   // When to reveal answers
-  const revealResults =
-    gameOver || (survey._id <= 8 && (win || guesses.length >= 2));
+  const mockGame = {
+    survey: surveyId,
+    win,
+    guesses,
+  } as GameSchema;
 
   // Always scroll to the top when opening modal
   useEffect(() => {
@@ -362,7 +370,7 @@ export default () => {
             style={{ color: msgColour }}
           >
             {msg}{" "}
-            {revealResults && (
+            {revealResults(mockGame, maxGuesses) && (
               <Link
                 to={`/surveys/${survey._id}/results`}
                 className="underline"
@@ -444,22 +452,8 @@ export default () => {
               </Link>
             </p>
           )}
-          <div className="flex flex-wrap space-x-3 my-3">
-            <NavButton name="Respond" />
-            <NavButton name="Draft" />
-            <Link
-              to="/surveys?community=on&standard=on"
-              className="underline inline-block self-end py-1"
-            >
-              More Surveys
-            </Link>
-          </div>
-          <p className="text-sm my-2 italic">
-            Survey photo from{" "}
-            <a className="underline" href={unsplashLink}>
-              Unsplash
-            </a>
-          </p>
+
+          <MiniNav survey={survey} page="guess" />
         </section>
       </main>
       <AnimatePresence initial={true} exitBeforeEnter={true}>

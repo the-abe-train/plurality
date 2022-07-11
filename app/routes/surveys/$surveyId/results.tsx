@@ -31,7 +31,7 @@ import {
 import { GameSchema, RankedVote, SurveySchema } from "~/db/schemas";
 
 import { commitSession, getSession } from "~/sessions";
-import { calcMaxGuesses, getTotalVotes } from "~/util/gameplay";
+import { calcMaxGuesses, getTotalVotes, revealResults } from "~/util/gameplay";
 import { resultsIcon } from "~/images/icons";
 import { surveyCatch } from "~/routeApis/surveyCatch";
 
@@ -104,7 +104,7 @@ export const loader: LoaderFunction = async ({ params, request }) => {
       status: 404,
     });
   }
-  invariant(game, "Game not found failed");
+  invariant(game, "Game not found");
 
   // Redirect to Respond if survey close hasn't happened yet
   const surveyClose = survey.surveyClose;
@@ -121,12 +121,7 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   const userRank = percentRank(scores, game.score);
 
   // Redirect to guess if game isn't over yet
-  if (!gameOver && survey._id > 8) {
-    return redirect(`/surveys/${surveyId}/guess`);
-  }
-
-  // Redirect if practice game but not won
-  if (!game.win && survey._id <= 8) {
+  if (!revealResults(game, maxGuesses)) {
     return redirect(`/surveys/${surveyId}/guess`);
   }
 
@@ -158,6 +153,7 @@ export const action: ActionFunction = async ({ params, request }) => {
     const surveyId = Number(params.surveyId);
     await resetGuesses(client, userId, surveyId);
     console.log("Guesses have been reset \n");
+
     return redirect(`/surveys/${surveyId}/guess`);
   } catch (e) {
     return json<ActionData>({

@@ -16,7 +16,7 @@ import Footer from "~/components/navigation/Footer";
 import Header from "~/components/navigation/Header";
 import Tooltip from "~/components/information/Tooltip";
 import AnimatedBanner from "~/components/text/AnimatedBanner";
-import NavButton from "~/components/buttons/NavButton";
+import MiniNav from "~/components/navigation/MiniNav";
 
 import { DraftSchema, UserSchema } from "~/db/schemas";
 import { client } from "~/db/connect.server";
@@ -32,6 +32,7 @@ import { draftIcon } from "~/images/icons";
 import Stripe from "stripe";
 import { ObjectId } from "mongodb";
 import DraftList from "~/components/lists/DraftList";
+import { NAME_LENGTH } from "~/util/gameplay";
 
 export const links: LinksFunction = () => {
   return [
@@ -92,11 +93,12 @@ export const action: ActionFunction = async ({ request }) => {
   const text = form.get("question") as string;
   const photo = form.get("photo") as string;
   const category = form.get("category") as string;
+  const username = form.get("username") as string;
   const user = session.get("user") as ObjectId;
 
   // Create Stripe payment link
   try {
-    const metadata = { user: user.toString(), text, photo, category };
+    const metadata = { user: user.toString(), text, photo, category, username };
     console.log("New draft:", metadata);
     const stripe = new Stripe(STRIPE_SECRET_KEY, {
       apiVersion: "2020-08-27",
@@ -136,7 +138,8 @@ export const action: ActionFunction = async ({ request }) => {
   }
 };
 
-// TODO survey should status "scheduled" should be determined automatically with db data
+// TODO survey should status "scheduled" should be determined automatically
+// with db data
 
 export default () => {
   const loaderData = useLoaderData<LoaderData>();
@@ -170,9 +173,9 @@ export default () => {
             <h2 className="font-header text-2xl" data-cy="draft-header">
               Draft your Survey question
             </h2>
-            <Form method="post" className="my-4 space-y-6">
+            <Form method="post" className="my-4 space-y-6" data-netlify="true">
               <textarea
-                className="w-full px-4 py-2 text-sm border border-outline"
+                className="w-full px-2 py-2 text-sm border border-outline"
                 name="question"
                 placeholder="Enter question text here."
                 minLength={10}
@@ -198,11 +201,24 @@ export default () => {
                 </label>
                 <input
                   type="text"
-                  className="w-full px-4 py-2 text-sm border border-outline"
+                  className="w-full px-2 py-2 text-sm border border-outline"
                   name="photo"
                   data-cy="photo-input"
                   placeholder="Unsplash photo ID"
                 />
+              </div>
+              <div>
+                <label>
+                  Your display name{" "}
+                  <input
+                    type="text"
+                    name="username"
+                    placeholder={user.name}
+                    maxLength={NAME_LENGTH}
+                    required
+                    className="w-full px-2 py-2 text-sm border border-outline"
+                  />
+                </label>
               </div>
               <div>
                 <p className="my-1">
@@ -232,6 +248,7 @@ export default () => {
                   </div>
                 </div>
               </div>
+
               <button
                 className="gold px-6 py-2 block mx-auto my-6"
                 type="submit"
@@ -248,13 +265,7 @@ export default () => {
             </Form>
           </section>
           <section className="md:self-end">
-            <div className="flex flex-wrap gap-3 my-3">
-              <NavButton name="Guess" />
-              <NavButton name="Respond" />
-            </div>
-            <Link to="/surveys?community=on&standard=on" className="underline">
-              Play more Surveys
-            </Link>
+            <MiniNav page="draft" />
           </section>
         </main>
       </div>

@@ -210,7 +210,7 @@ export async function surveyByClose(client: MongoClient, surveyClose: Date) {
 export async function surveysByAuthor(client: MongoClient, userId: ObjectId) {
   const db = await connectDb(client);
   const surveysCollection = db.collection<SurveySchema>("surveys");
-  return await surveysCollection.find({ author: userId }).toArray();
+  return await surveysCollection.find({ "author.user": userId }).toArray();
 }
 
 export async function getFutureSurveys(client: MongoClient, userId: ObjectId) {
@@ -466,7 +466,7 @@ export async function resetGuesses(
 ) {
   const db = await connectDb(client);
   const gamesCollection = db.collection<GameSchema>("games");
-  return gamesCollection.updateOne(
+  const updateResult = await gamesCollection.updateOne(
     { user, survey },
     {
       $set: {
@@ -478,6 +478,8 @@ export async function resetGuesses(
       },
     }
   );
+  console.log(`Game id ${JSON.stringify(updateResult)} reset\n`);
+  return;
 }
 
 // Session queries
@@ -534,7 +536,7 @@ export async function createDraft(
   const db = await connectDb(client);
   const draftsCollection = db.collection<DraftSchema>("drafts");
   const { amount_total, currency, metadata } = session;
-  const { text, user, photo, category } = metadata || {};
+  const { text, user, photo, category, username } = metadata || {};
   return draftsCollection.insertOne({
     _id: new ObjectId(),
     cost: { amount: amount_total || 0, currency: currency || "" },
@@ -544,5 +546,6 @@ export async function createDraft(
     photo,
     category: category as "word" | "number",
     user: new ObjectId(user),
+    username,
   });
 }

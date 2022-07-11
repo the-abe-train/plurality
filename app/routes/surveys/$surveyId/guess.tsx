@@ -31,7 +31,12 @@ import {
 import { GameSchema, SurveySchema } from "~/db/schemas";
 
 import { commitSession, getSession } from "~/sessions";
-import { calcMaxGuesses, getTotalVotes, THRESHOLD } from "~/util/gameplay";
+import {
+  calcMaxGuesses,
+  getTotalVotes,
+  revealResults,
+  THRESHOLD,
+} from "~/util/gameplay";
 import { exclamationIcon, guessIcon } from "~/images/icons";
 import { surveyCatch } from "~/routeApis/surveyCatch";
 
@@ -40,13 +45,13 @@ import Survey from "~/components/game/Survey";
 import Scorebar from "~/components/game/Scorebar";
 import Switch from "~/components/buttons/Switch";
 import AnimatedBanner from "~/components/text/AnimatedBanner";
-import NavButton from "~/components/buttons/NavButton";
 import Modal from "~/components/modal/Modal";
 
 import { getLemma, surveyAnswers } from "~/util/nlp";
 import { surveyMeta } from "~/routeApis/surveyMeta";
 import useValidation from "~/hooks/useValidation";
 import { isMobile } from "react-device-detect";
+import MiniNav from "~/components/navigation/MiniNav";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -344,8 +349,6 @@ export default () => {
     setGameOver(loaderData.gameOver || gameOver);
   }, [game, loaderData.gameOver]);
 
-  const unsplashLink = "https://unsplash.com/photos/" + survey.photo;
-
   // Updates from action data
   useEffect(() => {
     if (actionData?.message) {
@@ -399,10 +402,6 @@ export default () => {
     maxGuesses,
   };
 
-  // When to reveal answers
-  const revealResults =
-    gameOver || (survey._id <= 8 && (game.win || guesses.length >= 2));
-
   // Clearing the form after submission
   const formRef = useRef<HTMLFormElement>(null!);
   const inputRef = useRef<HTMLInputElement>(null!);
@@ -434,7 +433,7 @@ export default () => {
             style={{ color: msgColour }}
           >
             {msg}{" "}
-            {revealResults && (
+            {revealResults(game, maxGuesses) && (
               <Link
                 to={`/surveys/${survey._id}/results`}
                 className="underline"
@@ -490,34 +489,7 @@ export default () => {
           <Scorebar {...scorebarProps} instructions={false} />
         </section>
         <section className="md:self-end md:px-4">
-          {survey._id <= 8 && (
-            <p className="my-2 ">
-              Survey #{survey._id} is a{" "}
-              <Link
-                to="/help/terminology"
-                className="underline"
-                data-cy="help-link"
-              >
-                practice Survey.
-              </Link>
-            </p>
-          )}
-          <div className="flex flex-wrap space-x-3 my-3">
-            <NavButton name="Respond" />
-            <NavButton name="Draft" />
-            <Link
-              to="/surveys?community=on&standard=on"
-              className="underline inline-block self-end py-1"
-            >
-              More Surveys
-            </Link>
-          </div>
-          <p className="text-sm my-2 italic">
-            Survey photo from{" "}
-            <a className="underline" href={unsplashLink}>
-              Unsplash
-            </a>
-          </p>
+          <MiniNav survey={survey} page="guess" />
         </section>
       </main>
       <AnimatePresence initial={true} exitBeforeEnter={true}>

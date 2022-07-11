@@ -33,6 +33,7 @@ import useValidation from "~/hooks/useValidation";
 
 import { surveyCatch } from "~/routeApis/surveyCatch";
 import { getTypo } from "~/util/nlp";
+import MiniNav from "~/components/navigation/MiniNav";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -336,29 +337,7 @@ export default () => {
               <li>Not have any profanity or obscenity</li>
               <li>Only have unaccented letters or numbers</li>
             </ul>
-            <div>
-              {loaderData.survey.author && (
-                <p className="my-2">
-                  Survey submitted by <b> {loaderData.survey.author.name}</b>.
-                  To draft your own Survey,{" "}
-                  <Link to="/draft" className="underline">
-                    click here.
-                  </Link>
-                </p>
-              )}
-            </div>
-            <div className="my-4 md:mt-12">
-              <div className="flex flex-wrap gap-3 my-3">
-                <NavButton name="Guess" />
-                <NavButton name="Draft" />
-              </div>
-              <Link
-                to="/surveys?community=on&standard=on"
-                className="underline text-right w-full"
-              >
-                Play more Surveys
-              </Link>
-            </div>
+            <MiniNav survey={loaderData.survey} page="respond" />
           </section>
         </div>
         {yourVote && (
@@ -405,12 +384,6 @@ export default () => {
                 </p>
               )}
             </div>
-            <p className="text-sm my-4 italic">
-              Survey photos from{" "}
-              <a className="underline my-3" href={unsplashLink}>
-                Unsplash
-              </a>
-            </p>
           </section>
         )}
       </main>

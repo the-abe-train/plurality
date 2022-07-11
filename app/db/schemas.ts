@@ -69,6 +69,7 @@ export type DraftSchema = {
     amount: number;
     currency: string;
   };
+  username: string;
 };
 
 export type VoteAggregation = {
