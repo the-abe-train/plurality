@@ -24,6 +24,12 @@ export default function useValidation({
   return useEffect(() => {
     if (voteText.length < 1 || voteText.length >= 20) {
       setEnabled(false);
+    } else if (
+      voteText !== voteText.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    ) {
+      setEnabled(false);
+      setMsg("Response cannot contain accented characters.");
+      setMsgColour("red");
     } else if (voteText.trim().includes(" ")) {
       setEnabled(false);
       setMsg("Response cannot contain a space.");
@@ -42,6 +48,7 @@ export default function useValidation({
       setMsgColour("red");
     } else {
       setEnabled(true);
+      setMsg("");
       setMsgColour("inherit");
     }
   }, [voteText]);

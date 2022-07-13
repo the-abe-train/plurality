@@ -21,6 +21,12 @@ describe("Respond page test", () => {
       cy.contains("Response cannot contain numbers.").should("exist");
       cy.get("[data-cy=respond-input]").clear();
 
+      cy.get("[data-cy=respond-input]").type("Beyoncé");
+      cy.contains("Response cannot contain accented characters.").should(
+        "exist"
+      );
+      cy.get("[data-cy=respond-input]").clear();
+
       cy.get("[data-cy=respond-input]").type("Batmobile!");
       cy.contains("Response cannot contain a symbol.").should("exist");
       cy.get("[data-cy=respond-input]").clear();

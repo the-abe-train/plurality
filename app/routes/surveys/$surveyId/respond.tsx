@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { ActionFunction, LoaderFunction, Session } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Form, Link, useActionData, useLoaderData } from "@remix-run/react";
+import { Form, useActionData, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import Filter from "bad-words";
 
@@ -20,7 +20,6 @@ import { commitSession, getSession } from "~/sessions";
 
 import Survey from "~/components/game/Survey";
 import AnimatedBanner from "~/components/text/AnimatedBanner";
-import NavButton from "~/components/buttons/NavButton";
 
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
@@ -206,7 +205,8 @@ export default () => {
   const { surveyClose } = loaderData.survey;
   const [yourVote, setYourVote] = useState(loaderData.game.vote?.text);
   const [enabled, setEnabled] = useState(false);
-  const [voteText, setVoteText] = useState(actionData?.suggestion || "");
+  const [suggestion, setSuggestion] = useState(actionData?.suggestion || "");
+  const [voteText, setVoteText] = useState(suggestion);
   const [datePicker, setDatePicker] = useState(
     dayjs(surveyClose).format("YYYY-MM-DD")
   );
@@ -223,10 +223,6 @@ export default () => {
   const placeholderText = "Type your Survey response here.";
   const nextSurvey = parseFutureDate(surveyClose);
 
-  // Unsplash photo attributions
-  const refLink = "?utm_source=plurality&utm_medium=referral";
-  const unsplashLink = "https://unsplash.com/" + refLink;
-
   // Making sure "your vote" is correct
   useEffect(() => {
     const vote = loaderData.game.vote?.text;
@@ -240,7 +236,8 @@ export default () => {
     } else {
       setVoteText("");
     }
-  }, [loaderData.game, actionData?.message]);
+    setSuggestion(actionData?.suggestion || "");
+  }, [loaderData.game, actionData?.message, actionData?.suggestion]);
 
   // Updates from action data
   useEffect(() => {
@@ -258,6 +255,11 @@ export default () => {
       setPreviewSurveys(loaderData.previews);
     }
   }, [loaderData.lastSurveyDate, loaderData.previews]);
+
+  // This one is weird, but if the message is red, don't show a suggestion
+  useEffect(() => {
+    if (msgColour === "red") setSuggestion("");
+  }, [msgColour]);
 
   // Text validation
   useValidation({
@@ -298,7 +300,7 @@ export default () => {
                 name="confirm"
                 readOnly
                 className="hidden"
-                checked={!!actionData?.suggestion}
+                checked={!!suggestion}
               />
               <button
                 className="silver px-3 py-1"
@@ -307,7 +309,7 @@ export default () => {
                 value="submitResponse"
                 disabled={!enabled || !!yourVote}
               >
-                {actionData?.suggestion ? "Confirm" : "Enter"}
+                {suggestion ? "Confirm" : "Enter"}
               </button>
             </Form>
             {yourVote && (
@@ -320,8 +322,7 @@ export default () => {
             )}
             {msg && (
               <p style={{ color: msgColour }}>
-                {msg}{" "}
-                {actionData?.suggestion && <b>{actionData.suggestion}?</b>}
+                {msg} {suggestion && <b>{suggestion}?</b>}
               </p>
             )}
           </section>
