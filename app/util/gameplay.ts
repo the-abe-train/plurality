@@ -46,7 +46,5 @@ export function revealResults(game: GameSchema, maxGuesses: number) {
     game.guesses.length >= maxGuesses ||
     game.score === 1 ||
     game.guesses.length >= 30;
-  return (
-    gameOver || (game.survey <= 8 && (game.win || game.guesses.length >= 2))
-  );
+  return game.win || gameOver || (game.survey <= 8 && game.guesses.length >= 2);
 }

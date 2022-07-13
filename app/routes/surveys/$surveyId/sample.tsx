@@ -188,12 +188,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   const gameOver = updatedGuesses.length >= maxGuesses || score === 1;
   let message: string;
   if (win) {
-    if (gameOver || surveyId <= 8) {
-      message = "You win!";
-    } else {
-      message =
-        "You win! Use your remaining guesses to reveal the top responses.";
-    }
+    message = "You win!";
   } else if (!win && gameOver) {
     message = "No more guesses.";
   } else {
@@ -220,9 +215,6 @@ export default () => {
   const [guessesToWin, setGuessesToWin] = useState(0);
   const [displayPercent, setDisplayPercent] = useState(false);
 
-  // Unsplash photo attributions
-  const unsplashLink = "https://unsplash.com/photos/" + loaderData.survey.photo;
-
   // Calculated values
   const points = getTotalVotes(guesses);
   const score = points / totalVotes;
@@ -237,18 +229,6 @@ export default () => {
     setMsgColour,
     setMsg,
   });
-
-  // The modal
-  const [openModal, setOpenModal] = useState(actionData?.win || win);
-  const mainRef = useRef<HTMLDivElement>(null!);
-  useEffect(() => {
-    if (openModal) {
-      disableBodyScroll(mainRef.current);
-    } else {
-      enableBodyScroll(mainRef.current);
-    }
-    return () => clearAllBodyScrollLocks();
-  }, [mainRef, openModal]);
 
   // Initial game data to local storage
   // Local storage code needs to be run in useEffect or else the server will
@@ -299,11 +279,23 @@ export default () => {
     localStorage.setItem("gameOver", JSON.stringify(gameOver));
   }, [guesses, gameOver]);
 
+  // The modal
+  const [openModal, setOpenModal] = useState(actionData?.win || win);
+  const mainRef = useRef<HTMLDivElement>(null!);
+  useEffect(() => {
+    if (openModal) {
+      disableBodyScroll(mainRef.current);
+    } else {
+      enableBodyScroll(mainRef.current);
+    }
+    return () => clearAllBodyScrollLocks();
+  }, [mainRef, openModal]);
+
   // Upon winning
   useEffect(() => {
     localStorage.setItem("win", JSON.stringify(win));
-    if (win) {
-      window.scrollTo(0, 0);
+    const gameStateChange = win || gameOver;
+    if (gameStateChange && !openModal) {
       setTimeout(() => {
         setOpenModal(true);
       }, 1500);
@@ -312,14 +304,7 @@ export default () => {
         setGuessesToWin(guesses.length);
       }
     }
-  }, [win]);
-
-  // When to reveal answers
-  const mockGame = {
-    survey: surveyId,
-    win,
-    guesses,
-  } as GameSchema;
+  }, [win, gameOver]);
 
   // Always scroll to the top when opening modal
   useEffect(() => {
@@ -327,6 +312,13 @@ export default () => {
       window.scrollTo(0, 0);
     }
   }, [openModal]);
+
+  // When to reveal answers
+  const mockGame = {
+    survey: surveyId,
+    win,
+    guesses,
+  } as GameSchema;
 
   const scorebarProps = {
     points,

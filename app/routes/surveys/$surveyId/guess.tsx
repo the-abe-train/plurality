@@ -148,10 +148,7 @@ export const loader: LoaderFunction = async ({ params, request }) => {
     const tomorrowSc = midnight.toDate();
     const tomorrow = await surveyByClose(client, tomorrowSc);
     invariant(tomorrow, "Tomorrow's survey not found.");
-    const message =
-      gameOver || surveyId <= 8
-        ? "You win!"
-        : "You win! Use your remaining guesses to reveal the top responses.";
+    const message = "You win!";
     const data = {
       totalVotes,
       game,
@@ -374,12 +371,13 @@ export default () => {
 
   // Upon winning
   useEffect(() => {
-    if (win && !openModal) {
+    const gameStateChange = win || gameOver;
+    if (gameStateChange && !openModal) {
       setTimeout(() => {
         setOpenModal(true);
       }, 1500);
     }
-  }, [win]);
+  }, [win, gameOver]);
 
   // Always scroll to the top when opening modal
   useEffect(() => {
