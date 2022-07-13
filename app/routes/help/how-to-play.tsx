@@ -37,9 +37,8 @@ export default () => {
               play a Survey by guessing what were the most common responses to
               the Survey question. The percentage of total responses represented
               by your guesses is your score. To win, you need to reach a score
-              of at least
-              {THRESHOLD}%. However, you are only allowed a limited number
-              guesses.
+              of at least {THRESHOLD}%. However, you are only allowed a limited
+              number guesses.
             </p>
             <p>
               The more diverse the Survey responses, the harder it will be to

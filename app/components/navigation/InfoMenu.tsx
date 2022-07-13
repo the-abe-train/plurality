@@ -13,7 +13,7 @@ export default ({ page }: { page: string }) => {
   return (
     <nav
       className="grid grid-rows-2 grid-cols-2 gap-y-4 gap-x-5 mx-auto my-4 w-full
-md:my-0 md:flex flex-col md:space-y-4 p-2 md:p-4 h-min md:mr-8 card md:w-min"
+md:my-0 md:flex flex-col md:space-y-4 p-2 md:p-4 h-min md:mr-8 card md:w-min md:min-w-[12rem]"
     >
       {data.map(({ name, path }) => {
         return (
