@@ -260,11 +260,8 @@ export const action: ActionFunction = async ({ request, params }) => {
   // Pick message to send to player
   const gameOver = updatedGame.guesses.length >= maxGuesses || score === 1;
   let message: string;
-  if (win && !gameOver && surveyId <= 8) {
+  if (win && !gameOver) {
     message = "You win!";
-  } else if (win && !gameOver) {
-    message =
-      "You win! Use your remaining guesses to reveal the top responses.";
   } else if (win && gameOver) {
     message = "You win!";
   } else if (!win && gameOver) {

@@ -62,9 +62,7 @@ export const CatchBoundary = surveyCatch;
 type LoaderData = {
   survey: SurveySchema;
   totalVotes: number;
-
   maxGuesses: number;
-
   tomorrow?: SurveySchema;
 };
 
