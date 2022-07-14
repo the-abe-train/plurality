@@ -2,16 +2,16 @@ import type { LinksFunction } from "@remix-run/node";
 import { Link } from "@remix-run/react";
 import { githubIcon, twitterIcon, whiteLogo } from "~/images/icons";
 import styles from "~/styles/app.css";
+import SnackAdUnit from "../ads/SnackAdUnit";
 
 export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: styles }];
 };
 
-// TODO add a note like "Want to support the game? Buy a draft!"
-
 export default () => {
   return (
     <footer className="bg-secondary p-4 text-primary1 mt-4 text-sm">
+      <SnackAdUnit unitName="snack_dex1" siteId="2903" />
       <div
         className="w-full md:px-4 flex flex-col md:flex-row justify-between max-w-4xl 
       mx-auto items-center space-y-3 md:space-y-0"
@@ -49,9 +49,6 @@ export default () => {
           <a href="https://github.com/the-abe-train/plurality">
             <img src={githubIcon} width={20} height={20} alt="GitHub" />
           </a>
-          {/* <a href="mailto:team@plurality.fun">
-            <img src={emailIcon} width={20} height={20} alt="Email" />
-          </a> */}
         </section>
         <section>
           <ul className="grid grid-cols-5 gap-x-4 justify-items-center">
