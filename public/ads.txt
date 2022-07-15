@@ -1,4 +1,3 @@
-snack-media.com, SNM_2902, DIRECT
 snack-media.com, SNM_2903, DIRECT
 google.com, pub-5372661266361105, RESELLER, f08c47fec0942fa0
 #
