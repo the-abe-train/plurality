@@ -118,6 +118,7 @@ export default () => {
           </div>
         </div>
       </div>
+      <div id="snack_dex1" />
       <Footer />
     </div>
   );

@@ -12,7 +12,6 @@ export default () => {
   return (
     <footer className="mt-4 text-sm w-full">
       {/* <SnackAdUnit unitName="snack_dex1" siteId="2903" /> */}
-      <div id="snack_dex1" />
       <div className="w-full bg-secondary p-4 mt-4 text-primary1">
         <div
           className="flex flex-col md:flex-row justify-between max-w-4xl 

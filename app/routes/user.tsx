@@ -50,6 +50,7 @@ export default function User() {
     <div className="light w-full top-0 bottom-0 flex flex-col min-h-screen">
       <Header name={data.user ? truncateName(data.user.name) : "Connect"} />
       <Outlet />
+      <div id="snack_dex1" />
       <Footer />
     </div>
   );

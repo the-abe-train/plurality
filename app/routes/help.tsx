@@ -48,6 +48,7 @@ export default function help() {
 
       <Outlet />
 
+      <div id="snack_dex1" />
       <Footer />
     </div>
   );
