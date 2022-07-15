@@ -63,7 +63,7 @@ type LoaderData = {
   survey: SurveySchema;
   totalVotes: number;
   maxGuesses: number;
-  tomorrow?: SurveySchema;
+  tomorrow: SurveySchema;
 };
 
 export const loader: LoaderFunction = async ({ params, request }) => {

@@ -73,7 +73,7 @@ type LoaderData = {
   survey: SurveySchema;
   totalVotes: number;
   maxGuesses: number;
-  tomorrow?: SurveySchema;
+  tomorrow: SurveySchema;
 };
 
 export const loader: LoaderFunction = async ({ params, request }) => {
@@ -141,38 +141,22 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   // Set initial message for player
   const gameOver = game.guesses.length >= maxGuesses || game.score === 1;
 
-  // If the player has won, get tomorrow's survey for the preview
-  if (game.win) {
-    // Get tomorrow's survey from db
-    const midnight = dayjs().tz("America/Toronto").endOf("day");
-    const tomorrowSc = midnight.toDate();
-    const tomorrow = await surveyByClose(client, tomorrowSc);
-    invariant(tomorrow, "Tomorrow's survey not found.");
-    const message = "You win!";
-    const data = {
-      totalVotes,
-      game,
-      tomorrow,
-      message,
-      gameOver,
-      survey,
-      maxGuesses,
-    };
-    return json<LoaderData>(data, {
-      headers: {
-        "Set-Cookie": await commitSession(session),
-      },
-    });
-  }
+  // Get tomorrow's survey from db
+  const midnight = dayjs().tz("America/Toronto").endOf("day");
+  const tomorrowSc = midnight.toDate();
+  const tomorrow = await surveyByClose(client, tomorrowSc);
+  invariant(tomorrow, "Tomorrow's survey not found.");
 
   // Set initial message for player
-  const message = gameOver
+  let message = game.win
+    ? "You win!"
+    : gameOver
     ? "No more guesses."
     : "Try to guess the most popular survey responses!";
-
   const data = {
     totalVotes,
     game,
+    tomorrow,
     message,
     gameOver,
     survey,

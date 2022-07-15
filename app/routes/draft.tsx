@@ -173,7 +173,12 @@ export default () => {
             <h2 className="font-header text-2xl" data-cy="draft-header">
               Draft your Survey question
             </h2>
-            <Form method="post" className="my-4 space-y-6" data-netlify="true">
+            <Form
+              method="post"
+              className="my-4 space-y-6"
+              name="draft"
+              data-netlify="true"
+            >
               <textarea
                 className="w-full px-2 py-2 text-sm border border-outline"
                 name="question"
