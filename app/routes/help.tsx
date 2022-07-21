@@ -48,7 +48,7 @@ export default function help() {
 
       <Outlet />
 
-      <div id="snack_dex1" />
+      <div id="snack_dex1" className="w-fit mx-auto" />
       <Footer />
     </div>
   );
