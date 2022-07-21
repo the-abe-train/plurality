@@ -42,7 +42,7 @@ export default () => {
       <div className="flex-grow">
         <Outlet />
       </div>
-      <div id="snack_dex1" />
+      <div id="snack_dex1" className="w-fit mx-auto" />
       <Footer />
     </div>
   );

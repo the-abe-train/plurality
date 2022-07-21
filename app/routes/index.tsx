@@ -118,7 +118,7 @@ export default () => {
           </div>
         </div>
       </div>
-      <div id="snack_dex1" />
+      <div id="snack_dex1" className="w-fit mx-auto" />
       <Footer />
     </div>
   );
