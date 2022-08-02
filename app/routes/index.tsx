@@ -78,9 +78,11 @@ const instructions = [
 export default () => {
   const data = useLoaderData<LoaderData>();
   return (
-    <div className="light w-full top-0 bottom-0 flex flex-col justify-between min-h-screen h-full">
-      <div className="h-1"></div>
-      <div className="md:w-max mx-auto md:pb-8 max-w-survey md:max-w-4xl">
+    <div
+      className="light w-full top-0 bottom-0 flex flex-col justify-between min-h-screen 
+    h-full"
+    >
+      <div className="md:w-max mx-auto md:pb-8 max-w-survey md:max-w-4xl md:min-h-screen py-8">
         <AnimatedBanner text="Plurality" icon={logo} size={50} />
         <p className="text-center text-lg">A decentralized guessing game.</p>
         <div className="md:grid grid-cols-2 gap-y-3 gap-x-8 my-6">

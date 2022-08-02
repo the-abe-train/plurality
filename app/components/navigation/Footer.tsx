@@ -90,6 +90,7 @@ export default () => {
             </ul>
           </section>
         </div>
+        <div className="sm:h-[100px]"></div>
       </div>
     </footer>
   );
