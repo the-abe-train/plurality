@@ -138,9 +138,12 @@ export const action: ActionFunction = async ({ request, params }) => {
     console.log("Form parse failed");
     console.error(e);
     const message =
-      "The server has experienced an error. Please reach out to @theAbeTrain for support.";
+      "The server has experienced an error. Please reach out to Abe Train (https://the-abe-train.com) for support.";
     return json<ActionData>({ message });
   }
+  console.log("From request headers:");
+  console.log("x-forwarded-for", request.headers.get("x-forwarded-for"));
+  console.log("client-ip", request.headers.get("client-ip"));
 
   // Parse form
   const newVote = Number(form.get("vote")) || (form.get("vote") as string);
@@ -180,8 +183,9 @@ export const action: ActionFunction = async ({ request, params }) => {
     const surveyId = Number(params.surveyId);
     const updatedGame = await addVote(client, surveyId, userId, newVote);
     invariant(updatedGame, "Game update failed");
+
     console.log(
-      `Response "${newVote}" successfully submitted for Survey #${surveyId}`
+      `Response "${newVote}" successfully submitted for Survey #${surveyId} from IP ${request.referrer}`
     );
     return {};
   }
