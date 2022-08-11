@@ -169,17 +169,22 @@ export const action: ActionFunction = async ({ request, params }) => {
     }
 
     // Remove guesses from blacklisted IPs
-    console.log(BLACKLIST);
-    // const blacklist = JSON.parse(BLACKLIST) as string[];
-    // const ipAddresses = request.headers.get("x-forwarded-for");
-    // if (ipAddresses) {
-    // const ipArray = ipAddresses.split(", ");
-    // console.log(blacklist, ipArray);
-    // if (blacklist.some((ip) => ip in ipArray)) {
-    //   console.log(`Response blocked.`);
-    //   return {};
-    // }
-    // }
+    console.log("Blacklist:", BLACKLIST);
+    const ipAddresses = request.headers.get("x-forwarded-for");
+    try {
+      const blacklist = JSON.parse(BLACKLIST) as string[];
+      if (ipAddresses) {
+        const ipArray = ipAddresses.split(", ");
+        console.log(blacklist, ipArray);
+        if (blacklist.some((ip) => ip in ipArray)) {
+          console.log(`Response blocked.`);
+          return {};
+        }
+      }
+    } catch (e) {
+      console.log(`Failed to blacklist ${ipAddresses}`);
+      console.error(e);
+    }
 
     // Check for bad words
     const filter = new Filter();
