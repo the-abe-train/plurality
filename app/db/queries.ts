@@ -243,7 +243,7 @@ export async function getAllSurveyIds(client: MongoClient) {
 type SearchParams = {
   client: MongoClient;
   textSearch: RegExp;
-  dateSearch: Date;
+  dateParam: string | null;
   idSearch: number;
   communitySearch: boolean;
   standardSearch: boolean;
@@ -252,7 +252,7 @@ type SearchParams = {
 export async function surveyBySearch({
   client,
   textSearch,
-  dateSearch,
+  dateParam,
   idSearch,
   communitySearch,
   standardSearch,
@@ -260,26 +260,28 @@ export async function surveyBySearch({
   const db = await connectDb(client);
   const surveysCollection = db.collection<SurveySchema>("surveys");
   if (!communitySearch && !standardSearch) return [];
-  return await surveysCollection
-    .find({
-      $and: [
-        { _id: { $gt: 0 } },
-        {
-          $or: [
-            { text: { $regex: textSearch } },
-            { _id: idSearch },
-            { surveyClose: dateSearch },
-          ],
-        },
-        {
-          $or: [
-            { community: communitySearch },
-            { community: { $ne: standardSearch } },
-          ],
-        },
+  const searchFilter: any[] = [
+    { _id: { $gt: 0 } },
+    {
+      $or: [
+        { community: communitySearch },
+        { community: { $ne: standardSearch } },
       ],
-    })
-    .toArray();
+    },
+    {
+      $or: [{ text: { $regex: textSearch } }, { _id: idSearch }],
+    },
+  ];
+
+  if (dateParam) {
+    const [year, month, day] = dateParam.split("-").map((str) => Number(str));
+    const dateSearch = new Date(
+      Date.UTC(year, month - 1, day + 1, 3, 59, 59, 999)
+    );
+    searchFilter.push({ surveyClose: dateSearch });
+  }
+
+  return await surveysCollection.find({ $and: searchFilter }).toArray();
 }
 
 // Games collection

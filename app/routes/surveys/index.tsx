@@ -65,11 +65,11 @@ export const loader: LoaderFunction = async ({ request }) => {
   const communityParam = search.get("community");
   const standardParam = search.get("standard");
 
-  let dateSearch = new Date();
-  if (dateParam) {
-    const [year, month, day] = dateParam.split("-").map((str) => Number(str));
-    dateSearch = new Date(Date.UTC(year, month - 1, day + 1, 3, 59, 59, 999));
-  }
+  // let dateSearch: Date;
+  // if (dateParam) {
+  //   const [year, month, day] = dateParam.split("-").map((str) => Number(str));
+  //   dateSearch = new Date(Date.UTC(year, month - 1, day + 1, 3, 59, 59, 999));
+  // }
 
   // // Create regex from text search input
   let textSearch = /.+/;
@@ -101,7 +101,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
   // Parse query parameters
   const searchParams = {
-    dateSearch,
+    dateParam,
     idSearch,
     textSearch,
     communitySearch: communityParam === "on",
@@ -177,11 +177,12 @@ export default () => {
           />
           <div
             className="flex-grow flex flex-col justify-between space-y-3
-        md:flex-row md:space-y-0"
+            md:flex-row md:space-y-0"
           >
             <label htmlFor="date" className="w-full">
               Survey close date
               <input
+                data-cy="date-search"
                 type="date"
                 name="date"
                 id="date"
@@ -237,6 +238,7 @@ export default () => {
               <button
                 type="submit"
                 className="silver px-3 py-1"
+                data-cy="search-btn"
                 disabled={transition.state !== "idle"}
               >
                 Search

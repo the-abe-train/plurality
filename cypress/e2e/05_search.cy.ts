@@ -31,6 +31,14 @@ describe("Search Surveys test", () => {
     cy.get("[data-cy=search-results] a:first").click();
     cy.get(".text-lg").should("contain.text", "best");
   });
+
+  it("Searches for a Survey by date", () => {
+    cy.visit("http://localhost:3000/surveys");
+    cy.get("[data-cy=date-search]").type("2022-08-01");
+    cy.get("[data-cy=search-btn]").click();
+    cy.get("[data-cy=search-results] a:first").click();
+    cy.get(".text-lg").should("contain.text", "Which country are you from?");
+  });
 });
 
 export {};

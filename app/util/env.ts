@@ -9,3 +9,4 @@ export const ROOT_DOMAIN = process.env.ROOT_DOMAIN ?? "";
 export const JWT_SIGNATURE = process.env.JWT_SIGNATURE ?? "";
 export const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY ?? "";
 export const STRIPE_ENDPOINT_SECRET = process.env.STRIPE_ENDPOINT_SECRET ?? "";
+export const BLACKLIST = process.env.BLACKLIST ?? "";

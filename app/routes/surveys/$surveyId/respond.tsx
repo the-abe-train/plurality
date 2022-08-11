@@ -33,6 +33,7 @@ import useValidation from "~/hooks/useValidation";
 import { surveyCatch } from "~/routeApis/surveyCatch";
 import { getTypo } from "~/util/nlp";
 import MiniNav from "~/components/navigation/MiniNav";
+import { BLACKLIST } from "~/util/env";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -167,6 +168,18 @@ export const action: ActionFunction = async ({ request, params }) => {
       }
     }
 
+    // Remove guesses from blacklisted IPs
+    const blacklist = JSON.parse(BLACKLIST) as string[];
+    const ipAddresses = request.headers.get("x-forwarded-for");
+    if (ipAddresses) {
+      const ipArray = ipAddresses.split(", ");
+      console.log(blacklist, ipArray);
+      if (blacklist.some((ip) => ip in ipArray)) {
+        console.log(`Response blocked.`);
+        return {};
+      }
+    }
+
     // Check for bad words
     const filter = new Filter();
     if (filter.isProfane(String(newVote))) {
@@ -182,9 +195,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     invariant(updatedGame, "Game update failed");
 
     console.log(
-      `Response "${newVote}" successfully submitted for Survey #${surveyId} from IP ${request.headers.get(
-        "x-forwarded-for"
-      )}`
+      `Response "${newVote}" successfully submitted for Survey #${surveyId} from IP ${ipAddresses}`
     );
     return {};
   }
