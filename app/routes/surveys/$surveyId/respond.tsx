@@ -141,9 +141,6 @@ export const action: ActionFunction = async ({ request, params }) => {
       "The server has experienced an error. Please reach out to Abe Train (https://the-abe-train.com) for support.";
     return json<ActionData>({ message });
   }
-  console.log("From request headers:");
-  console.log("x-forwarded-for", request.headers.get("x-forwarded-for"));
-  console.log("client-ip", request.headers.get("client-ip"));
 
   // Parse form
   const newVote = Number(form.get("vote")) || (form.get("vote") as string);
@@ -185,7 +182,9 @@ export const action: ActionFunction = async ({ request, params }) => {
     invariant(updatedGame, "Game update failed");
 
     console.log(
-      `Response "${newVote}" successfully submitted for Survey #${surveyId} from IP ${request.referrer}`
+      `Response "${newVote}" successfully submitted for Survey #${surveyId} from IP ${request.headers.get(
+        "x-forwarded-for"
+      )}`
     );
     return {};
   }
