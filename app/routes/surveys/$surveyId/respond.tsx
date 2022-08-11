@@ -176,8 +176,8 @@ export const action: ActionFunction = async ({ request, params }) => {
       if (ipAddresses) {
         const ipArray = ipAddresses.split(", ");
         console.log(blacklist, ipArray);
-        if (blacklist.some((ip) => ip in ipArray)) {
-          console.log(`Response blocked.`);
+        if (blacklist.some((ip) => ipArray.includes(ip))) {
+          console.log(`Response from ${ipAddresses} blocked.`);
           return {};
         }
       }
@@ -201,7 +201,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     invariant(updatedGame, "Game update failed");
 
     console.log(
-      `Response "${newVote}" successfully submitted for Survey #${surveyId} from IP ${"x"}`
+      `Response "${newVote}" successfully submitted for Survey #${surveyId} from IP ${ipAddresses}`
     );
     return {};
   }
