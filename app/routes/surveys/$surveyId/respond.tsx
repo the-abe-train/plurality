@@ -172,12 +172,12 @@ export const action: ActionFunction = async ({ request, params }) => {
     const blacklist = JSON.parse(BLACKLIST) as string[];
     const ipAddresses = request.headers.get("x-forwarded-for");
     if (ipAddresses) {
-      const ipArray = ipAddresses.split(", ");
-      console.log(blacklist, ipArray);
-      if (blacklist.some((ip) => ip in ipArray)) {
-        console.log(`Response blocked.`);
-        return {};
-      }
+      // const ipArray = ipAddresses.split(", ");
+      // console.log(blacklist, ipArray);
+      // if (blacklist.some((ip) => ip in ipArray)) {
+      //   console.log(`Response blocked.`);
+      //   return {};
+      // }
     }
 
     // Check for bad words
