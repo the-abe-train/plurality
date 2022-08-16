@@ -22,7 +22,7 @@ export default function useValidation({
   );
 
   return useEffect(() => {
-    if (voteText.length < 1 || voteText.length >= 20) {
+    if (voteText.length < 1 || voteText.length > 20) {
       setEnabled(false);
     } else if (
       voteText !== voteText.normalize("NFD").replace(/[\u0300-\u036f]/g, "")

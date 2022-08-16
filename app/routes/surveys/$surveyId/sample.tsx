@@ -386,6 +386,7 @@ export default () => {
               onChange={(e) => setGuess(e.target.value)}
               ref={inputRef}
               data-cy="guess-input"
+              maxLength={20}
               required
             />
             <input
