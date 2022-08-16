@@ -5,6 +5,8 @@ import { RankedVote, VoteAggregation } from "~/db/schemas";
 import { capitalizeFirstLetter } from "./text";
 import Typo from "typo-js";
 
+const acronyms = require("./acronyms.json") as Record<string, string>;
+
 export function getTypo(response: string) {
   // @ts-ignore
   const dictionary = new Typo("en_US");
@@ -13,9 +15,8 @@ export function getTypo(response: string) {
 
 export function getLemma(word: string | number): string {
   if (typeof word === "number") return String(word);
-  const trimmed = word.trim().toLowerCase();
-  // console.log({ trimmed, noun, verb, adjective });
-
+  let trimmed = word.trim().toLowerCase();
+  if (acronyms.hasOwnProperty(trimmed)) trimmed = acronyms[trimmed];
   const noun = lemmatize.noun(trimmed);
   if (noun !== trimmed) return capitalizeFirstLetter(noun);
   const verb = lemmatize.verb(trimmed);
