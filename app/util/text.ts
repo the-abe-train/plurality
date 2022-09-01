@@ -22,16 +22,6 @@ export function trim(str: string | number) {
   return String(str).trim().toLowerCase();
 }
 
-export function parseAnswer(ans: string | number) {
-  const trimmedAns = trim(String(ans));
-  const splitAns = trimmedAns.split(/[\s,/]/);
-  const options = splitAns.filter((a) => {
-    const prepositions = ["a", "the", "in"];
-    return !prepositions.includes(a);
-  });
-  return options;
-}
-
 export const truncateEthAddress = (address: string) => {
   // Borrowed from truncate-eth-address
   const truncateRegex = /^(0x[a-zA-Z0-9]{4})[a-zA-Z0-9]+([a-zA-Z0-9]{4})$/;
