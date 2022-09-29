@@ -3,7 +3,7 @@ import InfoMenu from "~/components/navigation/InfoMenu";
 
 export default function () {
   return (
-    <main className="flex-grow px-4 mx-auto mb-4 max-w-4xl my-4 overflow-x-">
+    <main className="flex-grow px-4 mx-auto mb-4 max-w-4xl my-4 overflow-x-auto">
       <AnimatedBanner text="Privacy Policy" />
       <div className="flex flex-col md:flex-row-reverse my-4">
         <section className="w-4/5 space-y-3">
@@ -21,7 +21,7 @@ export default function () {
               Google Ad Manager
             </a>
             . Excerpts from Snack Media's Privacy Policy that pertain to
-            Plurlaity are laid out below. To read the entire policy, check out
+            Plurality are laid out below. To read the entire policy, check out
             their website{" "}
             <a
               className="underline"
