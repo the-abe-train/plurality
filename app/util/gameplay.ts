@@ -20,7 +20,7 @@ export function getTotalVotes(answers: RankedVote[]) {
 
 export function calcMinGuesses(answers: RankedVote[]) {
   const totalVote = getTotalVotes(answers);
-  const x = answers.map((ans) => {
+  const withFraction = answers.map((ans) => {
     const fraction = ans.votes / totalVote;
     return { ...ans, fraction };
   });
@@ -28,7 +28,7 @@ export function calcMinGuesses(answers: RankedVote[]) {
   let percent = 0,
     minGuesses = 0;
 
-  for (let ans of x) {
+  for (let ans of withFraction) {
     percent += ans.fraction;
     minGuesses += 1;
     if (percent >= 0.6) break;
@@ -39,6 +39,12 @@ export function calcMinGuesses(answers: RankedVote[]) {
 export function calcMaxGuesses(answers: RankedVote[]) {
   const minGuesses = calcMinGuesses(answers);
   return 20 + Math.floor(minGuesses / 10) * 10;
+}
+
+export function calcTopAnswers(answers: RankedVote[]) {
+  const minGuesses = calcMinGuesses(answers);
+  const numToReveal = 10 + Math.floor(minGuesses / 10) * 10;
+  return answers.slice(0, numToReveal);
 }
 
 export function revealResults(game: GameSchema, maxGuesses: number) {

@@ -31,7 +31,12 @@ import {
 import { GameSchema, RankedVote, SurveySchema } from "~/db/schemas";
 
 import { commitSession, getSession } from "~/sessions";
-import { calcMaxGuesses, getTotalVotes, revealResults } from "~/util/gameplay";
+import {
+  calcMaxGuesses,
+  calcTopAnswers,
+  getTotalVotes,
+  revealResults,
+} from "~/util/gameplay";
 import { resultsIcon } from "~/images/icons";
 import { surveyCatch } from "~/routeApis/surveyCatch";
 
@@ -115,6 +120,7 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   // Get stats for user
   const totalVotes = getTotalVotes(answers);
   const maxGuesses = calcMaxGuesses(answers);
+  const topAnswers = calcTopAnswers(answers);
   const gameOver = game.guesses.length >= maxGuesses || game.score === 1;
   const scoreData = assignBins(scores, 0.02);
   const avgScore = getAverage(scores);
@@ -131,7 +137,7 @@ export const loader: LoaderFunction = async ({ params, request }) => {
     gameOver,
     survey,
     maxGuesses,
-    topAnswers: answers.slice(0, maxGuesses),
+    topAnswers,
     scoreData,
     avgScore,
     userRank,
