@@ -71,6 +71,11 @@ export default function App() {
           id="snack-cmp"
           async
         ></script>
+        <script
+          type="text/javascript"
+          async
+          src="https://btloader.com/tag?o=5180208835985408&upapi=true"
+        ></script>
       </head>
       <body>
         <Outlet />
