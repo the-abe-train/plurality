@@ -28,6 +28,22 @@ netlify login
 netlify init
 ```
 
+## Env setup
+Create a .env file and add the following to it:
+```
+ROOT_DOMAIN=http://localhost:3000
+COOKIE_SIGNATURE=cookiesignature
+JWT_SIGNATURE=jwtsignature
+```
+
+## Database setup
+Plurality will not run without a connection to a Mongo Atlas database. Create your own account and database or reach out to Abe (@theAbeTrain on Twitter) for access to the staging database or sample data.
+Use the info from your Atlas database to create the env variables `MONGO_URL` and `DATABASE_NAME`.
+
+## Dependencies
+Install dependencies with `npm i`
+
+
 ## Development
 
 The Netlify CLI starts your app in development mode, rebuilding assets on file changes.
@@ -38,18 +54,7 @@ npm run dev
 
 Open up [http://localhost:3000](http://localhost:3000), and you should be ready to go!
 
-## Deployment
 
-There are two ways to deploy your app to Netlify, you can either link your app to your git repo and have it auto deploy changes to Netlify, or you can deploy your app manually. If you've followed the setup instructions already, all you need to do is run this:
-
-```sh
-npm run build
-# preview deployment
-netlify deploy
-
-# production deployment
-netlify deploy --prod
-```
 
 # License
 
