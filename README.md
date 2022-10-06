@@ -4,7 +4,7 @@
 
 ## Netlify Setup
 
-1. Install the [Netlify CLI](https://www.netlify.com/products/dev/):
+1. If you want to run the app in development mode, you first need to install the [Netlify CLI](https://www.netlify.com/products/dev/) with the instructions below.
 
 ```sh
 npm i -g netlify-cli
@@ -41,7 +41,7 @@ Plurality will not run without a connection to a Mongo Atlas database. Create yo
 Use the info from your Atlas database to create the env variables `MONGO_URL` and `DATABASE_NAME`.
 
 ## Dependencies
-Install dependencies with `npm i`
+Install dependencies with `npm i`.
 
 
 ## Development
