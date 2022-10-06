@@ -1,59 +1,23 @@
+![Plurality Banner](https://plurality.fun/preview.png)
+
 # Running Plurality Locally
 
-- [Remix Docs](https://remix.run/docs)
-
-## Netlify Setup
-
-1. If you want to run the app in development mode, you first need to install the [Netlify CLI](https://www.netlify.com/products/dev/) with the instructions below.
-
-```sh
-npm i -g netlify-cli
-```
-
-If you have previously installed the Netlify CLI, you should update it to the latest version:
-
-```sh
-npm i -g netlify-cli@latest
-```
-
-2. Sign up and log in to Netlify:
-
-```sh
-netlify login
-```
-
-3. Create a new site:
-
-```sh
-netlify init
-```
-
-## Env setup
-Create a .env file and add the following to it:
+1. Install the [Netlify CLI](https://www.netlify.com/products/dev/) with `npm i -g netlify-cli`
+2. Create a .env file and add the following to it:
 ```
 ROOT_DOMAIN=http://localhost:3000
 COOKIE_SIGNATURE=cookiesignature
 JWT_SIGNATURE=jwtsignature
 ```
-
-## Database setup
-Plurality will not run without a connection to a Mongo Atlas database. Create your own account and database or reach out to Abe (@theAbeTrain on Twitter) for access to the staging database or sample data.
+3. Add a database connection to the `.env` file. Plurality will not run without a connection to a Mongo Atlas database. Create your own account and database or reach out to Abe (@theAbeTrain on Twitter) for access to the staging database or sample data.
 Use the info from your Atlas database to create the env variables `MONGO_URL` and `DATABASE_NAME`.
+4. Install dependencies with `npm i`.
+5. Start up the development server with `npm run dev`. 
+6. Open up [http://localhost:3000](http://localhost:3000), and you should be ready to go!
 
-## Dependencies
-Install dependencies with `npm i`.
 
-
-## Development
-
-The Netlify CLI starts your app in development mode, rebuilding assets on file changes.
-
-```sh
-npm run dev
-```
-
-Open up [http://localhost:3000](http://localhost:3000), and you should be ready to go!
-
+# Remix docs
+- [Remix Docs](https://remix.run/docs)
 
 
 # License
