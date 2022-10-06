@@ -5,12 +5,14 @@ import { RankedVote, VoteAggregation } from "~/db/schemas";
 import { capitalizeFirstLetter } from "./text";
 import Typo from "typo-js";
 
-const acronyms = require("./acronyms.json") as Record<string, string>;
+const spellcheckIgnore = require("../maps/spellcheck_ignore.json") as string[];
+const acronyms = require("../maps/acronyms.json") as Record<string, string>;
 
 export function getTypo(response: string) {
+  if (spellcheckIgnore.includes(response)) return [];
   // @ts-ignore
   const dictionary = new Typo("en_US");
-  return dictionary.suggest(response);
+  return dictionary.suggest(response) as string[];
 }
 
 export function getLemma(word: string | number): string {
