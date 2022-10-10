@@ -4,13 +4,15 @@ import { json, redirect } from "@remix-run/node";
 import { Form, Link, useActionData, useLoaderData } from "@remix-run/react";
 import { commitSession, getSession } from "~/sessions";
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { connectUserWallet, gameBySurveyUser } from "~/db/queries";
 import { client } from "~/db/connect.server";
 import { ObjectId } from "mongodb";
 import useConnectWithWallet from "~/hooks/useConnectWithWallet";
 import AnimatedBanner from "~/components/text/AnimatedBanner";
 import userIcon from "~/images/icons/user.svg";
+import ReCAPTCHA from "react-google-recaptcha";
+import { CAPTCHA_SERCRET_KEY } from "~/util/env";
 
 type LoaderData = {
   message: string;
@@ -65,6 +67,33 @@ export const action: ActionFunction = async ({ request }) => {
   const verify = form.get("verify") as string;
   const wallet = form.get("wallet") as string;
   const localData = form.get("localData") as string;
+  const recaptcha = form.get("recaptcha") as string;
+
+  // Check recaptcha
+  const remoteIp = request.headers.get("x-forwarded-for");
+  const requestBody: Record<string, string> = {
+    secret: CAPTCHA_SERCRET_KEY,
+    response: recaptcha,
+    remoteip: remoteIp || "",
+  };
+  if (!remoteIp) delete requestBody["remoteip"];
+
+  console.log("Request body", requestBody);
+  const recaptchaResponse = await fetch(
+    "https://www.google.com/recaptcha/api/siteverify",
+    {
+      method: "post",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams(Object.entries(requestBody)),
+    }
+  );
+  const responseBody = await recaptchaResponse.json();
+  console.log("Response body", responseBody);
+  if (!responseBody.success) {
+    return json<ActionData>({ message: "ReCAPTCHA failed." });
+  }
 
   // Successful redirect function
   async function successfulRedirect(userId: ObjectId) {
@@ -147,6 +176,9 @@ export default function signup() {
     setLocalData(JSON.stringify({ survey, guesses, win, guessesToWin }));
   }, []);
 
+  const recaptchaRef = useRef<ReCAPTCHA>(null!);
+  const [recaptchaValue, setRecaptchaValue] = useState("");
+
   return (
     <main className="container flex-grow px-4 md:px-0 mx-auto w-full max-w-4xl">
       <AnimatedBanner text="Sign up" icon={userIcon} />
@@ -187,6 +219,18 @@ export default function signup() {
               type="text"
               name="localData"
               value={localData}
+              readOnly
+            />
+            <ReCAPTCHA
+              ref={recaptchaRef}
+              sitekey="6LeD5W4iAAAAAKlFI77nidSlKeIUPxVQFTXO38kB"
+              onChange={(e) => setRecaptchaValue(e || "")}
+            />
+            <input
+              className="hidden"
+              type="text"
+              name="recaptcha"
+              value={recaptchaValue}
               readOnly
             />
             <button

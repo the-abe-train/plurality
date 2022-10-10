@@ -22,7 +22,6 @@ export const meta: MetaFunction = () => {
     "theme-color": "#FDFAF6",
   };
   const twitter = {
-    "twitter:site": "@pluralitygame",
     "twitter:creator": "@theAbeTrain",
     "twitter:card": "summary",
     "twitter:image": "https://plurality.fun/preview-square.png",
