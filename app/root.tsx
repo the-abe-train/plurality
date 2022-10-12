@@ -8,6 +8,7 @@ import {
   ScrollRestoration,
 } from "@remix-run/react";
 import { ErrorBoundaryComponent } from "@remix-run/react/routeModules";
+import SnackAdUnit from "./components/ads/SnackAdUnit";
 import styles from "./styles/app.css";
 
 export function links() {
@@ -79,13 +80,9 @@ export default function App() {
       <body>
         <Outlet />
         <ScrollRestoration />
-        <script
-          id="snack_ads"
-          src="https://cdn-header-bidding.snack-media.com/assets/js/snack-loader/2903"
-          crossOrigin="anonymous"
-        ></script>
         <Scripts />
         <LiveReload />
+        <SnackAdUnit unitName="snack_dex1" siteId="2903" />
       </body>
     </html>
   );

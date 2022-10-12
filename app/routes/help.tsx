@@ -47,8 +47,6 @@ export default function help() {
       {/* <AnimatedBanner icon={infoIcon} text="Info" /> */}
 
       <Outlet />
-
-      <div id="snack_dex1" className="w-fit mx-auto" />
       <Footer />
     </div>
   );
