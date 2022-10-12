@@ -2,7 +2,7 @@ import type { LinksFunction } from "@remix-run/node";
 import { Link } from "@remix-run/react";
 import { githubIcon, twitterIcon, whiteLogo } from "~/images/icons";
 import styles from "~/styles/app.css";
-// import SnackAdUnit from "../ads/SnackAdUnit";
+import SnackAdUnit from "../ads/SnackAdUnit";
 
 export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: styles }];
@@ -11,7 +11,7 @@ export const links: LinksFunction = () => {
 export default () => {
   return (
     <footer className="mt-4 text-sm w-full">
-      {/* <SnackAdUnit unitName="snack_dex1" siteId="2903" /> */}
+      <SnackAdUnit unitName="snack_dex1" siteId="2903" />
       <div className="w-full bg-secondary p-4 mt-4 text-primary1">
         <div
           className="flex flex-col md:flex-row justify-between max-w-4xl 

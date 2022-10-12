@@ -82,7 +82,6 @@ export default function App() {
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
-        <SnackAdUnit unitName="snack_dex1" siteId="2903" />
       </body>
     </html>
   );
