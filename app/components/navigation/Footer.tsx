@@ -10,7 +10,7 @@ export const links: LinksFunction = () => {
 
 export default () => {
   return (
-    <footer className="mt-4 text-sm w-full">
+    <footer className="mt-4 text-sm w-full text-center">
       <SnackAdUnit unitName="snack_dex1" siteId="2903" />
       <div className="w-full bg-secondary p-4 mt-4 text-primary1">
         <div
