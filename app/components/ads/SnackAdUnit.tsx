@@ -82,7 +82,7 @@ function SnackAdUnit({ siteId }: Props) {
     };
   }, [siteId, unitName]);
 
-  return <div id={unitName}></div>;
+  return <div id={unitName} className="w-min mx-auto"></div>;
 }
 
 export default SnackAdUnit;
