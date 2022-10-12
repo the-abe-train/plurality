@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { isMobileOnly } from "react-device-detect";
 
 const ensureSnackLoaderIsLoaded = (site_id: string) => {
   return new Promise<void>((resolve) => {
@@ -60,10 +61,10 @@ const ensureSnackLoaderIsLoaded = (site_id: string) => {
 };
 
 type Props = {
-  unitName: string;
   siteId: string;
 };
-function SnackAdUnit({ unitName, siteId }: Props) {
+function SnackAdUnit({ siteId }: Props) {
+  const unitName = isMobileOnly ? "snack_mex1" : "snack_dex1";
   useEffect(() => {
     const win = window as any;
     console.log("Initialising slot: ", unitName);
