@@ -8,7 +8,7 @@ import useConnectWithWallet from "~/hooks/useConnectWithWallet";
 import { authorizeUser } from "~/util/authorize";
 import { client } from "~/db/connect.server";
 import { connectUserWallet, gameBySurveyUser } from "~/db/queries";
-import { getSession, commitSession } from "../../sessions";
+import { getSession, commitSession } from "~/sessions";
 import AnimatedBanner from "~/components/text/AnimatedBanner";
 import userIcon from "~/images/icons/user.svg";
 

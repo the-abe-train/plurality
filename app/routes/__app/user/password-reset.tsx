@@ -3,7 +3,7 @@ import { json, redirect } from "@remix-run/node";
 import { Form, Link, useActionData, useTransition } from "@remix-run/react";
 import { client } from "~/db/connect.server";
 import { userByEmail } from "~/db/queries";
-import { getSession, commitSession } from "../../sessions";
+import { getSession, commitSession } from "~/sessions";
 import AnimatedBanner from "~/components/text/AnimatedBanner";
 import userIcon from "~/images/icons/user.svg";
 import { passwordResetBody } from "~/util/passwordReset";

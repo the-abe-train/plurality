@@ -10,7 +10,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { sendEmail } from "~/api/nodemailer";
 
-import { getSession, destroySession } from "../../sessions";
+import { getSession, destroySession } from "~/sessions";
 import useAttachWallet from "~/hooks/useAttachWallet";
 import { verifyEmailBody } from "~/util/verifyEmail";
 import { truncateEthAddress, truncateName } from "~/util/text";

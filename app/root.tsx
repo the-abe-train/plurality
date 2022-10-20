@@ -79,9 +79,9 @@ export default function App() {
       </head>
       <body>
         <Outlet />
-        <SnackAdUnit siteId="2903" />
         <ScrollRestoration />
         <Scripts />
+        <SnackAdUnit siteId="2903" />
         <LiveReload />
       </body>
     </html>

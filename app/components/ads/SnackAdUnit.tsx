@@ -53,8 +53,13 @@ const ensureSnackLoaderIsLoaded = (site_id: string) => {
       );
       resolveScript();
     });
+    console.log("doc", doc);
     var scriptsRef = doc.getElementsByTagName("script")[0];
-    if (scriptsRef.parentNode) {
+    console.log("Reference node", scriptsRef);
+    if (scriptsRef && scriptsRef.parentNode) {
+      console.log("Running if code anyway");
+      console.log("Parent node", scriptsRef.parentNode);
+      console.log("New node", scriptElm);
       scriptsRef.parentNode.insertBefore(scriptElm, scriptsRef);
     }
   });
@@ -64,8 +69,10 @@ type Props = {
   siteId: string;
 };
 function SnackAdUnit({ siteId }: Props) {
+  console.log("\nLoading snack ad unit\n");
   const unitName = isMobileOnly ? "snack_mex1" : "snack_dex1";
   useEffect(() => {
+    console.log("\nLoading snack ad unit effect\n");
     const win = window as any;
     console.log("Initialising slot: ", unitName);
     ensureSnackLoaderIsLoaded(siteId).then(() => {
@@ -80,7 +87,7 @@ function SnackAdUnit({ siteId }: Props) {
         win.killSlot([unitName]);
       });
     };
-  }, [siteId, unitName]);
+  }, []);
 
   return <div id={unitName} className="w-min mx-auto"></div>;
 }
