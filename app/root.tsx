@@ -82,7 +82,7 @@ export default function App() {
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
-        <SnackAdUnit siteId="2903" />
+        {/* <SnackAdUnit siteId="2903" /> */}
       </body>
     </html>
   );
