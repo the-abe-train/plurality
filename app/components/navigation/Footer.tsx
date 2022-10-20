@@ -2,7 +2,7 @@ import type { LinksFunction } from "@remix-run/node";
 import { Link } from "@remix-run/react";
 import { githubIcon, twitterIcon, whiteLogo } from "~/images/icons";
 import styles from "~/styles/app.css";
-import SnackAdUnit from "../ads/SnackAdUnit";
+// import SnackAdUnit from "../ads/SnackAdUnit";
 
 export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: styles }];
