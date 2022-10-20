@@ -79,10 +79,10 @@ export default function App() {
       </head>
       <body>
         <Outlet />
+        <SnackAdUnit siteId="2903" />
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
-        <SnackAdUnit siteId="2903" />
       </body>
     </html>
   );
