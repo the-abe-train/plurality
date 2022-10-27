@@ -387,6 +387,7 @@ export default () => {
               ref={inputRef}
               data-cy="guess-input"
               maxLength={20}
+              autoComplete="new-password"
               required
             />
             <input
