@@ -188,7 +188,8 @@ export const action: ActionFunction = async ({ request, params }) => {
 
     // Check for bad words
     const filter = new Filter();
-    if (filter.isProfane(String(newVote))) {
+    filter.addWords("hitler", "slave");
+    if (filter.isProfane(String(newVote).toLowerCase())) {
       console.log(`Prevented response ${newVote} due to profanity`);
       const message = "Sorry, that word is not allowed as Survey response.";
       return json<ActionData>({ message });
