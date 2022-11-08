@@ -187,8 +187,10 @@ export const action: ActionFunction = async ({ request, params }) => {
     }
 
     // Check for bad words
+    const surveyId = Number(params.surveyId);
     const filter = new Filter();
     filter.addWords("hitler", "slave");
+    if (surveyId === 181) filter.removeWords("dick");
     if (filter.isProfane(String(newVote).toLowerCase())) {
       console.log(`Prevented response ${newVote} due to profanity`);
       const message = "Sorry, that word is not allowed as Survey response.";
@@ -197,7 +199,6 @@ export const action: ActionFunction = async ({ request, params }) => {
 
     // Update game with new guess
     const userId = session.get("user");
-    const surveyId = Number(params.surveyId);
     const updatedGame = await addVote(client, surveyId, userId, newVote);
     invariant(updatedGame, "Game update failed");
 
