@@ -196,6 +196,11 @@ export const action: ActionFunction = async ({ request, params }) => {
       const message = "Sorry, that word is not allowed as Survey response.";
       return json<ActionData>({ message });
     }
+    if (String(newVote).toLowerCase() === "idk") {
+      const message =
+        "I'm sure you can think of something if you try a bit harder!";
+      return json<ActionData>({ message });
+    }
 
     // Update game with new guess
     const userId = session.get("user");
