@@ -1,4 +1,4 @@
-import type { MetaFunction } from "@remix-run/node";
+import { json, LoaderFunction, MetaFunction } from "@remix-run/node";
 import {
   Links,
   LiveReload,
@@ -6,10 +6,14 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
+  useLocation,
 } from "@remix-run/react";
 import { ErrorBoundaryComponent } from "@remix-run/react/routeModules";
+import { useEffect } from "react";
 import SnackAdUnit from "./components/ads/SnackAdUnit";
 import styles from "./styles/app.css";
+import * as gtag from "~/util/gtags.client";
 
 export function links() {
   return [{ rel: "stylesheet", href: styles }];
@@ -46,14 +50,6 @@ export const ErrorBoundary: ErrorBoundaryComponent = ({ error }) => {
       <head>
         <Meta />
         <Links />
-          <script async src="https://www.googletagmanager.com/gtag/js?id=G-9GRMFDWRN2"></script>
-          <script>
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-
-          gtag('config', 'G-9GRMFDWRN2');
-          </script>
       </head>
       <body style={{ height: "100%" }}>
         <main className="light w-full top-0 bottom-0 flex flex-col min-h-screen p-12">
@@ -68,7 +64,23 @@ export const ErrorBoundary: ErrorBoundaryComponent = ({ error }) => {
   );
 };
 
+type LoaderData = {
+  gaTrackingId: string | undefined;
+};
+
+// Load the GA tracking id from the .env
+export const loader: LoaderFunction = async () => {
+  return json<LoaderData>({ gaTrackingId: process.env.GA_TRACKING_ID });
+};
+
 export default function App() {
+  const location = useLocation();
+  const { gaTrackingId } = useLoaderData<LoaderData>();
+  useEffect(() => {
+    if (gaTrackingId?.length) {
+      gtag.pageview(location.pathname, gaTrackingId);
+    }
+  }, [location, gaTrackingId]);
   return (
     <html lang="en">
       <head>
@@ -86,6 +98,29 @@ export default function App() {
         ></script>
       </head>
       <body>
+        {process.env.NODE_ENV === "development" || !gaTrackingId ? null : (
+          <>
+            <script
+              async
+              src={`https://www.googletagmanager.com/gtag/js?id=${gaTrackingId}`}
+            />
+            <script
+              async
+              id="gtag-init"
+              dangerouslySetInnerHTML={{
+                __html: `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${gaTrackingId}', {
+                  page_path: window.location.pathname,
+                });
+              `,
+              }}
+            />
+          </>
+        )}
+
         <Outlet />
         <ScrollRestoration />
         <Scripts />
