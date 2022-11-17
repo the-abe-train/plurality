@@ -46,6 +46,14 @@ export const ErrorBoundary: ErrorBoundaryComponent = ({ error }) => {
       <head>
         <Meta />
         <Links />
+          <script async src="https://www.googletagmanager.com/gtag/js?id=G-9GRMFDWRN2"></script>
+          <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', 'G-9GRMFDWRN2');
+          </script>
       </head>
       <body style={{ height: "100%" }}>
         <main className="light w-full top-0 bottom-0 flex flex-col min-h-screen p-12">
