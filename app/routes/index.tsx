@@ -9,7 +9,6 @@ import timezone from "dayjs/plugin/timezone";
 import styles from "~/styles/app.css";
 import backgrounds from "~/styles/backgrounds.css";
 
-import { SurveySchema } from "~/db/schemas";
 import { surveyByClose } from "~/db/queries";
 import { client } from "~/db/connect.server";
 

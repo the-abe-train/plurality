@@ -1,5 +1,4 @@
 import { Link } from "@remix-run/react";
-import { SurveySchema } from "~/db/schemas";
 import NavButton from "../buttons/NavButton";
 
 type Props = {
