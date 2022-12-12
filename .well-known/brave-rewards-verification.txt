@@ -1,0 +1,4 @@
+This is a Brave Rewards publisher verification file.
+
+Domain: plurality.fun
+Token: 4f02d3c6b76eef80c30b2e0453c85bfe6f8526e602715f64db10b9c870235f81
