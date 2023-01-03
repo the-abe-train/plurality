@@ -1,5 +1,3 @@
-import { GameSchema, RankedVote, VoteAggregation } from "~/db/schemas";
-
 export const PER_PAGE = 6;
 export const THRESHOLD = 60; // This is a %
 export const NAME_LENGTH = 16;
@@ -47,7 +45,12 @@ export function calcTopAnswers(answers: RankedVote[]) {
   return answers.slice(0, numToReveal);
 }
 
-export function revealResults(game: GameSchema, maxGuesses: number) {
+export function revealResults(
+  game: GameSchema,
+  maxGuesses: number,
+  isAdmin?: boolean
+) {
+  if (isAdmin) return true;
   const gameOver =
     game.guesses.length >= maxGuesses ||
     game.score === 1 ||

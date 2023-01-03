@@ -11,3 +11,4 @@ export const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY ?? "";
 export const STRIPE_ENDPOINT_SECRET = process.env.STRIPE_ENDPOINT_SECRET ?? "";
 export const BLACKLIST = process.env.BLACKLIST ?? "";
 export const CAPTCHA_SERCRET_KEY = process.env.CAPTCHA_SERCRET_KEY ?? "";
+export const ADMIN_ID = process.env.ADMIN_ID ?? "";

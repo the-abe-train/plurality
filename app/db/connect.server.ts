@@ -1,4 +1,4 @@
-import { MongoClient, MongoClientOptions } from "mongodb";
+import { MongoClient, MongoClientOptions, ObjectId } from "mongodb";
 import { MONGO_URL } from "../util/env";
 
 interface Options extends MongoClientOptions {
@@ -26,3 +26,7 @@ if (process.env.NODE_ENV === "production") {
 }
 
 export { client };
+
+export function checkAdmin(userId: any) {
+  return new ObjectId("628dcc247386837086138963").equals(userId);
+}

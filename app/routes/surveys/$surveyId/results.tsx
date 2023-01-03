@@ -20,15 +20,13 @@ import timezone from "dayjs/plugin/timezone";
 import styles from "~/styles/app.css";
 import backgrounds from "~/styles/backgrounds.css";
 
-import { client } from "~/db/connect.server";
+import { client, checkAdmin } from "~/db/connect.server";
 import {
   gameBySurveyUser,
   resetGuesses,
   surveyById,
   surveyScores,
 } from "~/db/queries";
-
-import { GameSchema, RankedVote, SurveySchema } from "~/db/schemas";
 
 import { commitSession, getSession } from "~/sessions";
 import {
@@ -111,12 +109,6 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   }
   invariant(game, "Game not found");
 
-  // Redirect to Respond if survey close hasn't happened yet
-  const surveyClose = survey.surveyClose;
-  if (dayjs(surveyClose) >= dayjs()) {
-    return redirect(`/surveys/${surveyId}/respond`);
-  }
-
   // Get stats for user
   const totalVotes = getTotalVotes(answers);
   const maxGuesses = calcMaxGuesses(answers);
@@ -126,8 +118,15 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   const avgScore = getAverage(scores);
   const userRank = percentRank(scores, game.score);
 
-  // Redirect to guess if game isn't over yet
-  if (!revealResults(game, maxGuesses)) {
+  // Redirect to Respond if survey close hasn't happened yet
+  const surveyClose = survey.surveyClose;
+  const isAdmin = checkAdmin(userId);
+  if (dayjs(surveyClose).isAfter(dayjs()) && !isAdmin) {
+    return redirect(`/surveys/${surveyId}/respond`);
+  }
+
+  // Redirect to guess if game isn't over yet.
+  if (!revealResults(game, maxGuesses, isAdmin)) {
     return redirect(`/surveys/${surveyId}/guess`);
   }
 
