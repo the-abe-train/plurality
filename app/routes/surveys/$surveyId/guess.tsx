@@ -28,8 +28,6 @@ import {
   surveyById,
 } from "~/db/queries";
 
-import { GameSchema, SurveySchema } from "~/db/schemas";
-
 import { commitSession, getSession } from "~/sessions";
 import {
   calcMaxGuesses,

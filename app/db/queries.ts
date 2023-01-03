@@ -1,12 +1,3 @@
-import {
-  SurveySchema,
-  VoteAggregation,
-  UserSchema,
-  GameSchema,
-  SessionSchema,
-  RankedVote,
-  DraftSchema,
-} from "./schemas";
 import { DATABASE_NAME } from "../util/env";
 import { MongoClient, ObjectId, UpdateFilter } from "mongodb";
 import { capitalizeFirstLetter, truncateEthAddress } from "~/util/text";
