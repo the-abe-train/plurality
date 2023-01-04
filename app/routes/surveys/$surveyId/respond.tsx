@@ -5,7 +5,6 @@ import { Form, useActionData, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import Filter from "bad-words";
 
-import { GameSchema, SurveySchema } from "~/db/schemas";
 import { client } from "~/db/connect.server";
 import {
   addVote,
@@ -190,7 +189,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     const surveyId = Number(params.surveyId);
     const filter = new Filter();
     filter.addWords("hitler", "slave");
-    filter.removeWords("labia");
+    filter.removeWords("labia", "lust");
     if (surveyId === 181) filter.removeWords("dick");
     if (filter.isProfane(String(newVote).toLowerCase())) {
       console.log(`Prevented response ${newVote} due to profanity`);
