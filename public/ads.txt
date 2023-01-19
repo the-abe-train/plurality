@@ -312,3 +312,5 @@ yahoo.com, 59875, reseller
 triplelift.com, 11582, reseller, 6c33edb13117fd86
 conversantmedia.com, 100232, reseller, 03113cd04947736d
 media.net, 8CUY6IX4H, RESELLER
+synacor.com, 82151, RESELLER, e108f11b2cdf7d5b
+imds.tv, 82151, RESELLER, ae6c32151e71f19d
