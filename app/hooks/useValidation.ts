@@ -18,7 +18,7 @@ export default function useValidation({
   const containsLetter = !!voteText.match(/[a-zA-Z]/);
   const containsNumber = !!voteText.match(/\d/);
   const containsSymbol = !!voteText.match(
-    /[-!$%^&*()_+|~=`{}\[\]:";'<>?,.\/\\#]/
+    /[-!$%^&*()_+|~=`{}\[\]:";'<>?,.\/\\#’]/
   );
 
   return useEffect(() => {
