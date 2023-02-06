@@ -9,7 +9,6 @@ import styles from "~/styles/app.css";
 import backgrounds from "~/styles/backgrounds.css";
 
 import { destroySession, getSession } from "~/sessions";
-import { UserSchema } from "~/db/schemas";
 import { userById } from "~/db/queries";
 import { client } from "~/db/connect.server";
 import { truncateName } from "~/util/text";

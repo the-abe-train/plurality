@@ -309,3 +309,8 @@ inmobi.com, b4821b1325c44dc581b04d743ca46575, reseller, 83e75a7ae333ca9d
 rubiconproject.com, 11726, reseller, 0bfd66d529a55807
 themediagrid.com, V19ZSB, reseller, 35d5010d7789b49d
 yahoo.com, 59875, reseller
+triplelift.com, 11582, reseller, 6c33edb13117fd86
+conversantmedia.com, 100232, reseller, 03113cd04947736d
+media.net, 8CUY6IX4H, RESELLER
+synacor.com, 82151, RESELLER, e108f11b2cdf7d5b
+imds.tv, 82151, RESELLER, ae6c32151e71f19d

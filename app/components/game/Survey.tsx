@@ -1,6 +1,5 @@
 import { Link } from "@remix-run/react";
 import dayjs from "dayjs";
-import { SurveySchema } from "~/db/schemas";
 
 type Props = {
   survey: SurveySchema;
@@ -9,6 +8,7 @@ type Props = {
 export default function Survey({ survey }: Props) {
   const surveyClose = dayjs(survey.surveyClose);
   const action = surveyClose > dayjs() ? "respond" : "guess";
+  const img = `https://plurality-cover-images.s3.ca-central-1.amazonaws.com/${survey.photo}.jpg`;
   return (
     <Link
       to={`/surveys/${survey._id}/${action}`}
@@ -22,7 +22,7 @@ export default function Survey({ survey }: Props) {
       >
         <div className="z-0 h-40 overflow-hidden rounded-t-md bg-black">
           <img
-            src={`https://source.unsplash.com/${survey.photo}/600x300`}
+            src={img}
             alt="question image"
             className="object-cover w-full h-full"
           />

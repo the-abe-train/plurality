@@ -5,7 +5,6 @@ import { Form, useActionData, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import Filter from "bad-words";
 
-import { GameSchema, SurveySchema } from "~/db/schemas";
 import { client } from "~/db/connect.server";
 import {
   addVote,
@@ -169,27 +168,28 @@ export const action: ActionFunction = async ({ request, params }) => {
     }
 
     // Remove guesses from blacklisted IPs
-    console.log("Blacklist:", BLACKLIST);
+    // console.log("Blacklist:", BLACKLIST);
     const ipAddresses = request.headers.get("x-forwarded-for");
-    try {
-      const blacklist = JSON.parse(BLACKLIST) as string[];
-      if (ipAddresses) {
-        const ipArray = ipAddresses.split(", ");
-        console.log(blacklist, ipArray);
-        if (blacklist.some((ip) => ipArray.includes(ip))) {
-          console.log(`Response from ${ipAddresses} blocked.`);
-          return {};
-        }
-      }
-    } catch (e) {
-      console.log(`Failed to blacklist ${ipAddresses}`);
-      console.error(e);
-    }
+    // try {
+    //   const blacklist = JSON.parse(BLACKLIST) as string[];
+    //   if (ipAddresses) {
+    //     const ipArray = ipAddresses.split(", ");
+    //     console.log(blacklist, ipArray);
+    //     if (blacklist.some((ip) => ipArray.includes(ip))) {
+    //       console.log(`Response from ${ipAddresses} blocked.`);
+    //       return {};
+    //     }
+    //   }
+    // } catch (e) {
+    //   console.log(`Failed to blacklist ${ipAddresses}`);
+    //   console.error(e);
+    // }
 
     // Check for bad words
     const surveyId = Number(params.surveyId);
     const filter = new Filter();
     filter.addWords("hitler", "slave");
+    filter.removeWords("labia", "lust");
     if (surveyId === 181) filter.removeWords("dick");
     if (filter.isProfane(String(newVote).toLowerCase())) {
       console.log(`Prevented response ${newVote} due to profanity`);

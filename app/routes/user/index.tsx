@@ -16,7 +16,6 @@ import { verifyEmailBody } from "~/util/verifyEmail";
 import { truncateEthAddress, truncateName } from "~/util/text";
 import { authorizeWallet } from "~/util/authorize";
 
-import { DraftSchema, UserSchema } from "~/db/schemas";
 import { client } from "~/db/connect.server";
 import {
   deleteUser,
