@@ -314,3 +314,4 @@ conversantmedia.com, 100232, reseller, 03113cd04947736d
 media.net, 8CUY6IX4H, RESELLER
 synacor.com, 82151, RESELLER, e108f11b2cdf7d5b
 imds.tv, 82151, RESELLER, ae6c32151e71f19d
+openx.com, 558758631, RESELLER, 6a698e2ec38604c7
