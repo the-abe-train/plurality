@@ -193,9 +193,15 @@ export async function surveyById(client: MongoClient, id: number) {
 export async function surveyByClose(client: MongoClient, surveyClose: Date) {
   const db = await connectDb(client);
   const surveysCollection = db.collection<SurveySchema>("surveys");
-  return await surveysCollection.findOne({
-    surveyClose: surveyClose,
+  console.log(surveyClose);
+  const options = surveysCollection.find({
+    surveyClose: { $gte: surveyClose },
   });
+  const arr = await options.toArray();
+  const sorted = arr.sort((a, z) => {
+    return dayjs(a.surveyClose).diff(z.surveyClose);
+  });
+  return sorted[0];
 }
 
 export async function surveysByAuthor(client: MongoClient, userId: ObjectId) {
