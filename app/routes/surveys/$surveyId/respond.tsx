@@ -188,7 +188,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     // Check for bad words
     const surveyId = Number(params.surveyId);
     const filter = new Filter();
-    filter.addWords("hitler", "slave");
+    filter.addWords("hitler", "slave", "negro", "niggerman", "niger", "nword");
     filter.removeWords("labia", "lust");
     if (surveyId === 181) filter.removeWords("dick");
     if (filter.isProfane(String(newVote).toLowerCase())) {
