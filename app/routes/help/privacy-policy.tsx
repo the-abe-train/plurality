@@ -207,9 +207,9 @@ export default function () {
               <a className="underline" href="https://twitter.com/theAbeTrain">
                 Twitter
               </a>
-              , or through the form on my{" "}
-              <a className="underline" href="https://the-abe-train.com">
-                personal website.
+              , or through the form on the{" "}
+              <a className="underline" href="https://trainwrecklabs.com">
+                Trainwreck Labs website.
               </a>
             </li>
             <li>

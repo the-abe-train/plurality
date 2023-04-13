@@ -1,6 +1,5 @@
 import { Link } from "@remix-run/react";
 import dayjs from "dayjs";
-import { DraftSchema } from "~/db/schemas";
 
 type Props = {
   drafts: DraftSchema[];
@@ -60,6 +59,10 @@ export default ({ drafts, showButton }: Props) => {
         Have a question about your draft? DM me on{" "}
         <a href="https://twitter.com/theAbeTrain" className="underline">
           Twitter
+        </a>{" "}
+        or send me a message at{" "}
+        <a className="underline" href="trainwrecklabs.com">
+          trainwrecklabs.com
         </a>
         !
       </p>

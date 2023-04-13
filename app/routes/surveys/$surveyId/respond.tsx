@@ -138,7 +138,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     console.log("Form parse failed");
     console.error(e);
     const message =
-      "The server has experienced an error. Please reach out to Abe Train (https://the-abe-train.com) for support.";
+      "The server has experienced an error. Please reach out to Trainwreck Labs (https://trainwrecklabs.com) for support.";
     return json<ActionData>({ message });
   }
 

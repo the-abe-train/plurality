@@ -1,6 +1,11 @@
 import type { LinksFunction } from "@remix-run/node";
 import { Link } from "@remix-run/react";
-import { githubIcon, twitterIcon, whiteLogo } from "~/images/icons";
+import {
+  githubIcon,
+  twitterIcon,
+  whiteLogo,
+  trainwreckLogo,
+} from "~/images/icons";
 import styles from "~/styles/app.css";
 import SnackAdUnit from "../ads/SnackAdUnit";
 
@@ -37,17 +42,19 @@ export default () => {
           <section className="flex justify-center w-full md:w-max space-x-6 items-center">
             <div>
               <b>Plurality</b> was created by <br />
-              <a className="underline" href="https://the-abe-train.com">
-                The Abe Train
-              </a>{" "}
-              &{" "}
-              <a
-                className="underline"
-                href="https://twitter.com/enriqueolivojr"
-              >
-                The Enrique Olivo
+              <a href="https://trainwrecklabs.com" data-i18n="Footer1">
+                by Trainwreck Labs
               </a>
             </div>
+            <a href="https://trainwrecklabs.com">
+              <img
+                src={trainwreckLogo}
+                width={16}
+                height={16}
+                className="opacity-60 inline ml-2 mb-[1px]"
+                alt="trainwreck"
+              />
+            </a>
             <a href="https://twitter.com/theAbeTrain">
               <img src={twitterIcon} width={20} height={20} alt="Twitter" />
             </a>

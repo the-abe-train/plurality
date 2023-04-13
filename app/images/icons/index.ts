@@ -15,6 +15,7 @@ import exclamationIcon from "~/images/icons/exclamation.svg";
 import infoIcon from "~/images/icons/info.svg";
 import shareIcon from "~/images/icons/share.svg";
 import resultsIcon from "~/images/icons/results.svg";
+import trainwreckLogo from "~/images/icons/trainwreck.svg";
 
 export {
   guessIcon,
@@ -34,4 +35,5 @@ export {
   infoIcon,
   shareIcon,
   resultsIcon,
+  trainwreckLogo,
 };
