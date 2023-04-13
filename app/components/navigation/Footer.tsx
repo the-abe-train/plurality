@@ -49,9 +49,9 @@ export default () => {
             <a href="https://trainwrecklabs.com">
               <img
                 src={trainwreckLogo}
-                width={16}
-                height={16}
-                className="opacity-60 inline ml-2 mb-[1px]"
+                width={20}
+                height={20}
+                className="inline ml-2 mb-[1px]"
                 alt="trainwreck"
               />
             </a>
