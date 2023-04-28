@@ -1,0 +1,34 @@
+import { json } from "@remix-run/node";
+import type { LoaderFunction } from "@remix-run/node";
+
+export let loader: LoaderFunction = async () => {
+  return json(
+    {
+      short_name: "Plurality",
+      name: "Plurality",
+      start_url: "/",
+      description: "A decentralized guessing game",
+      display: "fullscreen",
+      background_color: "#FFEAE0",
+      theme_color: "#FFEAE0",
+      icons: [
+        {
+          src: "/android-chrome-192x192.png",
+          sizes: "192x192",
+          type: "image/png",
+        },
+        {
+          src: "/android-chrome-512x512.png",
+          sizes: "512x512",
+          type: "image/png",
+        },
+      ],
+    },
+    {
+      headers: {
+        "Cache-Control": "public, max-age=600",
+        "Content-Type": "application/manifest+json",
+      },
+    }
+  );
+};
