@@ -1,3 +1,4 @@
+import { useSWEffect } from "~/utils/client/sw-hook";
 import { json, LoaderFunction, MetaFunction } from "@remix-run/node";
 import {
   Links,
@@ -14,11 +15,9 @@ import { useEffect } from "react";
 import SnackAdUnit from "./components/ads/SnackAdUnit";
 import styles from "./styles/app.css";
 import * as gtag from "~/util/gtags.client";
-
 export function links() {
   return [{ rel: "stylesheet", href: styles }];
 }
-
 export const meta: MetaFunction = () => {
   const htmlAttributes = {
     title: "Plurality",
@@ -39,16 +38,17 @@ export const meta: MetaFunction = () => {
     "og:image": "https://plurality.fun/preview.png",
     "og:image:alt": "Plurality: A decentralized guessing game",
   };
-
   return { charset: "utf-8", ...htmlAttributes, ...twitter, ...og };
 };
-
 export const ErrorBoundary: ErrorBoundaryComponent = ({ error }) => {
   console.error(error);
+  useSWEffect();
   return (
     <html>
       <head>
         <Meta />
+        <link rel="manifest" href="/resources/manifest" />
+        {/* <link rel="manifest" href="/site.webmanifest" /> */}
         <Links />
       </head>
       <body style={{ height: "100%" }}>
@@ -63,16 +63,10 @@ export const ErrorBoundary: ErrorBoundaryComponent = ({ error }) => {
     </html>
   );
 };
-
-type LoaderData = {
-  gaTrackingId: string | undefined;
-};
-
-// Load the GA tracking id from the .env
+type LoaderData = { gaTrackingId: string | undefined }; // Load the GA tracking id from the .env
 export const loader: LoaderFunction = async () => {
   return json<LoaderData>({ gaTrackingId: process.env.GA_TRACKING_ID });
 };
-
 export default function App() {
   const location = useLocation();
   const { gaTrackingId } = useLoaderData<LoaderData>();
@@ -85,6 +79,8 @@ export default function App() {
     <html lang="en">
       <head>
         <Meta />
+        <link rel="manifest" href="/resources/manifest" />
+        {/* <link rel="manifest" href="/site.webmanifest" /> */}
         <Links />
         <script
           src="https://widgets.snack-projects.co.uk/gdpr/snack-cmp_v2.min.js"
@@ -108,23 +104,12 @@ export default function App() {
               async
               id="gtag-init"
               dangerouslySetInnerHTML={{
-                __html: `
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                gtag('config', '${gaTrackingId}', {
-                  page_path: window.location.pathname,
-                });
-              `,
+                __html: ` window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', '${gaTrackingId}', { page_path: window.location.pathname, }); `,
               }}
             />
           </>
         )}
-
-        <Outlet />
-        <ScrollRestoration />
-        <Scripts />
-        <LiveReload />
+        <Outlet /> <ScrollRestoration /> <Scripts /> <LiveReload />
         {/* <SnackAdUnit siteId="2903" /> */}
       </body>
     </html>
