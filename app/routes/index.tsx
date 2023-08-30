@@ -83,40 +83,42 @@ export default () => {
     >
       <div className="md:w-max mx-auto md:pb-8 max-w-survey md:max-w-4xl md:min-h-screen py-8">
         <AnimatedBanner text="Plurality" icon={logo} size={50} />
-        <p className="text-center text-lg">A decentralized guessing game.</p>
-        <div className="md:grid grid-cols-2 gap-y-3 gap-x-8 my-6">
-          <h2 className="block text-2xl font-header row-start-1 col-start-2 mt-6 mb-2 md:my-0">
-            Click on today's Survey to begin!
+        <div className="my-6 space-y-4">
+          <h2 className="text-2xl font-header text-center">
+            A Message from Trainwreck Labs
           </h2>
-          <div className="col-start-2">
-            <Survey survey={data.survey} />
-          </div>
-          <h2 className="text-2xl font-header row-start-1 mt-6 mb-2 md:my-0 col-start-1">
-            Instructions
-          </h2>
-          <div
-            className="col-start-1 row-start-2 flex justify-around card 
-            flex-col max-w-survey min-w-[260px] p-2 h-full min-h-[14rem]"
-          >
-            {instructions.map((instr) => {
-              return (
-                <div key={instr.name} className="flex flex-col items-center">
-                  <div className="flex items-center p-1 space-x-3">
-                    <Link to={instr.link} className="cursor-default h-max">
-                      <img
-                        src={instr.icon}
-                        alt={instr.name}
-                        width={44}
-                        height={44}
-                        className="block"
-                      />
-                    </Link>
-                    <p className="block text-black">{instr.text}</p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+          <p>
+            I am sad to announce that there will be no more new surveys added to
+            Plurality for the foreseeable future.
+          </p>
+          <p>
+            Plurality started off as an experiment to understand the diversity
+            of opinions of random internet strangers, but instead became an
+            illustration of how much we all have in common. I am extremely
+            grateful to the people who responded to this game's hundreds of
+            surveys, shared their scores, and hopefully learned something every
+            now and then.
+          </p>
+          <p>
+            Old surveys will remain up indefinitely, but if you want to continue
+            enjoying new daily challenges, make sure to checkout other games
+            from{" "}
+            <a href="https://trainwrecklabs.com" className="underline">
+              Trainwreck Labs
+            </a>
+            !
+          </p>
+          <p>
+            Although there are no current plans to upload new surveys, Plurality
+            may eventually return. If that happens, the first place you'll hear
+            about it is on the official Trainwreck Labs{" "}
+            <a href="https://discord.gg/Xpyy8dCr9g" className="underline">
+              Discord server
+            </a>
+            . Make sure to join and be on the lookout for updates!
+          </p>
+          <p>With gratitude,</p>
+          <p>The Abe Train</p>
         </div>
       </div>
       <Footer />
